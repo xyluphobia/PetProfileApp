@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/petDetails.dart';
 
-class PetDetailsView extends StatelessWidget {
-  const PetDetailsView({super.key});
+class PetDetailsView extends StatefulWidget {
+  final Datum petDetails;
+  const PetDetailsView({super.key, required this.petDetails});
 
+  @override
+  State<PetDetailsView> createState() => _PetDetailsViewState();
+}
+
+class _PetDetailsViewState extends State<PetDetailsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +21,7 @@ class PetDetailsView extends StatelessWidget {
           centerTitle: true,
           title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
           ),
-      body: const Text("details"),
+      body: Text('details for ${widget.petDetails.petName}'),
     );
   }
 }

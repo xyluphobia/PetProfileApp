@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:pet_profile_app/account_view.dart';
 import 'package:pet_profile_app/emergency_view.dart';
-import 'package:pet_profile_app/petDetails.dart';
 import 'package:pet_profile_app/pets_view.dart';
 
 void main() {
@@ -23,33 +21,6 @@ class _MyAppState extends State<MyApp> {
     PetsView(),
     EmergencyView(),
   ];
-  late PetDetails petDetails;
-  bool isDataLoaded = false;
-  String errorMsg = "";
-
-  Future<PetDetails> getDataFromJson() async {
-    try {
-      String response = await rootBundle.loadString('assets/petDetailsData.json');
-      PetDetails petDetailsRead = petDetailsFromJson(response);
-      return petDetailsRead;
-    } catch (e) {
-      errorMsg = "Error: Couldn't Read or Find File.";
-      return PetDetails(data: []);
-    }
-  }
-
-  assignData() async {
-    petDetails = await getDataFromJson();
-    setState(() {
-      isDataLoaded = true;
-    });
-  }
-
-  @override
-  void initState() {
-    assignData();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,13 +77,12 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Container(
           margin: const EdgeInsets.only(
-            top: 8,
+            top: 0,
             bottom: 0,
-            left: 16,
-            right: 16,
+            left: 0,
+            right: 0,
           ),
-          child: !isDataLoaded ? const Center(child: CircularProgressIndicator(),) :
-           errorMsg.isNotEmpty ? Center(child: Text(errorMsg)) : 
+          child:
            IndexedStack(
             index: navIndex,
             children: widgetList,

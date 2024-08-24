@@ -26,23 +26,19 @@ class PetDetails {
 
 class Datum {
   Datum({
-    required this.id,
     required this.petName,
     required this.petImage,
   });
 
-  final int id;
   final String petName;
   final String petImage;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["id"],
         petName: json["petName"],
         petImage: json["petImage"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "petName": petName,
         "petImage": petImage,
       };

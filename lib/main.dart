@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/account_view.dart';
+import 'package:pet_profile_app/emergency_view.dart';
+import 'package:pet_profile_app/pets_view.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int navIndex = 1;
+  List<Widget> widgetList = const [
+    AccountView(),
+    PetsView(),
+    EmergencyView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 63, 63, 63),
+        backgroundColor: const Color(0xFF121212),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 95, 95, 95),
+          backgroundColor: const Color.fromARGB(255, 34, 34, 34),
+          title: const Center(
+            child: Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),)
+            ),
           ),
         bottomNavigationBar: Container(
           height: 100,
@@ -23,7 +41,7 @@ class MyApp extends StatelessWidget {
               topRight: Radius.circular(36.0),
             ),
             boxShadow: [
-              BoxShadow(color: Color.fromARGB(255, 48, 48, 48), spreadRadius: 0, blurRadius: 20),
+              BoxShadow(color: Color.fromARGB(255, 53, 53, 53), spreadRadius: 0, blurRadius: 5),
             ],
           ),
           child: ClipRRect(
@@ -32,8 +50,15 @@ class MyApp extends StatelessWidget {
               topRight: Radius.circular(36.0),
             ),
             child: BottomNavigationBar(
-              backgroundColor: const Color.fromARGB(255, 95, 95, 95),
-              selectedItemColor: Colors.amber,
+              onTap: (index) {
+                setState(() {
+                  navIndex = index;
+                });
+              },
+              currentIndex: navIndex,
+              backgroundColor: const Color.fromARGB(255, 34, 34, 34),
+              selectedItemColor: const Color(0xFF66b2b2),
+              showUnselectedLabels: false,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_box_rounded),
@@ -51,43 +76,16 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(
-              top: 8,
-              bottom: 8,
-              right: 24,
-              left: 24,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  color: Colors.red,
-                  width: 150,
-                  height: 150,
-                ),
-                Container(
-                  color: Colors.blue,
-                  width: 150,
-                  height: 150,
-                ),
-                Container(
-                  color: Colors.orange,
-                  width: 150,
-                  height: 150,
-                ),
-                Container(
-                  color: Colors.green,
-                  width: 150,
-                  height: 150,
-                ),
-                Container(
-                  color: Colors.deepPurple,
-                  width: 150,
-                  height: 150,
-                ),
-              ],
-            ),
+        body: Container(
+          margin: const EdgeInsets.only(
+            top: 4,
+            bottom: 4,
+            left: 16,
+            right: 16,
+          ),
+          child: IndexedStack(
+            index: navIndex,
+            children: widgetList,
           ),
         ),
       ),

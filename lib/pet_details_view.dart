@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pet_profile_app/petDetails.dart';
 
 class PetDetailsView extends StatefulWidget {
-  final Datum petDetails;
+  final Pet petDetails;
   const PetDetailsView({super.key, required this.petDetails});
 
   @override
@@ -21,7 +21,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           centerTitle: true,
           title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
           ),
-      body: Text('details for ${widget.petDetails.petName}'),
+      body: Text('details for ${widget.petDetails.name}'),
     );
   }
 }

@@ -13,10 +13,10 @@ class PetDetails {
     required this.data,
   });
 
-  final List<Datum> data;
+  final List<Pet> data;
 
   factory PetDetails.fromJson(Map<String, dynamic> json) => PetDetails(
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<Pet>.from(json["data"].map((x) => Pet.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -24,22 +24,22 @@ class PetDetails {
       };
 }
 
-class Datum {
-  Datum({
-    required this.petName,
-    required this.petImage,
+class Pet {
+  Pet({
+    required this.name,
+    required this.image,
   });
 
-  final String petName;
-  final String petImage;
+  final String name;
+  final String image;
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        petName: json["petName"],
-        petImage: json["petImage"],
+  factory Pet.fromJson(Map<String, dynamic> json) => Pet(
+        name: json["petName"],
+        image: json["petImage"],
       );
 
   Map<String, dynamic> toJson() => {
-        "petName": petName,
-        "petImage": petImage,
+        "petName": name,
+        "petImage": image,
       };
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pet_profile_app/account_view.dart';
 import 'package:pet_profile_app/emergency_view.dart';
+import 'package:pet_profile_app/petDetails.dart';
 import 'package:pet_profile_app/pets_view.dart';
 
 void main() {
@@ -21,6 +23,33 @@ class _MyAppState extends State<MyApp> {
     PetsView(),
     EmergencyView(),
   ];
+  late PetDetails petDetails;
+  bool isDataLoaded = false;
+  String errorMsg = "";
+
+  Future<PetDetails> getDataFromJson() async {
+    try {
+      String response = await rootBundle.loadString('assets/petDetailsData.json');
+      PetDetails petDetailsRead = petDetailsFromJson(response);
+      return petDetailsRead;
+    } catch (e) {
+      errorMsg = "Error: Couldn't Read or Find File.";
+      return PetDetails(data: []);
+    }
+  }
+
+  assignData() async {
+    petDetails = await getDataFromJson();
+    setState(() {
+      isDataLoaded = true;
+    });
+  }
+
+  @override
+  void initState() {
+    assignData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +58,8 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: const Color(0xFF121212),
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 34, 34, 34),
-          title: const Center(
-            child: Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),)
-            ),
+          centerTitle: true,
+          title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
           ),
         bottomNavigationBar: Container(
           height: 100,
@@ -78,12 +106,14 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Container(
           margin: const EdgeInsets.only(
-            top: 4,
-            bottom: 4,
+            top: 8,
+            bottom: 0,
             left: 16,
             right: 16,
           ),
-          child: IndexedStack(
+          child: !isDataLoaded ? const Center(child: CircularProgressIndicator(),) :
+           errorMsg.isNotEmpty ? Center(child: Text(errorMsg)) : 
+           IndexedStack(
             index: navIndex,
             children: widgetList,
           ),

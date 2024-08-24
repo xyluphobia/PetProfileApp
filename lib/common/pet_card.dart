@@ -3,8 +3,9 @@ import 'package:pet_profile_app/petDetails.dart';
 import 'package:pet_profile_app/pet_details_view.dart';
 
 class PetCard extends StatefulWidget {
-  final Pet petDetails;
-  const PetCard({super.key, required this.petDetails});
+  final Pet pet;
+  final int petIndex;
+  const PetCard({super.key, required this.pet, required this.petIndex});
 
   @override
   State<PetCard> createState() => _PetCardState();
@@ -20,7 +21,7 @@ class _PetCardState extends State<PetCard> {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => PetDetailsView(petDetails: widget.petDetails),));
+              builder: (context) => PetDetailsView(newPet: false, pet: widget.pet, petIndex: widget.petIndex,),));
         },
         child: Card(
           child: Padding(
@@ -38,7 +39,7 @@ class _PetCardState extends State<PetCard> {
                     children: [
                       Column(
                         children: [
-                          Text(widget.petDetails.name, style: const TextStyle(color: Colors.white),),
+                          Text(widget.pet.name, style: const TextStyle(color: Colors.white),),
                           const Text("gender * age", style: TextStyle(color: Colors.white),),
                         ],
                       ),

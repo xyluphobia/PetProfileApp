@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:pet_profile_app/common/add_pet_card.dart';
 import 'package:pet_profile_app/common/pet_card.dart';
 import 'package:pet_profile_app/petDetails.dart';
 
@@ -45,7 +46,7 @@ class _PetsViewState extends State<PetsView> {
            errorMsg.isNotEmpty ? Center(child: Text(errorMsg)) : 
      Center(
        child: ListView.builder(
-         itemCount: petDetails.data.length,
+         itemCount: petDetails.data.length + 1,
          padding: const EdgeInsets.only(
           top: 4,
           bottom: 8,
@@ -57,6 +58,11 @@ class _PetsViewState extends State<PetsView> {
   }
 
   Widget getPetCard(int index) {
-    return PetCard(petDetails: petDetails.data[index]);
+    if (index < petDetails.data.length) {
+      return PetCard(pet: petDetails.data[index], petIndex: index,);
+    }
+    else {
+      return const AddPetCard();
+    }
   }
 }

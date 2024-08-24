@@ -30,8 +30,8 @@ class Pet {
     required this.image,
   });
 
-  final String name;
-  final String image;
+  String name;
+  String image;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
         name: json["petName"],

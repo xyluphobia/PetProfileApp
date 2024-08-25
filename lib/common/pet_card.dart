@@ -21,7 +21,7 @@ class _PetCardState extends State<PetCard> {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => PetDetailsView(pet: widget.pet, petIndex: widget.petIndex,),)
+              builder: (context) => PetDetailsView(petIndex: widget.petIndex,),)
           );
         },
         child: Card(

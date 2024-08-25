@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:pet_profile_app/petDetails.dart';
 
 class PetDetailsView extends StatefulWidget {
-  final Pet pet;
   final int petIndex;
-  const PetDetailsView({super.key, required this.pet, required this.petIndex});
+  const PetDetailsView({super.key, required this.petIndex});
 
   @override
   State<PetDetailsView> createState() => _PetDetailsViewState();
@@ -14,6 +13,7 @@ class PetDetailsView extends StatefulWidget {
 
 class _PetDetailsViewState extends State<PetDetailsView> {
   bool newPet = false;
+  late Pet pet;
 
   @override
   void initState() {
@@ -22,17 +22,28 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    if (!newPet) {
+      pet = context.read<FileController>().petDetails!.data[widget.petIndex];
+    } else {
+      pet = Pet(name: "", image: "");
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     void addOrEditPetData() async {
-      widget.pet.name = "new test pet";
+      pet.name = "new test pet";
 
       PetDetails? petDetails = context.read<FileController>().petDetails;
       if (newPet) {
-        petDetails?.data.add(widget.pet);
+        petDetails?.data.add(pet);
       }
       else {
-        petDetails?.data[widget.petIndex] = widget.pet;
+        petDetails?.data[widget.petIndex] = pet;
       }
 
       await context.read<FileController>().writePetDetails(petDetails!);
@@ -49,7 +60,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           ),
       body: Column(
         children: [
-          Text('details for ${newPet ? "new pet" : widget.pet.name}'),
+          Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
+
+        
+
           GestureDetector(
             onTap: () {
               addOrEditPetData();

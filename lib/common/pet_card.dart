@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/petDetails.dart';
 import 'package:pet_profile_app/pet_details_view.dart';
 
 class PetCard extends StatefulWidget {
-  final Pet pet;
   final int petIndex;
-  const PetCard({super.key, required this.pet, required this.petIndex});
+  const PetCard({super.key, required this.petIndex});
 
   @override
   State<PetCard> createState() => _PetCardState();
@@ -14,6 +15,8 @@ class PetCard extends StatefulWidget {
 class _PetCardState extends State<PetCard> {
   @override
   Widget build(BuildContext context) {
+    Pet pet = context.select((FileController controller) => controller.petDetails == null ? Pet(name: "fail", image: "") : 
+    controller.petDetails!.data.isEmpty ? Pet(name: "fail", image: "") : controller.petDetails!.data[widget.petIndex]);
     return Container(
       margin: const EdgeInsets.only(top: 4),
       child: GestureDetector(
@@ -40,7 +43,7 @@ class _PetCardState extends State<PetCard> {
                     children: [
                       Column(
                         children: [
-                          Text(widget.pet.name, style: const TextStyle(color: Colors.white),),
+                          Text(pet.name, style: const TextStyle(color: Colors.white),),
                           const Text("gender * age", style: TextStyle(color: Colors.white),),
                         ],
                       ),

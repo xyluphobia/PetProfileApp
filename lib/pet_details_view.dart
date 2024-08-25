@@ -36,11 +36,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   @override
   Widget build(BuildContext context) {
     void addOrEditPetData() async {
-      pet.name = "new test pet";
-
       PetDetails? petDetails = context.read<FileController>().petDetails;
       if (newPet) {
         petDetails?.data.add(pet);
+        newPet = false;
       }
       else {
         petDetails?.data[widget.petIndex] = pet;
@@ -58,26 +57,43 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           centerTitle: true,
           title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
           ),
-      body: Column(
-        children: [
-          Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
-
+      body: Container(
+        margin: const EdgeInsets.only(
+          top: 8,
+          bottom: 8,
+          left: 24,
+          right: 24,
+        ),
+        child: Column(
+          children: [
+            Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
+            // Display circular image of the pet. Model this page after a contacts page.
+            TextField(
+              onChanged: (text) {
+                pet.name = text;
+              },
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: newPet ? "Pet Name" : pet.name,
+              ),
+            ),
         
+            GestureDetector(
+              onTap: () {
+                addOrEditPetData();
+              },
+              child: const Text('SAVE PET DATA')
+            ),
 
-          GestureDetector(
-            onTap: () {
-              addOrEditPetData();
-            },
-            child: const Text('SAVE PET DATA')
-          ),
-
-          GestureDetector(
-            onTap: () {
-              context.read<FileController>().clearPetDetailsJson();
-            },
-            child: const Text('CLEAR ALL SAVED PETS'),
-          ),
-        ],
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                context.read<FileController>().clearPetDetailsJson();
+              },
+              child: const Text('CLEAR ALL SAVED PETS'),
+            ),
+          ],
+        ),
       ),
     );
   }

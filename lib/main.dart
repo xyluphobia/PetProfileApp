@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<FileController>().readString();
+    context.read<FileController>().readPetDetails();
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color(0xFF121212),

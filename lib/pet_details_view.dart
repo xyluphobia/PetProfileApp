@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/file_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:pet_profile_app/petDetails.dart';
-import 'package:pet_profile_app/file_manager.dart';
 
 class PetDetailsView extends StatefulWidget {
   final Pet pet;
@@ -21,23 +22,22 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
     super.initState();
   }
-
-  void addOrEditPetData() async {
-    widget.pet.name = "new test pet";
-
-    PetDetails petDetails = petDetailsFromJson(await FileManager().getJsonString());
-    if (newPet) {
-      petDetails.data.add(widget.pet);
-    }
-    else {
-      petDetails.data[widget.petIndex] = widget.pet;
-    }
-
-    await FileManager().writeJsonFile(petDetailsToJson(petDetails));
-  }
-
   @override
   Widget build(BuildContext context) {
+    void addOrEditPetData() async {
+      widget.pet.name = "new test pet";
+
+      PetDetails? petDetails = context.read<FileController>().petDetails;
+      if (newPet) {
+        petDetails?.data.add(widget.pet);
+      }
+      else {
+        petDetails?.data[widget.petIndex] = widget.pet;
+      }
+
+      await context.read<FileController>().writePetDetails(petDetails!);
+    }
+
     return Scaffold(
       appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 34, 34, 34),

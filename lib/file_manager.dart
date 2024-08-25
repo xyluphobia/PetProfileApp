@@ -21,7 +21,7 @@ class FileManager {
     return File('$path/petDetailsData.json');
   }
 
-  Future<String> getJsonString() async {
+  Future<String> readJsonFile() async {
     final file = await _localFile;
     bool doesFileExist = await file.exists();
 
@@ -35,8 +35,9 @@ class FileManager {
     return contents;
   }
 
-  Future<void> writeJsonFile(String jsonToSet) async {
+  Future<PetDetails> writeJsonFile(String jsonToSet) async {
     final file = await _localFile;
     file.writeAsString(jsonToSet);
+    return petDetailsFromJson(jsonToSet);
   }
 }

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/file_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:pet_profile_app/account_view.dart';
 import 'package:pet_profile_app/emergency_view.dart';
 import 'package:pet_profile_app/pets_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => FileController())], 
+      child: const MyApp())
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -24,6 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    context.read<FileController>().readString();
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color(0xFF121212),

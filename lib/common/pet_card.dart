@@ -21,7 +21,8 @@ class _PetCardState extends State<PetCard> {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => PetDetailsView(newPet: false, pet: widget.pet, petIndex: widget.petIndex,),));
+              builder: (context) => PetDetailsView(pet: widget.pet, petIndex: widget.petIndex,),)
+          );
         },
         child: Card(
           child: Padding(
@@ -32,8 +33,8 @@ class _PetCardState extends State<PetCard> {
               color: const Color.fromARGB(255, 59, 59, 59),
               child: Column(
                 children: [
-                  Expanded(
-                    child: Image.asset('assets/img.jpg')
+                  const Expanded(
+                    child: Icon(Icons.pets_sharp),
                   ),
                   Row(
                     children: [

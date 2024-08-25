@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pet_profile_app/pet_details_view.dart';
 
+import '../petDetails.dart';
+
 class AddPetCard extends StatelessWidget {
   const AddPetCard({super.key});
 
@@ -13,7 +15,7 @@ class AddPetCard extends StatelessWidget {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => const PetDetailsView(newPet: true,)));
+              builder: (context) => PetDetailsView(pet: Pet(name: "", image: ""), petIndex: -1,)));
         },
         child: Card(
           child: Padding(

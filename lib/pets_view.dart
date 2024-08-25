@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pet_profile_app/common/add_pet_card.dart';
 import 'package:pet_profile_app/common/pet_card.dart';
+import 'package:pet_profile_app/file_controller.dart';
+import 'package:pet_profile_app/file_manager.dart';
 import 'package:pet_profile_app/petDetails.dart';
+import 'package:provider/provider.dart';
 
 class PetsView extends StatefulWidget {
   const PetsView({super.key});
@@ -26,9 +29,9 @@ class _PetsViewState extends State<PetsView> {
       return PetDetails(data: []);
     }
   }
-
+/*
   assignData() async {
-    petDetails = await getDataFromJson();
+    petDetails = petDetailsFromJson(await FileManager().getJsonString());
     setState(() {
       isDataLoaded = true;
     });
@@ -38,6 +41,18 @@ class _PetsViewState extends State<PetsView> {
   void initState() {
     assignData();
     super.initState();
+  }*/
+  @override
+  void didChangeDependencies() {
+    void assignData2() async {
+      print("running");
+      petDetails = petDetailsFromJson(await context.read<FileController>().readString());
+      setState(() {
+        isDataLoaded = true;
+      });
+    }
+    assignData2();
+    super.didChangeDependencies();
   }
 
   @override
@@ -58,7 +73,7 @@ class _PetsViewState extends State<PetsView> {
   }
 
   Widget getPetCard(int index) {
-    if (index < petDetails.data.length) {
+    if (index < petDetails.data.length && petDetails.data.isNotEmpty) {
       return PetCard(pet: petDetails.data[index], petIndex: index,);
     }
     else {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:pet_profile_app/petDetails.dart';
 
 class FileManager {
   static FileManager? _instance;
@@ -22,14 +23,16 @@ class FileManager {
 
   Future<String> getJsonString() async {
     final file = await _localFile;
-    if (await file.exists()) {
-      final contents = await file.readAsString();
-      return contents;
+    bool doesFileExist = await file.exists();
+
+    if (!doesFileExist) {
+      // create the file at the correct location if it doesn't exist then return it
+      await file.create();
+      await writeJsonFile("{\"data\":[]}");
     } 
-    else {
-      // create the file at the correct location then return it
-      return "No File";
-    }
+
+    final contents = await file.readAsString();
+    return contents;
   }
 
   Future<void> writeJsonFile(String jsonToSet) async {

@@ -36,7 +36,7 @@ class _PetsViewState extends State<PetsView> {
 
   Widget getPetCard(int index) {
     PetDetails? petDetailsLocal = context.read<FileController>().petDetails;
-    if (index < petDetailsLocal!.data.length && petDetailsLocal.data.isNotEmpty) {
+    if (petDetailsLocal != null && index < petDetailsLocal.data.length) {
       return PetCard(pet: petDetailsLocal.data[index], petIndex: index,);
     }
     else {

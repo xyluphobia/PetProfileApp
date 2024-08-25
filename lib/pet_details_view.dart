@@ -49,11 +49,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           ),
       body: Column(
         children: [
+          Text('details for ${newPet ? "new pet" : widget.pet.name}'),
           GestureDetector(
             onTap: () {
               addOrEditPetData();
             },
-            child: Text('details for ${newPet ? "new pet" : widget.pet.name}')
+            child: const Text('SAVE PET DATA')
           ),
 
           GestureDetector(

@@ -47,12 +47,23 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           centerTitle: true,
           title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
           ),
-      body: GestureDetector(
-        onTap: () {
-          addOrEditPetData();
-        },
-        child: Text('details for ${newPet ? "new pet" : widget.pet.name}'),
-        ),
+      body: Column(
+        children: [
+          GestureDetector(
+            onTap: () {
+              addOrEditPetData();
+            },
+            child: Text('details for ${newPet ? "new pet" : widget.pet.name}')
+          ),
+
+          GestureDetector(
+            onTap: () {
+              context.read<FileController>().clearPetDetailsJson();
+            },
+            child: const Text('CLEAR ALL SAVED PETS'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -8,7 +8,7 @@ import 'dart:convert';
 Pet Empty_Pet = Pet(
   name: '', 
   image: '',
-  age: 0,
+  age: '',
   species: '',
   breed: '',
   owner: '',
@@ -46,7 +46,7 @@ class Pet {
 
   String image;
   String name;
-  int age;
+  String age;
   String species;
   String breed;
   String owner;

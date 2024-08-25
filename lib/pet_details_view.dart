@@ -14,35 +14,30 @@ class PetDetailsView extends StatefulWidget {
 class _PetDetailsViewState extends State<PetDetailsView> {
   bool newPet = false;
   late Pet pet;
+  late int petIndex = widget.petIndex;
 
   @override
   void initState() {
-    if (widget.petIndex == -1) {
+    if (petIndex == -1) {
       newPet = true;
     }
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    if (!newPet) {
-      pet = context.read<FileController>().petDetails!.data[widget.petIndex];
-    } else {
-      pet = Empty_Pet;
-    }
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    pet = context.select((FileController controller) => controller.petDetails == null ? Empty_Pet : 
+    controller.petDetails!.data.isEmpty ? Empty_Pet : controller.petDetails!.data[petIndex]);
+
     void addOrEditPetData() async {
       PetDetails? petDetails = context.read<FileController>().petDetails;
       if (newPet) {
         petDetails?.data.add(pet);
+        petIndex = (petDetails!.data.length - 1);
         newPet = false;
       }
       else {
-        petDetails?.data[widget.petIndex] = pet;
+        petDetails?.data[petIndex] = pet;
       }
 
       await context.read<FileController>().writePetDetails(petDetails!);
@@ -68,16 +63,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           children: [
             Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
             // Display circular image of the pet. Model this page after a contacts page.
-            TextField(
-              onChanged: (text) {
-                pet.name = text;
-              },
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: newPet ? "Pet Name" : pet.name,
-              ),
-            ),
-        
+            developmentInputFields(),
+            basicInfoCard(),
             GestureDetector(
               onTap: () {
                 addOrEditPetData();
@@ -97,4 +84,124 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       ),
     );
   }
+
+  Widget basicInfoCard() {
+    return Card(
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: 150,
+              height: 150,
+              color: Colors.red,
+            ),
+            Column(
+              textBaseline: TextBaseline.alphabetic,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(pet.name),
+                        const Text("name", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(pet.owner),
+                        const Text("owner", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(pet.age),
+                        const Text("age" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('${pet.species} / ${pet.breed}'),
+                        const Text("species / breed" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget developmentInputFields() {
+    return Column(
+      children: [
+        TextField(
+          onChanged: (text) {
+            pet.name = text;
+          },
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: newPet ? "Pet Name" : pet.name,
+          ),
+        ),
+
+        TextField(
+          onChanged: (text) {
+            pet.owner = text;
+          },
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: newPet ? "Owner Name" : pet.owner,
+          ),
+        ),
+
+        TextField(
+          onChanged: (text) {
+            pet.age = text;
+          },
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: newPet ? "Pet Age" : pet.age,
+          ),
+        ),
+
+        TextField(
+          onChanged: (text) {
+            pet.species = text;
+          },
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: newPet ? "Pet Species" : pet.species,
+          ),
+        ),
+
+        TextField(
+          onChanged: (text) {
+            pet.breed = text;
+          },
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: newPet ? "Pet Breed" : pet.breed,
+          ),
+        ),
+      ],
+    );
+  }
 }
+

@@ -15,8 +15,8 @@ class PetCard extends StatefulWidget {
 class _PetCardState extends State<PetCard> {
   @override
   Widget build(BuildContext context) {
-    Pet pet = context.select((FileController controller) => controller.petDetails == null ? Pet(name: "fail", image: "") : 
-    controller.petDetails!.data.isEmpty ? Pet(name: "fail", image: "") : controller.petDetails!.data[widget.petIndex]);
+    Pet pet = context.select((FileController controller) => controller.petDetails == null ? Empty_Pet : 
+    controller.petDetails!.data.isEmpty ? Empty_Pet : controller.petDetails!.data[widget.petIndex]);
     return Container(
       margin: const EdgeInsets.only(top: 4),
       child: GestureDetector(

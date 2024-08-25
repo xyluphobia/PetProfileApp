@@ -18,7 +18,7 @@ class FileController extends ChangeNotifier
   }
 
   clearPetDetailsJson() async {
-    _petDetails = await FileManager().writeJsonFile("{\"data\":[]}");
+    _petDetails = await FileManager().writeJsonFile(FileManager.baseJsonString);
     notifyListeners();
   }
 }

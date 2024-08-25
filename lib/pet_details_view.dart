@@ -28,7 +28,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     if (!newPet) {
       pet = context.read<FileController>().petDetails!.data[widget.petIndex];
     } else {
-      pet = Pet(name: "", image: "");
+      pet = Empty_Pet;
     }
     super.didChangeDependencies();
   }

@@ -4,6 +4,9 @@
 
 import 'dart:convert';
 
+// ignore: constant_identifier_names, non_constant_identifier_names
+Pet Empty_Pet = Pet(name: '', image: '');
+
 PetDetails petDetailsFromJson(String str) => PetDetails.fromJson(json.decode(str));
 
 String petDetailsToJson(PetDetails data) => json.encode(data.toJson());

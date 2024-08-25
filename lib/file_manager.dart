@@ -4,6 +4,7 @@ import 'package:pet_profile_app/petDetails.dart';
 
 class FileManager {
   static FileManager? _instance;
+  static String baseJsonString = "{\"data\":[]}";
 
   FileManager._internal() {
     _instance = this;
@@ -28,7 +29,7 @@ class FileManager {
     if (!doesFileExist) {
       // create the file at the correct location if it doesn't exist then return it
       await file.create();
-      await writeJsonFile("{\"data\":[]}");
+      await writeJsonFile(baseJsonString);
     } 
 
     final contents = await file.readAsString();

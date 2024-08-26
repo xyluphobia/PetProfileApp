@@ -27,7 +27,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   @override
   Widget build(BuildContext context) {
     pet = context.select((FileController controller) => controller.petDetails == null ? Empty_Pet : 
-    controller.petDetails!.data.isEmpty ? Empty_Pet : controller.petDetails!.data[petIndex]);
+    controller.petDetails!.data.isEmpty ? Empty_Pet : 
+    newPet ? Empty_Pet : controller.petDetails!.data[petIndex]);
 
     void addOrEditPetData() async {
       PetDetails? petDetails = context.read<FileController>().petDetails;
@@ -62,9 +63,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         child: Column(
           children: [
             Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
-            // Display circular image of the pet. Model this page after a contacts page.
-            developmentInputFields(),
+
+            //developmentInputFields(),
             basicInfoCard(),
+
             GestureDetector(
               onTap: () {
                 addOrEditPetData();
@@ -107,14 +109,46 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(pet.name),
+                        SizedBox(
+                          height: 20,
+                          width: 100,
+                          child: TextField(
+                            keyboardType: TextInputType.name,
+                            textAlign: TextAlign.end,
+                            autocorrect: false,
+                            maxLines: 1,
+
+                            onChanged: (text) {
+                              pet.name = text;
+                            },
+                            decoration: InputDecoration(
+                              hintText: pet.name
+                            ),
+                          ),
+                        ),
                         const Text("name", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(pet.owner),
+                        SizedBox(
+                          height: 20,
+                          width: 100,
+                          child: TextField(
+                            keyboardType: TextInputType.name,
+                            textAlign: TextAlign.end,
+                            autocorrect: false,
+                            maxLines: 1,
+
+                            onChanged: (text) {
+                              pet.owner = text;
+                            },
+                            decoration: InputDecoration(
+                              hintText: pet.owner
+                            ),
+                          ),
+                        ),
                         const Text("owner", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
                       ],
                     ),
@@ -126,14 +160,71 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(pet.age),
+                        SizedBox(
+                          height: 20,
+                          width: 100,
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.end,
+                            autocorrect: false,
+                            maxLines: 1,
+
+                            onChanged: (text) {
+                              pet.age = text;
+                            },
+                            decoration: InputDecoration(
+                              hintText: pet.age
+                            ),
+                          ),
+                        ),
                         const Text("age" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text('${pet.species} / ${pet.breed}'),
+                        //Text('${pet.species} / ${pet.breed}'),
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 70,
+                              child: TextField(
+                                keyboardType: TextInputType.name,
+                                textAlign: TextAlign.end,
+                                autocorrect: false,
+                                maxLines: 1,
+
+                                onChanged: (text) {
+                                  pet.species = text;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: pet.species
+                                ),
+                              ),
+                            ),
+
+                            const Text("/"),
+
+                            SizedBox(
+                              height: 20,
+                              width: 70,
+                              child: TextField(
+                                keyboardType: TextInputType.name,
+                                textAlign: TextAlign.end,
+                                autocorrect: false,
+                                maxLines: 1,
+
+                                onChanged: (text) {
+                                  pet.breed = text;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: pet.breed
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const Text("species / breed" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
                       ],
                     ),

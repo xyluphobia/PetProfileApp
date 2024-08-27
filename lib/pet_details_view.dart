@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:pet_profile_app/file_controller.dart';
 import 'package:provider/provider.dart';
+
+import 'package:pet_profile_app/file_manager.dart';
+import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/pet_details.dart';
 
 class PetDetailsView extends StatefulWidget {
@@ -14,9 +18,22 @@ class PetDetailsView extends StatefulWidget {
 
 class _PetDetailsViewState extends State<PetDetailsView> {
   bool newPet = false;
-  bool useEmptyPet = false;
+  bool assignPet = true;
   late Pet pet;
   late int petIndex = widget.petIndex;
+
+  Future selectImage(ImageSource imgSource) async {
+    final returnedImage = await ImagePicker().pickImage(source: imgSource);
+
+    if (returnedImage == null) return;
+
+    String savedImagePath = await FileManager().saveImage(File(returnedImage.path));
+    setState(() {
+      assignPet = false;
+      pet.image = savedImagePath;
+    });
+    return;
+  }
 
   @override
   void initState() {
@@ -28,15 +45,19 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
-    Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
+    if (assignPet) {
+      pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
+      Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
+    }
 
     void addOrEditPetData() async {
       PetDetails? petDetails = context.read<FileController>().petDetails;
       if (newPet) {
         petDetails?.data.add(pet);
         petIndex = (petDetails!.data.length - 1);
-        newPet = false;
+        setState(() {
+          newPet = false;
+        });
       }
       else {
         petDetails?.data[petIndex] = pet;
@@ -88,220 +109,299 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     );
   }
 
-  Widget basicInfoCard() {
-    return Card(
-      child: SizedBox(
-        height: 300,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Future displayBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context, 
+      builder: (context) => Container(
+        height: 200,
+        child: Column(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 150,
-                  height: 150,
-                  color: Colors.red,
+            SizedBox(
+              height: 92,
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  selectImage(ImageSource.gallery).then((_) {
+                    if (context.mounted) Navigator.pop(context);
+                  });
+                }, 
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all(const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    ),
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 100,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.start,
-                            autocorrect: false,
-                            maxLines: 1,
-
-                            onChanged: (text) {
-                              pet.age = text;
-                            },
-                            decoration: InputDecoration(
-                              hintText: pet.age
-                            ),
-                          ),
-                        ),
-                        const Text("age", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.photo),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 100,
-                          child: TextField(
-                            keyboardType: TextInputType.none,
-                            textAlign: TextAlign.start,
-                            autocorrect: false,
-                            maxLines: 1,
-                            showCursor: false,
-
-                            onTap: () {
-                              showDatePicker(
-                                context: context,
-                                initialDate: pet.birthday == null ? DateTime.now() : DateFormat('dd/MM/yyyy').tryParse(pet.birthday!),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime.now(),
-                              ).then((date) {
-                                if (date != null) {
-                                  setState(() {
-                                    pet.birthday = DateFormat('dd/MM/yyyy').format(date);
-                                  });
-                                }
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: pet.birthday,
-                            ),
-                          ),
-                        ),
-                        const Text("birthday", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
-                    ),
+                    Text("Pick Photo", textScaler: TextScaler.linear(1.5),),
                   ],
-                ),
-              ],
+                )
+              ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+            const Divider(
+              thickness: 2,
+              indent: 18,
+              endIndent: 18,
+            ),
+            SizedBox(
+              height: 92,
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  selectImage(ImageSource.camera).then((_) {
+                    if (context.mounted) Navigator.pop(context);
+                  });
+                }, 
+                style: ButtonStyle(
+                    shape: WidgetStateProperty.all(const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero),
+                    ),
+                  ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 100,
-                          child: TextField(
-                            keyboardType: TextInputType.name,
-                            textAlign: TextAlign.end,
-                            autocorrect: false,
-                            maxLines: 1,
-
-                            onChanged: (text) {
-                              pet.name = text;
-                            },
-                            decoration: InputDecoration(
-                              hintText: pet.name
-                            ),
-                          ),
-                        ),
-                        const Text("name", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.camera_alt_outlined),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 100,
-                          child: TextField(
-                            keyboardType: TextInputType.name,
-                            textAlign: TextAlign.end,
-                            autocorrect: false,
-                            maxLines: 1,
-
-                            onChanged: (text) {
-                              pet.owner = text;
-                            },
-                            decoration: InputDecoration(
-                              hintText: pet.owner
-                            ),
-                          ),
-                        ),
-                        const Text("owner", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
-                    ),
+                    Text("Take Photo", textScaler: TextScaler.linear(1.5),),
                   ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                          width: 100,
-                          child: TextField(
-                            keyboardType: TextInputType.text,
-                            textAlign: TextAlign.end,
-                            autocorrect: false,
-                            maxLines: 1,
-
-                            onChanged: (text) {
-                              pet.gender = text;
-                            },
-                            decoration: InputDecoration(
-                              hintText: pet.gender
-                            ),
-                          ),
-                        ),
-                        const Text("gender" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 20,
-                              width: 70,
-                              child: TextField(
-                                keyboardType: TextInputType.text,
-                                textAlign: TextAlign.end,
-                                autocorrect: false,
-                                maxLines: 1,
-
-                                onChanged: (text) {
-                                  pet.species = text;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: pet.species
-                                ),
-                              ),
-                            ),
-
-                            const Text("/"),
-
-                            SizedBox(
-                              height: 20,
-                              width: 70,
-                              child: TextField(
-                                keyboardType: TextInputType.text,
-                                textAlign: TextAlign.end,
-                                autocorrect: false,
-                                maxLines: 1,
-
-                                onChanged: (text) {
-                                  pet.breed = text;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: pet.breed
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Text("species / breed" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                )
+              ),
             ),
           ],
+        ),
+      )
+    );
+  }
+
+  Widget basicInfoCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
+          height: 250,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      displayBottomSheet(context);
+                    },
+                    child: CircleAvatar(
+                      radius: 80,
+                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) :const AssetImage('assets/images/petimage.jpg'),
+                      // ^ pet.image == null ? AssetImage('assets/images/petimage.jpg') : , ^
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 100,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.start,
+                              autocorrect: false,
+                              maxLines: 1,
+        
+                              onChanged: (text) {
+                                pet.age = text;
+                              },
+                              decoration: InputDecoration(
+                                hintText: pet.age
+                              ),
+                            ),
+                          ),
+                          const Text("age", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 100,
+                            child: TextField(
+                              keyboardType: TextInputType.none,
+                              textAlign: TextAlign.start,
+                              autocorrect: false,
+                              maxLines: 1,
+                              showCursor: false,
+        
+                              onTap: () {
+                                showDatePicker(
+                                  context: context,
+                                  initialDate: pet.birthday == null ? DateTime.now() : DateFormat('dd/MM/yyyy').tryParse(pet.birthday!),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime.now(),
+                                ).then((date) {
+                                  if (date != null) {
+                                    setState(() {
+                                      pet.birthday = DateFormat('dd/MM/yyyy').format(date);
+                                    });
+                                  }
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: pet.birthday,
+                              ),
+                            ),
+                          ),
+                          const Text("birthday", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 100,
+                            child: TextField(
+                              keyboardType: TextInputType.name,
+                              textAlign: TextAlign.end,
+                              autocorrect: false,
+                              maxLines: 1,
+        
+                              onChanged: (text) {
+                                pet.name = text;
+                              },
+                              decoration: InputDecoration(
+                                hintText: pet.name
+                              ),
+                            ),
+                          ),
+                          const Text("name", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 100,
+                            child: TextField(
+                              keyboardType: TextInputType.name,
+                              textAlign: TextAlign.end,
+                              autocorrect: false,
+                              maxLines: 1,
+        
+                              onChanged: (text) {
+                                pet.owner = text;
+                              },
+                              decoration: InputDecoration(
+                                hintText: pet.owner
+                              ),
+                            ),
+                          ),
+                          const Text("owner", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 100,
+                            child: TextField(
+                              keyboardType: TextInputType.text,
+                              textAlign: TextAlign.end,
+                              autocorrect: false,
+                              maxLines: 1,
+        
+                              onChanged: (text) {
+                                pet.gender = text;
+                              },
+                              decoration: InputDecoration(
+                                hintText: pet.gender
+                              ),
+                            ),
+                          ),
+                          const Text("gender" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 20,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.text,
+                                  textAlign: TextAlign.end,
+                                  autocorrect: false,
+                                  maxLines: 1,
+        
+                                  onChanged: (text) {
+                                    pet.species = text;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: pet.species
+                                  ),
+                                ),
+                              ),
+        
+                              const Text("/"),
+        
+                              SizedBox(
+                                height: 20,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.text,
+                                  textAlign: TextAlign.end,
+                                  autocorrect: false,
+                                  maxLines: 1,
+        
+                                  onChanged: (text) {
+                                    pet.breed = text;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: pet.breed
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Text("species / breed" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

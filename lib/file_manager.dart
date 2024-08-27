@@ -41,4 +41,10 @@ class FileManager {
     file.writeAsString(jsonToSet);
     return petDetailsFromJson(jsonToSet);
   }
+
+  Future<String> saveImage(File image) async {
+    final path = await _localPath;
+    File imageSaved = await image.copy('$path/${DateTime.now()}');
+    return imageSaved.path;
+  }
 }

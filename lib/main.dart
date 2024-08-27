@@ -29,8 +29,13 @@ class _MyAppState extends State<MyApp> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
     context.read<FileController>().readPetDetails();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color(0xFF121212),
@@ -82,18 +87,9 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ),
-        body: Container(
-          margin: const EdgeInsets.only(
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-          ),
-          child:
-           IndexedStack(
-            index: navIndex,
-            children: widgetList,
-          ),
+        body: IndexedStack(
+         index: navIndex,
+         children: widgetList,
         ),
       ),
     );

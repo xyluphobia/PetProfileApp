@@ -117,7 +117,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         child: Column(
           children: [
             SizedBox(
-              height: 92,
+              height: 99,
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
@@ -147,9 +147,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               thickness: 2,
               indent: 18,
               endIndent: 18,
+              height: 2,
             ),
             SizedBox(
-              height: 92,
+              height: 99,
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
@@ -199,8 +200,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     },
                     child: CircleAvatar(
                       radius: 80,
-                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) :const AssetImage('assets/images/petimage.jpg'),
-                      // ^ pet.image == null ? AssetImage('assets/images/petimage.jpg') : , ^
+                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petimage.jpg'),
                     ),
                   ),
                   Column(

@@ -112,7 +112,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   Future displayBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context, 
-      builder: (context) => Container(
+      builder: (context) => SizedBox(
         height: 200,
         child: Column(
           children: [

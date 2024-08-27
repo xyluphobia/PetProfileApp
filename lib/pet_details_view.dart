@@ -234,33 +234,32 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           height: 20,
                           width: 100,
                           child: TextField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.text,
                             textAlign: TextAlign.end,
                             autocorrect: false,
                             maxLines: 1,
 
                             onChanged: (text) {
-                              pet.age = text;
+                              pet.gender = text;
                             },
                             decoration: InputDecoration(
-                              hintText: pet.age
+                              hintText: pet.gender
                             ),
                           ),
                         ),
-                        const Text("age" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                        const Text("gender" , style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        //Text('${pet.species} / ${pet.breed}'),
                         Row(
                           children: [
                             SizedBox(
                               height: 20,
                               width: 70,
                               child: TextField(
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.text,
                                 textAlign: TextAlign.end,
                                 autocorrect: false,
                                 maxLines: 1,
@@ -280,7 +279,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               height: 20,
                               width: 70,
                               child: TextField(
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.text,
                                 textAlign: TextAlign.end,
                                 autocorrect: false,
                                 maxLines: 1,

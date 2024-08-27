@@ -32,6 +32,7 @@ class Pet {
     this.name,
     this.age,
     this.birthday,
+    this.gender,
     this.species,
     this.breed,
     this.owner,
@@ -41,6 +42,7 @@ class Pet {
   String? name;
   String? age;
   String? birthday;
+  String? gender;
   String? species;
   String? breed;
   String? owner;
@@ -50,6 +52,7 @@ class Pet {
         name: json["name"],
         age: json["age"],
         birthday: json["birthday"],
+        gender: json["gender"],
         species: json["species"],
         breed: json["breed"],
         owner: json["owner"],
@@ -60,6 +63,7 @@ class Pet {
         "name": name,
         "age" : age,
         "birthday" : birthday,
+        "gender" : gender,
         "species" : species,
         "breed" : breed,
         "owner" : owner,

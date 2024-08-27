@@ -37,6 +37,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'Cabin',
+        textTheme: Theme.of(context).textTheme.apply(
+          fontSizeFactor: 1.4, 
+        ),
+      ),
       home: Scaffold(
         backgroundColor: const Color(0xFF121212),
         appBar: AppBar(

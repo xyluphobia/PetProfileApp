@@ -200,7 +200,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     },
                     child: CircleAvatar(
                       radius: 80,
-                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petimage.jpg'),
+                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petImage.jpg'),
                     ),
                   ),
                   Column(

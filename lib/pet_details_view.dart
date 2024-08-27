@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pet_profile_app/file_controller.dart';
 import 'package:provider/provider.dart';
-import 'package:pet_profile_app/petDetails.dart';
+import 'package:pet_profile_app/pet_details.dart';
 
 class PetDetailsView extends StatefulWidget {
   final int petIndex;
@@ -13,6 +14,7 @@ class PetDetailsView extends StatefulWidget {
 
 class _PetDetailsViewState extends State<PetDetailsView> {
   bool newPet = false;
+  bool useEmptyPet = false;
   late Pet pet;
   late int petIndex = widget.petIndex;
 
@@ -26,9 +28,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    pet = context.select((FileController controller) => controller.petDetails == null ? Empty_Pet : 
-    controller.petDetails!.data.isEmpty ? Empty_Pet : 
-    newPet ? Empty_Pet : controller.petDetails!.data[petIndex]);
+    pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
+    Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
 
     void addOrEditPetData() async {
       PetDetails? petDetails = context.read<FileController>().petDetails;
@@ -76,8 +77,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
             GestureDetector(
               onTap: () {
-                Navigator.pop(context);
                 context.read<FileController>().clearPetDetailsJson();
+                Navigator.pop(context);
               },
               child: const Text('CLEAR ALL SAVED PETS'),
             ),
@@ -89,17 +90,86 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   Widget basicInfoCard() {
     return Card(
-      child: IntrinsicHeight(
+      child: SizedBox(
+        height: 300,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              width: 150,
-              height: 150,
-              color: Colors.red,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  color: Colors.red,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          width: 100,
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.start,
+                            autocorrect: false,
+                            maxLines: 1,
+
+                            onChanged: (text) {
+                              pet.age = text;
+                            },
+                            decoration: InputDecoration(
+                              hintText: pet.age
+                            ),
+                          ),
+                        ),
+                        const Text("age", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          width: 100,
+                          child: TextField(
+                            keyboardType: TextInputType.none,
+                            textAlign: TextAlign.start,
+                            autocorrect: false,
+                            maxLines: 1,
+                            showCursor: false,
+
+                            onTap: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: pet.birthday == null ? DateTime.now() : DateFormat('dd/MM/yyyy').tryParse(pet.birthday!),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime.now(),
+                              ).then((date) {
+                                if (date != null) {
+                                  setState(() {
+                                    pet.birthday = DateFormat('dd/MM/yyyy').format(date);
+                                  });
+                                }
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: pet.birthday,
+                            ),
+                          ),
+                        ),
+                        const Text("birthday", style: TextStyle(color: Colors.grey), textScaler: TextScaler.linear(0.8),),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
             Column(
-              textBaseline: TextBaseline.alphabetic,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

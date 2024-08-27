@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:pet_profile_app/petDetails.dart';
+import 'package:pet_profile_app/pet_details.dart';
 
 class FileManager {
   static FileManager? _instance;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_profile_app/file_manager.dart';
-import 'package:pet_profile_app/petDetails.dart';
+import 'package:pet_profile_app/pet_details.dart';
 
 class FileController extends ChangeNotifier
 {

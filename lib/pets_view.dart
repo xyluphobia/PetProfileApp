@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pet_profile_app/common/add_pet_card.dart';
 import 'package:pet_profile_app/common/pet_card.dart';
 import 'package:pet_profile_app/file_controller.dart';
-import 'package:pet_profile_app/petDetails.dart';
+import 'package:pet_profile_app/pet_details.dart';
 
 class PetsView extends StatefulWidget {
   const PetsView({super.key});

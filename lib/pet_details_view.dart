@@ -29,7 +29,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
     String savedImagePath = await FileManager().saveImage(File(returnedImage.path));
     setState(() {
-      assignPet = false;
       pet.image = savedImagePath;
     });
     return;
@@ -48,6 +47,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     if (assignPet) {
       pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
+
+      assignPet = false;
     }
 
     void addOrEditPetData() async {
@@ -252,7 +253,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 ).then((date) {
                                   if (date != null) {
                                     setState(() {
-                                      assignPet = false;
                                       pet.birthday = DateFormat('dd/MM/yyyy').format(date);
                                     });
                                   }

@@ -5,14 +5,6 @@
 import 'dart:convert';
 
 // ignore: constant_identifier_names, non_constant_identifier_names
-Pet Empty_Pet = Pet(
-  name: '', 
-  image: '',
-  age: '',
-  species: '',
-  breed: '',
-  owner: '',
-);
 
 PetDetails petDetailsFromJson(String str) => PetDetails.fromJson(json.decode(str));
 
@@ -36,25 +28,28 @@ class PetDetails {
 
 class Pet {
   Pet({
-    required this.image,
-    required this.name,
-    required this.age,
-    required this.species,
-    required this.breed,
-    required this.owner,
+    this.image,
+    this.name,
+    this.age,
+    this.birthday,
+    this.species,
+    this.breed,
+    this.owner,
   });
 
-  String image;
-  String name;
-  String age;
-  String species;
-  String breed;
-  String owner;
+  String? image;
+  String? name;
+  String? age;
+  String? birthday;
+  String? species;
+  String? breed;
+  String? owner;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
         image: json["image"],
         name: json["name"],
         age: json["age"],
+        birthday: json["birthday"],
         species: json["species"],
         breed: json["breed"],
         owner: json["owner"],
@@ -64,6 +59,7 @@ class Pet {
         "image": image,
         "name": name,
         "age" : age,
+        "birthday" : birthday,
         "species" : species,
         "breed" : breed,
         "owner" : owner,

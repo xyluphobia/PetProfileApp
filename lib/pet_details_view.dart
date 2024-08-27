@@ -186,7 +186,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SizedBox(
-          height: 250,
+          height: 270,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -210,7 +210,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 20,
+                            height: 30,
                             width: 100,
                             child: TextField(
                               keyboardType: TextInputType.number,
@@ -222,7 +222,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 pet.age = text;
                               },
                               decoration: InputDecoration(
-                                hintText: pet.age
+                                hintText: pet.age,
+                                isDense: true,
                               ),
                             ),
                           ),
@@ -233,8 +234,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 20,
-                            width: 100,
+                            height: 30,
+                            width: 140,
                             child: TextField(
                               keyboardType: TextInputType.none,
                               textAlign: TextAlign.start,
@@ -251,6 +252,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 ).then((date) {
                                   if (date != null) {
                                     setState(() {
+                                      assignPet = false;
                                       pet.birthday = DateFormat('dd/MM/yyyy').format(date);
                                     });
                                   }
@@ -258,6 +260,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               },
                               decoration: InputDecoration(
                                 hintText: pet.birthday,
+                                isDense: true,
                               ),
                             ),
                           ),
@@ -279,7 +282,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           SizedBox(
-                            height: 20,
+                            height: 30,
                             width: 100,
                             child: TextField(
                               keyboardType: TextInputType.name,
@@ -291,7 +294,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 pet.name = text;
                               },
                               decoration: InputDecoration(
-                                hintText: pet.name
+                                hintText: pet.name,
+                                isDense: true,
                               ),
                             ),
                           ),
@@ -302,7 +306,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           SizedBox(
-                            height: 20,
+                            height: 30,
                             width: 100,
                             child: TextField(
                               keyboardType: TextInputType.name,
@@ -314,7 +318,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 pet.owner = text;
                               },
                               decoration: InputDecoration(
-                                hintText: pet.owner
+                                hintText: pet.owner,
+                                isDense: true,
                               ),
                             ),
                           ),
@@ -330,7 +335,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           SizedBox(
-                            height: 20,
+                            height: 30,
                             width: 100,
                             child: TextField(
                               keyboardType: TextInputType.text,
@@ -342,7 +347,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 pet.gender = text;
                               },
                               decoration: InputDecoration(
-                                hintText: pet.gender
+                                hintText: pet.gender,
+                                isDense: true,
                               ),
                             ),
                           ),
@@ -355,7 +361,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           Row(
                             children: [
                               SizedBox(
-                                height: 20,
+                                height: 30,
                                 width: 70,
                                 child: TextField(
                                   keyboardType: TextInputType.text,
@@ -367,7 +373,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                     pet.species = text;
                                   },
                                   decoration: InputDecoration(
-                                    hintText: pet.species
+                                    hintText: pet.species,
+                                    isDense: true,
                                   ),
                                 ),
                               ),
@@ -375,7 +382,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               const Text("/"),
         
                               SizedBox(
-                                height: 20,
+                                height: 30,
                                 width: 70,
                                 child: TextField(
                                   keyboardType: TextInputType.text,
@@ -387,7 +394,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                     pet.breed = text;
                                   },
                                   decoration: InputDecoration(
-                                    hintText: pet.breed
+                                    hintText: pet.breed,
+                                    isDense: true,
                                   ),
                                 ),
                               ),

@@ -31,38 +31,36 @@ class _PetCardState extends State<PetCard> {
           );
         },
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 184,
-              color: const Color.fromARGB(255, 59, 59, 59),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 184,
-                    width: 200,
-                    child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: pet.image == null ? Image.asset('assets/images/petimage.jpg') : Image.file(File(pet.image!)),
-                    ),
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            height: 184,
+            color: const Color.fromARGB(255, 59, 59, 59),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: 184,
+                  width: 200,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: pet.image == null ? Image.asset('assets/images/petimage.jpg') : Image.file(File(pet.image!)),
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(pet.name ?? 'name', style: const TextStyle(color: Colors.white),),
-                        const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                        Text(pet.owner ?? 'owner', style: const TextStyle(color: Colors.white),),
-                        const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                        Text('${pet.gender ?? 'gender'} * ${pet.gender ?? 'age'}', style: const TextStyle(color: Colors.white),),
-                      ],
-                    ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(pet.name ?? 'name', style: const TextStyle(color: Colors.white),),
+                      const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
+                      Text(pet.owner ?? 'owner', style: const TextStyle(color: Colors.white),),
+                      const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
+                      Text('${pet.gender ?? 'gender'} * ${pet.gender ?? 'age'}', style: const TextStyle(color: Colors.white),),
+                    ],
                   ),
-                ],
-              )
-            ),
+                ),
+              ],
+            )
           ),
         ),
       ),

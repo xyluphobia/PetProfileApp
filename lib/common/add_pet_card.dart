@@ -16,13 +16,11 @@ class AddPetCard extends StatelessWidget {
               builder: (context) => const PetDetailsView(petIndex: -1,)));
         },
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 184,
-              width: 154,
-              color: const Color.fromARGB(255, 223, 27, 27),
-            ),
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            height: 184,
+            width: 154,
+            color: const Color.fromARGB(255, 223, 27, 27),
           ),
         ),
       ),

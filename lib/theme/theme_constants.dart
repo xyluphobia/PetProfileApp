@@ -21,7 +21,12 @@ ThemeData lightTheme = ThemeData(
     error: Color(0xFFae3e0a), 
     onError: Color(0xFFf3ede2), 
   ),
-  appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFf3ede2)),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFFf3ede2),
+    iconTheme: IconThemeData(
+      color: Color(0xFFf68e5f),
+    )
+  ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: Color(0xFFf3ede2),
     selectedItemColor: Color(0xFFf68e5f),
@@ -50,7 +55,12 @@ ThemeData darkTheme = ThemeData(
     error: Color(0xFFae3e0a), 
     onError: Color(0xFFf3ede2), 
   ),
-  appBarTheme: const AppBarTheme(backgroundColor: Color.fromARGB(255, 51, 51, 51)),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 51, 51, 51),
+    iconTheme: IconThemeData(
+      color: Color(0xFF66b2b2),
+    ),
+  ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: Color.fromARGB(255, 51, 51, 51),
     selectedItemColor: Color(0xFF66b2b2),

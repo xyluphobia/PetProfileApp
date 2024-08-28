@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_profile_app/file_controller.dart';
+import 'package:pet_profile_app/theme/theme_constants.dart';
+import 'package:pet_profile_app/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:pet_profile_app/account_view.dart';
 import 'package:pet_profile_app/emergency_view.dart';
@@ -20,6 +22,8 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+ThemeManager _themeManager = ThemeManager();
+
 class _MyAppState extends State<MyApp> {
   int navIndex = 1;
   List<Widget> widgetList = const [
@@ -27,6 +31,25 @@ class _MyAppState extends State<MyApp> {
     PetsView(),
     EmergencyView(),
   ];
+
+  @override
+  void dispose() {
+    _themeManager.removeListener(themeListener);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _themeManager.addListener(themeListener);
+    super.initState();
+  } 
+
+  themeListener() {
+    if (mounted) {
+      setState(() {
+      });
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -37,28 +60,35 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'Cabin',
-        textTheme: Theme.of(context).textTheme.apply(
-          fontSizeFactor: 1.4, 
-        ),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: _themeManager.themeMode,
+
       home: Scaffold(
-        backgroundColor: const Color(0xFF121212),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 34, 34, 34),
           centerTitle: true,
-          title: const Icon(Icons.pets_sharp, color: Color(0xFF66b2b2),),
+          title: const Icon(Icons.pets_sharp),
+          surfaceTintColor: Colors.transparent,
+          elevation: 1,
+          shadowColor: _themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(108, 33, 34, 34) : const Color.fromARGB(108, 199, 189, 177),
+
+          actions: [Switch(value: _themeManager.themeMode == ThemeMode.dark, onChanged: (newValue) {
+            _themeManager.toggleTheme(newValue);
+          })],
           ),
         bottomNavigationBar: Container(
           height: 100,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(36.0),
               topRight: Radius.circular(36.0),
             ),
             boxShadow: [
-              BoxShadow(color: Color.fromARGB(255, 53, 53, 53), spreadRadius: 0, blurRadius: 5),
+              BoxShadow(
+                color: _themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(108, 33, 34, 34) : const Color.fromARGB(108, 177, 168, 158), 
+                spreadRadius: 0, 
+                blurRadius: 1
+              ),
             ],
           ),
           child: ClipRRect(
@@ -73,8 +103,6 @@ class _MyAppState extends State<MyApp> {
                 });
               },
               currentIndex: navIndex,
-              backgroundColor: const Color.fromARGB(255, 34, 34, 34),
-              selectedItemColor: const Color(0xFF66b2b2),
               showUnselectedLabels: false,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(

@@ -34,7 +34,6 @@ class _PetCardState extends State<PetCard> {
           clipBehavior: Clip.antiAlias,
           child: Container(
             height: 184,
-            color: const Color.fromARGB(255, 59, 59, 59),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -51,11 +50,11 @@ class _PetCardState extends State<PetCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(pet.name ?? 'name', style: const TextStyle(color: Colors.white),),
+                      Text(pet.name ?? 'name', style: const TextStyle(color: Color(0xff100000)),),
                       const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                      Text(pet.owner ?? 'owner', style: const TextStyle(color: Colors.white),),
+                      Text(pet.owner ?? 'owner', style: const TextStyle(color: Color(0xff100000)),),
                       const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                      Text('${pet.gender ?? 'gender'} * ${pet.gender ?? 'age'}', style: const TextStyle(color: Colors.white),),
+                      Text('${pet.gender ?? 'gender'} * ${pet.gender ?? 'age'}', style: const TextStyle(color: Color(0xff100000)),),
                     ],
                   ),
                 ),

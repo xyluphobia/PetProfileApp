@@ -20,7 +20,6 @@ class AddPetCard extends StatelessWidget {
           child: Container(
             height: 184,
             width: 154,
-            color: const Color.fromARGB(255, 223, 27, 27),
           ),
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/theme/theme_manager.dart';
+
 import 'package:pet_profile_app/account_view.dart';
 import 'package:pet_profile_app/emergency_view.dart';
 import 'package:pet_profile_app/pets_view.dart';
@@ -18,77 +20,82 @@ class _HomeViewState extends State<HomeView> {
     EmergencyView(),
   ];
 
+  ThemeManager appValueNotifier = ThemeManager.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Icon(Icons.pets_sharp),
-          surfaceTintColor: Colors.transparent,
-          elevation: 1,
-          shadowColor: _themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(108, 33, 34, 34) : const Color.fromARGB(108, 199, 189, 177),
-          actions: [
-            Switch(
-              trackOutlineWidth: const WidgetStatePropertyAll(1),
-              activeTrackColor: const Color.fromARGB(255, 34, 34, 34),
-              activeColor: const Color(0xFF66b2b2),
-
-              value: _themeManager.themeMode == ThemeMode.dark, 
-              onChanged: (newValue) {
-                _themeManager.toggleTheme(newValue);
-              },
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Icon(Icons.pets_sharp),
+        surfaceTintColor: Colors.transparent,
+        elevation: 1,
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: appValueNotifier.isDark,
+            builder: (context, value, child) { 
+              return Switch(
+                trackOutlineWidth: const WidgetStatePropertyAll(1),
+                activeTrackColor: const Color.fromARGB(255, 34, 34, 34),
+                activeColor: const Color(0xFF66b2b2),
+              
+                value: appValueNotifier.isDark.value, 
+                onChanged: (newValue) {
+                  appValueNotifier.toggleTheme();
+                },
+              );
+            }
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(36.0),
+            topRight: Radius.circular(36.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: appValueNotifier.isDark.value ? const Color.fromARGB(108, 34, 33, 33) : const Color.fromARGB(108, 177, 168, 158), 
+              spreadRadius: 0, 
+              blurRadius: 1
             ),
           ],
         ),
-        bottomNavigationBar: Container(
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(36.0),
-              topRight: Radius.circular(36.0),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(108, 33, 34, 34) : const Color.fromARGB(108, 177, 168, 158), 
-                spreadRadius: 0, 
-                blurRadius: 1
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(36.0),
+            topRight: Radius.circular(36.0),
+          ),
+          child: BottomNavigationBar(
+            onTap: (index) {
+              setState(() {
+                navIndex = index;
+              });
+            },
+            currentIndex: navIndex,
+            showUnselectedLabels: false,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_box_rounded),
+                label: "Account",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.pets_rounded),
+                label: "Pets",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.emergency),
+                label: "Emergency",
               ),
             ],
           ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(36.0),
-              topRight: Radius.circular(36.0),
-            ),
-            child: BottomNavigationBar(
-              onTap: (index) {
-                setState(() {
-                  navIndex = index;
-                });
-              },
-              currentIndex: navIndex,
-              showUnselectedLabels: false,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_box_rounded),
-                  label: "Account",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.pets_rounded),
-                  label: "Pets",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.emergency),
-                  label: "Emergency",
-                ),
-              ],
-            ),
-          ),
         ),
-        body: IndexedStack(
-         index: navIndex,
-         children: widgetList,
-        ),
-      );
+      ),
+      body: IndexedStack(
+        index: navIndex,
+        children: widgetList,
+      ),
+    );
   }
 }

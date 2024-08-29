@@ -32,7 +32,7 @@ class _PetCardState extends State<PetCard> {
         },
         child: Card(
           clipBehavior: Clip.antiAlias,
-          child: Container(
+          child: SizedBox(
             height: 184,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

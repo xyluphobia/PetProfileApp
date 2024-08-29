@@ -43,10 +43,10 @@ class ThemeManager
     textTheme: CTextTheme.lightTextTheme,
     inputDecorationTheme: CInputDecorationTheme.lightInputDecorationTheme,
 
-    colorScheme: lightScheme,
+    colorScheme: CColorThemes.lightScheme,
     appBarTheme: lightAppBar,
     bottomNavigationBarTheme: lightBottomNavBar,
-    cardTheme: CardTheme(color: lightScheme.primary),
+    cardTheme: CardTheme(color: CColorThemes.lightScheme.primary),
   );
 
 
@@ -58,9 +58,9 @@ class ThemeManager
     textTheme: CTextTheme.darkTextTheme,
     inputDecorationTheme: CInputDecorationTheme.darkInputDecorationTheme,
 
-    colorScheme: darkScheme,
+    colorScheme: CColorThemes.darkScheme,
     appBarTheme: darkAppBar,
     bottomNavigationBarTheme: darkBottomNavBar,
-    cardTheme: CardTheme(color: darkScheme.primary),
+    cardTheme: CardTheme(color: CColorThemes.darkScheme.primary),
   );
 }

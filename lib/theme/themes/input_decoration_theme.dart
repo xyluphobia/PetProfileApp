@@ -5,9 +5,9 @@ class CInputDecorationTheme {
   CInputDecorationTheme._();
 
   static InputDecorationTheme lightInputDecorationTheme = InputDecorationTheme(
-    hintStyle: TextStyle(color: lightScheme.onPrimary),
+    hintStyle: TextStyle(color: CColorThemes.lightScheme.onPrimary),
   );
   static InputDecorationTheme darkInputDecorationTheme = InputDecorationTheme(
-    hintStyle: TextStyle(color: darkScheme.onPrimary),
+    hintStyle: TextStyle(color: CColorThemes.darkScheme.onPrimary),
   );
 }

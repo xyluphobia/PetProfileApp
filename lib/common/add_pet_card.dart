@@ -15,9 +15,9 @@ class AddPetCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => const PetDetailsView(petIndex: -1,)));
         },
-        child: Card(
+        child: const Card(
           clipBehavior: Clip.antiAlias,
-          child: Container(
+          child: SizedBox(
             height: 184,
             width: 154,
           ),

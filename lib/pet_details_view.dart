@@ -74,16 +74,13 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       ),
       body: Container(
         margin: const EdgeInsets.only(
-          top: 8,
+          top: 16,
           bottom: 8,
           left: 24,
           right: 24,
         ),
         child: Column(
           children: [
-            Text('Details For ${newPet ? "a New Pet!" : pet.name}'),
-
-            //developmentInputFields(),
             basicInfoCard(),
 
             GestureDetector(
@@ -128,14 +125,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Icon(Icons.photo),
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(Icons.photo, color: Theme.of(context).colorScheme.onPrimary,),
                     ),
-                    Text("Pick Photo", textScaler: TextScaler.linear(1.5),),
+                    Text("Pick Photo", style: Theme.of(context).textTheme.headlineMedium,),
                   ],
                 )
               ),
@@ -160,14 +157,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       borderRadius: BorderRadius.zero),
                     ),
                   ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Icon(Icons.camera_alt_outlined),
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(Icons.camera_alt_outlined, color: Theme.of(context).colorScheme.onPrimary,),
                     ),
-                    Text("Take Photo", textScaler: TextScaler.linear(1.5),),
+                    Text("Take Photo", style: Theme.of(context).textTheme.headlineMedium,),
                   ],
                 )
               ),

@@ -35,8 +35,8 @@ class _HomeViewState extends State<HomeView> {
             builder: (context, value, child) { 
               return Switch(
                 trackOutlineWidth: const WidgetStatePropertyAll(1),
-                activeTrackColor: const Color.fromARGB(255, 34, 34, 34),
-                activeColor: const Color(0xFF66b2b2),
+                activeTrackColor: Theme.of(context).colorScheme.surface,
+                activeColor: Theme.of(context).colorScheme.onSurface,
               
                 value: appValueNotifier.isDark.value, 
                 onChanged: (newValue) {

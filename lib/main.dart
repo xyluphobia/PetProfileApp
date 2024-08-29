@@ -71,11 +71,19 @@ class _MyAppState extends State<MyApp> {
           surfaceTintColor: Colors.transparent,
           elevation: 1,
           shadowColor: _themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(108, 33, 34, 34) : const Color.fromARGB(108, 199, 189, 177),
+          actions: [
+            Switch(
+              trackOutlineWidth: const WidgetStatePropertyAll(1),
+              activeTrackColor: const Color.fromARGB(255, 34, 34, 34),
+              activeColor: const Color(0xFF66b2b2),
 
-          actions: [Switch(value: _themeManager.themeMode == ThemeMode.dark, onChanged: (newValue) {
-            _themeManager.toggleTheme(newValue);
-          })],
-          ),
+              value: _themeManager.themeMode == ThemeMode.dark, 
+              onChanged: (newValue) {
+                _themeManager.toggleTheme(newValue);
+              },
+            ),
+          ],
+        ),
         bottomNavigationBar: Container(
           height: 100,
           decoration: BoxDecoration(

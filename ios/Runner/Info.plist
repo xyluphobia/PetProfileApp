@@ -30,6 +30,8 @@
 	<String>Used to capture audio for the image picker plugin<string>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to allow users to set images of their pets on their account from their camera</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open to provide information about nearby open emergency vet clinics.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -41,3 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Hide secrets/API keys
+/ios/Runner/AppDelegate.swift
+/android/app/src/main/AndroidManifest.xml

@@ -30,7 +30,7 @@ class _HomeViewState extends State<HomeView> {
         surfaceTintColor: Colors.transparent,
         elevation: 1,
         actions: [
-          ValueListenableBuilder(
+          if (navIndex == 1 ) ValueListenableBuilder(
             valueListenable: appValueNotifier.isDark,
             builder: (context, value, child) { 
               return Switch(

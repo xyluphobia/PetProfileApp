@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:geocoding/geocoding.dart';
 import 'package:pet_profile_app/common/location_list_tile.dart';
 import 'package:pet_profile_app/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
@@ -24,12 +25,11 @@ class _EmergencyViewState extends State<EmergencyView> {
   );
 
   Set<Marker> markers = {};
-
-  TextEditingController mapSearchController = TextEditingController();
+  List<AutocompletePrediction> placePredictions = [];
 
   @override
   void initState() {
-    goToCurrentLocation();
+    goToLocation();
     super.initState();
   }
 
@@ -57,13 +57,15 @@ class _EmergencyViewState extends State<EmergencyView> {
                   Expanded(
                     child: TextField(
                       decoration: null,
-                      controller: mapSearchController,
                       textCapitalization: TextCapitalization.words,
+                      onChanged: (value) {
+                        mapPlaceAutoComplete(value);
+                      },
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      mapPlaceAutoComplete("Sydney");
+                      //mapPlaceAutoComplete("Sydney");
                     }, 
                     icon: const Icon(Icons.search),
                   ),
@@ -71,9 +73,16 @@ class _EmergencyViewState extends State<EmergencyView> {
               ),
             ),
             // Search bar results (make it go on top of all other elements & make it only appear when searching)
-            LocationListTile(
-              location: "Test Location, Test Area, Testing",
-              press: () {},
+            Expanded(
+              child: ListView.builder(
+                itemCount: placePredictions.length,
+                itemBuilder: (context, index) => LocationListTile(
+                  location: placePredictions[index].description!,
+                  press: () {
+                    goToLocation(address: placePredictions[index].description!);
+                  },
+                ),
+              ),
             ),
             // Google Map Embed
             Container(
@@ -98,7 +107,7 @@ class _EmergencyViewState extends State<EmergencyView> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: goToCurrentLocation, 
+        onPressed: goToLocation, 
         label: const Icon(Icons.location_pin),
       ),
     );
@@ -107,8 +116,8 @@ class _EmergencyViewState extends State<EmergencyView> {
 
   void mapPlaceAutoComplete(String query) async {
     Uri uri = Uri.https(
-      "places.googleapis.com", 
-      "/v1/places:autocomplete",
+      "maps.googleapis.com", 
+      "/maps/api/place/autocomplete/json",
       {
         "input": query,
         "key": mapsAPI,
@@ -117,27 +126,48 @@ class _EmergencyViewState extends State<EmergencyView> {
 
     String? response = await NetworkUtil.fetchUrl(uri);
     if (response != null && response.isNotEmpty) {
-      print(response);
+      PlaceAutocompleteResponse result = PlaceAutocompleteResponse.parseAutocompleteResult(response);
+      if(result.predictions != null) {
+        setState(() {
+          placePredictions = result.predictions!;
+        });
+      }
     }
   }
 
 
-  Future<void> goToCurrentLocation() async {
+  Future<void> goToLocation({String? address}) async {
     final GoogleMapController mapController = await _mapController.future;
-    Position position = await _determinePosition();
+    markers.clear();
 
-    await mapController.animateCamera(CameraUpdate.newCameraPosition(
+    if (address != null) {
+      List<Location> locationList = await locationFromAddress(address);
+      await mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: LatLng(locationList[0].latitude, locationList[0].longitude),
+        zoom: 10,
+      ))); 
+
+      markers.add(Marker(
+        markerId: const MarkerId("CurrentLocation"),
+        position: LatLng(locationList[0].latitude, locationList[0].longitude),
+      ));
+    }
+    else {
+      Position position = await _determinePosition();
+
+      await mapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         target: LatLng(position.latitude, position.longitude),
         zoom: 10,
-    ))); 
+      ))); 
 
-    markers.clear();
-    markers.add(Marker(
-      markerId: const MarkerId("CurrentLocation"),
-      position: LatLng(position.latitude, position.longitude),
-    ));
-
+      markers.add(Marker(
+        markerId: const MarkerId("CurrentLocation"),
+        position: LatLng(position.latitude, position.longitude),
+      ));
+    }
+    
     setState(() {
     });
   }

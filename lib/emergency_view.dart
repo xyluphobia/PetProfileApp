@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:pet_profile_app/common/location_list_tile.dart';
+import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/secrets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,12 +25,13 @@ class _EmergencyViewState extends State<EmergencyView> {
 
   Set<Marker> markers = {};
 
-  static const CameraPosition _kLake = CameraPosition(
-    bearing: 192.8334901395799,
-    target: LatLng(37.43296265331129, -122.08832357078792),
-    tilt: 59.440717697143555,
-    zoom: 19.151926040649414,
-  );
+  TextEditingController mapSearchController = TextEditingController();
+
+  @override
+  void initState() {
+    goToCurrentLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,37 @@ class _EmergencyViewState extends State<EmergencyView> {
           children: [
             // Search bar to enter location
             Container(
+              decoration: ShapeDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              ),
+              padding: const EdgeInsets.only(left: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: null,
+                      controller: mapSearchController,
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      mapPlaceAutoComplete("Sydney");
+                    }, 
+                    icon: const Icon(Icons.search),
+                  ),
+                ],
+              ),
+            ),
+            // Search bar results (make it go on top of all other elements & make it only appear when searching)
+            LocationListTile(
+              location: "Test Location, Test Area, Testing",
+              press: () {},
+            ),
+            // Google Map Embed
+            Container(
+              margin: const EdgeInsets.only(top: 8),
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               ),
@@ -68,6 +103,24 @@ class _EmergencyViewState extends State<EmergencyView> {
       ),
     );
   }
+
+
+  void mapPlaceAutoComplete(String query) async {
+    Uri uri = Uri.https(
+      "places.googleapis.com", 
+      "/v1/places:autocomplete",
+      {
+        "input": query,
+        "key": mapsAPI,
+      }
+    );
+
+    String? response = await NetworkUtil.fetchUrl(uri);
+    if (response != null && response.isNotEmpty) {
+      print(response);
+    }
+  }
+
 
   Future<void> goToCurrentLocation() async {
     final GoogleMapController mapController = await _mapController.future;

@@ -45,3 +45,4 @@ app.*.map.json
 # Hide secrets/API keys
 ios/Runner/AppDelegate.swift
 android/app/src/main/AndroidManifest.xml
+secrets.dart

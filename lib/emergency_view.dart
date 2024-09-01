@@ -27,6 +27,9 @@ class _EmergencyViewState extends State<EmergencyView> {
   Set<Marker> markers = {};
   List<AutocompletePrediction> placePredictions = [];
 
+  bool searchingForLocation = false;
+  final TextEditingController _mapSearchTextController = TextEditingController();
+
   @override
   void initState() {
     goToLocation();
@@ -49,60 +52,106 @@ class _EmergencyViewState extends State<EmergencyView> {
             Container(
               decoration: ShapeDecoration(
                 color: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                shape: searchingForLocation ? 
+                const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0))) : 
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               ),
-              padding: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.only(left: 12),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
-                      decoration: null,
+                      showCursor: false,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter your location...",
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                          fontSize: 14,
+                        ),
+                      ),
+                      controller: _mapSearchTextController,
                       textCapitalization: TextCapitalization.words,
                       onChanged: (value) {
                         mapPlaceAutoComplete(value);
+                        if (value.isEmpty)
+                        {
+                          setState(() {
+                            searchingForLocation = false;
+                          });
+                        }
+                        else
+                        {
+                          setState(() {
+                            searchingForLocation = true;
+                          });
+                        }
+                      },
+                      onSubmitted: (value) {
+                        setState(() {
+                          searchingForLocation = false;
+                        });
                       },
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      //mapPlaceAutoComplete("Sydney");
+                      _mapSearchTextController.clear();
                     }, 
-                    icon: const Icon(Icons.search),
+                    icon: const Icon(Icons.clear),
                   ),
                 ],
               ),
             ),
-            // Search bar results (make it go on top of all other elements & make it only appear when searching)
             Expanded(
-              child: ListView.builder(
-                itemCount: placePredictions.length,
-                itemBuilder: (context, index) => LocationListTile(
-                  location: placePredictions[index].description!,
-                  press: () {
-                    goToLocation(address: placePredictions[index].description!);
-                  },
-                ),
+              child: Stack(
+                fit: StackFit.loose,
+                children: [
+                  Column(
+                    children: [
+                      // Google Map Embed
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        height: 300,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: GoogleMap(
+                          mapType: MapType.terrain,
+                          initialCameraPosition: defaultCameraPosition,
+                          zoomControlsEnabled: false,
+                          markers: markers,
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController.complete(controller);
+                          },
+                        ),
+                      ),
+                      // Nearby Emergency Vet Cards
+                    ],
+                  ),
+                  // Search bar results
+                  if (searchingForLocation) Expanded(
+                    child: ListView.builder(
+                      itemCount: placePredictions.length,
+                      itemBuilder: (context, index) => LocationListTile(
+                        indexPassed: index,
+                        listLength: placePredictions.length,
+                        location: placePredictions[index].description!,
+                        press: () {
+                          goToLocation(address: placePredictions[index].description!);
+                          setState(() {
+                            searchingForLocation = false;
+                          });
+                          FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
+                          _mapSearchTextController.text = placePredictions[index].description!;
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            // Google Map Embed
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              height: 300,
-              child: GoogleMap(
-                mapType: MapType.terrain,
-                initialCameraPosition: defaultCameraPosition,
-                zoomControlsEnabled: false,
-                markers: markers,
-                onMapCreated: (GoogleMapController controller) {
-                  _mapController.complete(controller);
-                },
-              ),
-            ),
-            // Nearby Emergency Vet Cards
           ],
         ),
       ),

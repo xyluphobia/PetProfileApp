@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:geocoding/geocoding.dart';
 import 'package:pet_profile_app/common/location_list_tile.dart';
+import 'package:pet_profile_app/common/nearby_vets_tile.dart';
 import 'package:pet_profile_app/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
 
@@ -23,9 +25,11 @@ class _EmergencyViewState extends State<EmergencyView> {
     target: LatLng(-33.8688, 151.2093),
     zoom: 10,
   );
+  LatLng lastLatLng = LatLng(0, 0);
 
   Set<Marker> markers = {};
   List<AutocompletePrediction> placePredictions = [];
+  List<NearbyVets> nearbyVets = [];
 
   bool searchingForLocation = false;
   final TextEditingController _mapSearchTextController = TextEditingController();
@@ -33,6 +37,7 @@ class _EmergencyViewState extends State<EmergencyView> {
   @override
   void initState() {
     goToLocation();
+    mapPlaceNearbySearch();
     super.initState();
   }
 
@@ -117,22 +122,54 @@ class _EmergencyViewState extends State<EmergencyView> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: GoogleMap(
-                          mapType: MapType.terrain,
-                          initialCameraPosition: defaultCameraPosition,
-                          zoomControlsEnabled: false,
-                          markers: markers,
-                          onMapCreated: (GoogleMapController controller) {
-                            _mapController.complete(controller);
-                          },
+                        child: Scaffold(
+                          body: GoogleMap(
+                            mapType: MapType.terrain,
+                            initialCameraPosition: defaultCameraPosition,
+                            zoomControlsEnabled: false,
+                            markers: markers,
+                            onMapCreated: (GoogleMapController controller) {
+                              _mapController.complete(controller);
+                            },
+                          ),
+                          floatingActionButton: FloatingActionButton.extended(
+                            onPressed: goToLocation, 
+                            label: const Icon(Icons.location_pin),
+                          ),
                         ),
                       ),
                       // Nearby Emergency Vet Cards
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          decoration: ShapeDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.only(left: 12.0),
+                            itemCount: nearbyVets.length,
+                            itemBuilder: (context, index) => NearbyVetsTile(
+                              businessName: nearbyVets[index].businessName,
+                              formattedAddress: nearbyVets[index].formattedAddress,
+                              phoneNumber: nearbyVets[index].phoneNumber,
+                              isOpen: nearbyVets[index].isOpen,
+                            )
+                          )
+                        ),
+                      ),
                     ],
                   ),
                   // Search bar results
-                  if (searchingForLocation) Expanded(
+                  if (searchingForLocation) Container(
+                    decoration: ShapeDecoration( 
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12.0), bottomRight: Radius.circular(12.0)))
+                    ),
                     child: ListView.builder(
+                      shrinkWrap: true,
                       itemCount: placePredictions.length,
                       itemBuilder: (context, index) => LocationListTile(
                         indexPassed: index,
@@ -154,10 +191,6 @@ class _EmergencyViewState extends State<EmergencyView> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: goToLocation, 
-        label: const Icon(Icons.location_pin),
       ),
     );
   }
@@ -184,41 +217,76 @@ class _EmergencyViewState extends State<EmergencyView> {
     }
   }
 
+  void mapPlaceNearbySearch() async {
+    Uri uri = Uri.https("places.googleapis.com", "/v1/places:searchNearby");
+    Map<String, dynamic> jsonRequest = {
+      "includedTypes": [
+        "veterinary_care"
+      ],
+      "maxResultCount": 10,
+      "locationRestriction": {
+        "circle": {
+          "center": {
+            "latitude": lastLatLng.latitude,
+            "longitude": lastLatLng.longitude
+          },
+          "radius": 50000
+        }
+      }
+    };
+    final String jsonRequestString = jsonEncode(jsonRequest);
+
+    String? response = await NetworkUtil.fetchUrl(
+      uri, 
+      headers: {
+        "Content-Type": "application/json", 
+        "X-Goog-Api-Key": mapsAPI,
+        "X-Goog-FieldMask": "places.displayName.text,places.formattedAddress,places.nationalPhoneNumber,places.regularOpeningHours.openNow",
+        "Accept": "application/json",
+        },
+      jsonRequestBody: jsonRequestString
+    );
+
+    if (response != null && response.isNotEmpty) {
+      NearbyVetsResponse result = NearbyVetsResponse.parseNearbyVetsResult(response);
+      if(result.places != null) {
+        setState(() {
+          nearbyVets = result.places!;
+        });
+      }
+    }
+  }
+
 
   Future<void> goToLocation({String? address}) async {
     final GoogleMapController mapController = await _mapController.future;
     markers.clear();
 
+    LatLng goTo;
     if (address != null) {
       List<Location> locationList = await locationFromAddress(address);
-      await mapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
-        target: LatLng(locationList[0].latitude, locationList[0].longitude),
-        zoom: 10,
-      ))); 
-
-      markers.add(Marker(
-        markerId: const MarkerId("CurrentLocation"),
-        position: LatLng(locationList[0].latitude, locationList[0].longitude),
-      ));
+      goTo = LatLng(locationList[0].latitude, locationList[0].longitude);
     }
     else {
       Position position = await _determinePosition();
+      goTo = LatLng(position.latitude, position.longitude);
+    }
 
-      await mapController.animateCamera(CameraUpdate.newCameraPosition(
+    await mapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
-        target: LatLng(position.latitude, position.longitude),
+        target: goTo,
         zoom: 10,
       ))); 
 
-      markers.add(Marker(
+    markers.add(Marker(
         markerId: const MarkerId("CurrentLocation"),
-        position: LatLng(position.latitude, position.longitude),
+        position: goTo,
       ));
-    }
     
     setState(() {
+      lastLatLng = goTo;
     });
+    mapPlaceNearbySearch();
   }
 
   /// Determine the current position of the device.

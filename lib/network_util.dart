@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkUtil {
-  static Future<String?> fetchUrl(Uri uri, {Map<String, String>? headers}) async {
+  static Future<String?> fetchUrl(Uri uri, {Map<String, String>? headers, String? jsonRequestBody}) async {
     try {
-      final response = await http.post(uri, headers: headers);
-      print(response.statusCode);
+      final response = await http.post(uri, headers: headers, body: jsonRequestBody);
+
       if (response.statusCode == 200) {
         return response.body;
       }
@@ -77,6 +77,47 @@ class StructuredFormatting {
     return StructuredFormatting(
       mainText: json['main_text'] as String?,
       secondaryText: json['secondary_text'] as String?,
+    );
+  }
+}
+
+class NearbyVetsResponse {
+  final List<NearbyVets>? places;
+
+  NearbyVetsResponse({this.places});
+  
+  factory NearbyVetsResponse.fromJson(Map<String, dynamic> json) {
+    return NearbyVetsResponse(
+      places: json['places']?.map<NearbyVets>((json) => NearbyVets.fromJson(json)).toList(),
+    );
+  }
+
+  static NearbyVetsResponse parseNearbyVetsResult(String responseBody) {
+    final parsed = json.decode(responseBody).cast<String, dynamic>();
+
+    return NearbyVetsResponse.fromJson(parsed);
+  }
+}
+
+class NearbyVets {
+  final String? businessName;
+  final String? formattedAddress;
+  final String? phoneNumber;
+  final bool? isOpen;
+
+  NearbyVets({
+    this.businessName,
+    this.formattedAddress,
+    this.phoneNumber,
+    this.isOpen,
+  });
+
+  factory NearbyVets.fromJson(Map<String, dynamic> json) {
+    return NearbyVets(
+      businessName: json['displayName']['text'] as String?,
+      formattedAddress: json['formattedAddress'] as String?,
+      phoneNumber: json['nationalPhoneNumber'] as String?,
+      isOpen: json['regularOpeningHours']['openNow'] as bool?,
     );
   }
 }

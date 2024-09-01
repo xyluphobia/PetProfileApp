@@ -250,6 +250,14 @@ class _EmergencyViewState extends State<EmergencyView> {
     if (response != null && response.isNotEmpty) {
       NearbyVetsResponse result = NearbyVetsResponse.parseNearbyVetsResult(response);
       if(result.places != null) {
+        // Sorts the list into true, false order based on 'isOpen' so that open business are shown before closed ones.
+        result.places!.sort((a, b) {
+          if (a.isOpen == null) return 1;
+          if (b.isOpen == null) return -1;
+          if (a.isOpen! && !b.isOpen!) return -1;
+          if (!a.isOpen! && b.isOpen!) return 1;
+          return 0;
+        });
         setState(() {
           nearbyVets = result.places!;
         });

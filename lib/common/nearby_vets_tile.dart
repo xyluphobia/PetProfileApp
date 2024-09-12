@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NearbyVetsTile extends StatelessWidget {
   const NearbyVetsTile({super.key, required this.businessName, required this.formattedAddress, required this.phoneNumber, required this.isOpen});
@@ -25,6 +26,7 @@ class NearbyVetsTile extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,6 +39,7 @@ class NearbyVetsTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
+                      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                     ),
                     Text(
                       isOpen != null ? isOpen! ? "Open" : "Closed" : "",
@@ -51,6 +54,7 @@ class NearbyVetsTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
+                  //style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
               ],
             ),
@@ -59,8 +63,21 @@ class NearbyVetsTile extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.phone)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.directions)),
+            IconButton(onPressed: () async {
+              final Uri url = Uri(
+                scheme: 'tel',
+                path: phoneNumber,
+              );
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                print("Cannot launch url: $url");
+              }
+            }, icon: const Icon(Icons.phone)),
+
+            IconButton(onPressed: () {
+              
+            }, icon: const Icon(Icons.directions)),
           ],
         )
       ],

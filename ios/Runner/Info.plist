@@ -24,6 +24,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to allow users to set images of their pets on their account from their image library</string>
 	<key>NSMicrophoneUsageDescription</key>

@@ -13,15 +13,9 @@ class PetsView extends StatefulWidget {
 }
 
 class _PetsViewState extends State<PetsView> {
-  late PetDetails petDetails;
-  bool isDataLoaded = true;
-  String errorMsg = "";
-
   @override
   Widget build(BuildContext context) {
-    return !isDataLoaded ? const Center(child: CircularProgressIndicator(),) :
-           errorMsg.isNotEmpty ? Center(child: Text(errorMsg)) : 
-     Center(
+    return Center(
        child: ListView.builder(
          itemCount: context.select((FileController controller) => controller.petDetails != null ? controller.petDetails!.data.length + 1 : 1),
          padding: const EdgeInsets.only(

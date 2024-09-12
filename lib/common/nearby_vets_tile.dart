@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:pet_profile_app/network_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NearbyVetsTile extends StatelessWidget {
@@ -75,8 +77,22 @@ class NearbyVetsTile extends StatelessWidget {
               }
             }, icon: const Icon(Icons.phone)),
 
-            IconButton(onPressed: () {
+            IconButton(onPressed: () async {
+              Position? currentLocation = NetworkUtil.lastLocation;
+              currentLocation ??= await NetworkUtil.determinePosition();
               
+              Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                "api" : "1",
+                "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                "destination" : formattedAddress,
+                "travelmode" : "driving",
+              });
+
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                print("Cannot launch url: $url");
+              }
             }, icon: const Icon(Icons.directions)),
           ],
         )

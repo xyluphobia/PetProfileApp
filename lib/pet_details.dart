@@ -18,12 +18,12 @@ class PetDetails {
   final List<Pet> data;
 
   factory PetDetails.fromJson(Map<String, dynamic> json) => PetDetails(
-        data: List<Pet>.from(json["data"].map((x) => Pet.fromJson(x))),
-      );
+    data: List<Pet>.from(json["data"].map((x) => Pet.fromJson(x))),
+  );
 
   Map<String, dynamic> toJson() => {
-        "data": List<dynamic>.from(data.map((x) => x.toJson())),
-      };
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
 }
 
 class Pet {
@@ -48,24 +48,24 @@ class Pet {
   String? owner;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
-        image: json["image"],
-        name: json["name"],
-        age: json["age"],
-        birthday: json["birthday"],
-        gender: json["gender"],
-        species: json["species"],
-        breed: json["breed"],
-        owner: json["owner"],
-      );
+    image: json["image"],
+    name: json["name"],
+    age: json["age"],
+    birthday: json["birthday"],
+    gender: json["gender"],
+    species: json["species"],
+    breed: json["breed"],
+    owner: json["owner"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "image": image,
-        "name": name,
-        "age" : age,
-        "birthday" : birthday,
-        "gender" : gender,
-        "species" : species,
-        "breed" : breed,
-        "owner" : owner,
-      };
+    "image": image,
+    "name": name,
+    "age" : age,
+    "birthday" : birthday,
+    "gender" : gender,
+    "species" : species,
+    "breed" : breed,
+    "owner" : owner,
+  };
 }

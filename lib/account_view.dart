@@ -6,7 +6,9 @@ class AccountView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text('Account', style:TextStyle(fontSize: 40)),
+      body: Text(
+        "Account", 
+        style: TextStyle(fontSize: 40)),
     );
   }
 }

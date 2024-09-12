@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
     context.read<FileController>().readPetDetails();
+    context.read<FileController>().readAccountDetails();
     super.didChangeDependencies();
   }
 

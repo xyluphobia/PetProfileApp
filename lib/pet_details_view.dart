@@ -69,8 +69,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
     return Scaffold(
       appBar: AppBar(
-          centerTitle: true,
-          title: const Icon(Icons.pets_sharp),
+        centerTitle: true,
+        title: const Icon(Icons.pets_sharp),
+        actions: [
+          IconButton(
+            onPressed: addOrEditPetData, 
+            icon: const Icon(Icons.check),
+          ),
+        ],
       ),
       body: Container(
         margin: const EdgeInsets.only(
@@ -82,13 +88,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         child: Column(
           children: [
             basicInfoCard(),
-
-            GestureDetector(
-              onTap: () {
-                addOrEditPetData();
-              },
-              child: const Text('SAVE PET DATA')
-            ),
 
             GestureDetector(
               onTap: () {

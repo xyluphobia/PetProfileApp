@@ -29,8 +29,14 @@ class _HomeViewState extends State<HomeView> {
         title: const Icon(Icons.pets_sharp),
         surfaceTintColor: Colors.transparent,
         elevation: 1,
+        leading: navIndex == 1 ? IconButton(
+          onPressed: () {
+            
+          }, 
+          icon: const Icon(Icons.search)
+        ) : null,
         actions: [
-          if (navIndex == 1 ) ValueListenableBuilder(
+          if (navIndex == 1) ValueListenableBuilder(
             valueListenable: appValueNotifier.isDark,
             builder: (context, value, child) { 
               return Switch(

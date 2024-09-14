@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import 'package:pet_profile_app/file_manager.dart';
 import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/pet_details.dart';
+import 'package:uuid/uuid.dart';
 
 class PetDetailsView extends StatefulWidget {
   final int petIndex;
@@ -67,6 +70,29 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       await context.read<FileController>().writePetDetails(petDetails!);
     }
 
+    void sharePetInfo() async {
+      var uuid = Uuid();
+      String filename = uuid.v4();
+      filename = filename.replaceRange(6, filename.length, '');
+      filename = filename.toUpperCase(); // Filename results in a random 6 character long code of numbers and letters. All letters are uppercase. 
+
+      var headers = {
+        'Content-Type': 'application/json',
+        'x-ms-blob-type': 'BlockBlob'
+      };
+      var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
+      request.body = json.encode(pet);
+      print(request.body);
+      request.headers.addAll(headers);
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200)
+      {
+        print(await response.stream.bytesToString());
+      }
+      else {print(response.reasonPhrase);}
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -77,6 +103,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             icon: const Icon(Icons.check),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: sharePetInfo,
+        child: const Icon(Icons.navigation),
       ),
       body: Container(
         margin: const EdgeInsets.only(

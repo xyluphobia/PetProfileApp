@@ -32,7 +32,7 @@ class _EmergencyViewState extends State<EmergencyView> {
     target: LatLng(NetworkUtil.lastLocation!.latitude, NetworkUtil.lastLocation!.longitude),
     zoom: 10,
   );
-  LatLng lastLatLng = LatLng(0, 0);
+  LatLng lastLatLng = const LatLng(0, 0);
 
   Set<Marker> markers = {};
   List<AutocompletePrediction> placePredictions = [];

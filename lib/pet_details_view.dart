@@ -71,7 +71,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
 
     void sharePetInfo() async {
-      var uuid = Uuid();
+      var uuid = const Uuid();
       String filename = uuid.v4();
       filename = filename.replaceRange(6, filename.length, '');
       filename = filename.toUpperCase(); // Filename results in a random 6 character long code of numbers and letters. All letters are uppercase. 

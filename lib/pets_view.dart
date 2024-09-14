@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:pet_profile_app/common/add_pet_card.dart';
@@ -18,6 +17,7 @@ class PetsView extends StatefulWidget {
 
 class _PetsViewState extends State<PetsView> {
   TextEditingController enterPetCodePopupInput = TextEditingController();
+  bool addCardExists = false;
 
   void getPetInfo(String friendCode) async {
     String filename = friendCode.toUpperCase();
@@ -34,10 +34,11 @@ class _PetsViewState extends State<PetsView> {
       String responseString = await response.stream.bytesToString();
       
       Pet pet = Pet.fromJson(jsonDecode(responseString));
-      PetDetails? petDetails = context.read<FileController>().petDetails;
-      petDetails?.data.add(pet);
-
-      await context.read<FileController>().writePetDetails(petDetails!);
+      if (mounted) {
+        PetDetails? petDetails = context.read<FileController>().petDetails;
+        petDetails?.data.add(pet);
+        await context.read<FileController>().writePetDetails(petDetails!);
+      }
     }
     else {
       // need error handling for invalid code
@@ -63,9 +64,11 @@ class _PetsViewState extends State<PetsView> {
   Widget getPetCard(int index) {
     PetDetails? petDetailsLocal = context.read<FileController>().petDetails;
     if (petDetailsLocal != null && index < petDetailsLocal.data.length) {
+      addCardExists = false;
       return PetCard(petIndex: index,);
     }
-    else if (index == petDetailsLocal!.data.length) {
+    else if (!addCardExists) {
+      addCardExists = true;
       return const AddPetCard();
     }
     else {
@@ -75,10 +78,11 @@ class _PetsViewState extends State<PetsView> {
             context: context, 
             builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.primary,
-              title: Text("Enter Pet Code"),
+              title: const Text("Enter Pet Code"),
               content: TextField(
                 autofocus: true,
                 autocorrect: false,
+                showCursor: false,
                 controller: enterPetCodePopupInput,
                 keyboardType: TextInputType.visiblePassword,
                 maxLines: 1,
@@ -89,7 +93,12 @@ class _PetsViewState extends State<PetsView> {
                   hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary,),
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
               actions: [
+                IconButton(
+                  onPressed: () {Navigator.of(context).pop();}, 
+                  icon: const Icon(Icons.close_rounded),
+                ),
                 TextButton(
                   child: Text("SUBMIT", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
                   onPressed: () {

@@ -20,6 +20,7 @@ class AddPetCard extends StatelessWidget {
           child: SizedBox(
             height: 184,
             width: 154,
+            child: Icon(Icons.add_rounded, size: 66,),
           ),
         ),
       ),

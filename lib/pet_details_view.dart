@@ -37,6 +37,22 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     return;
   }
 
+  void addOrEditPetData() async {
+    PetDetails? petDetails = context.read<FileController>().petDetails;
+    if (newPet) {
+      petDetails?.data.add(pet);
+      petIndex = (petDetails!.data.length - 1);
+      setState(() {
+        newPet = false;
+      });
+    }
+    else {
+      petDetails?.data[petIndex] = pet;
+    }
+
+    await context.read<FileController>().writePetDetails(petDetails!);
+  }
+
   @override
   void initState() {
     if (petIndex == -1) {
@@ -52,22 +68,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
 
       assignPet = false;
-    }
-
-    void addOrEditPetData() async {
-      PetDetails? petDetails = context.read<FileController>().petDetails;
-      if (newPet) {
-        petDetails?.data.add(pet);
-        petIndex = (petDetails!.data.length - 1);
-        setState(() {
-          newPet = false;
-        });
-      }
-      else {
-        petDetails?.data[petIndex] = pet;
-      }
-
-      await context.read<FileController>().writePetDetails(petDetails!);
     }
 
     void sharePetInfo() async {
@@ -105,6 +105,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "sharePetInfoBtn",
         onPressed: sharePetInfo,
         child: const Icon(Icons.navigation),
       ),
@@ -145,6 +146,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               child: TextButton(
                 onPressed: () {
                   selectImage(ImageSource.gallery).then((_) {
+                    addOrEditPetData();
                     if (context.mounted) Navigator.pop(context);
                   });
                 }, 
@@ -178,6 +180,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               child: TextButton(
                 onPressed: () {
                   selectImage(ImageSource.camera).then((_) {
+                    addOrEditPetData();
                     if (context.mounted) Navigator.pop(context);
                   });
                 }, 
@@ -223,7 +226,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     },
                     child: CircleAvatar(
                       radius: 80,
-                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petImage.jpg'),
+                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petimage.jpg'),
                     ),
                   ),
                   Column(

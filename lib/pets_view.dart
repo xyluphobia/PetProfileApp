@@ -72,6 +72,7 @@ class _PetsViewState extends State<PetsView> {
       return const AddPetCard();
     }
     else {
+      addCardExists = false;
       return ElevatedButton(
         onPressed: () {
           showDialog(

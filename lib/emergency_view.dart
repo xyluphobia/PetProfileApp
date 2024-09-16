@@ -140,6 +140,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                             },
                           ),
                           floatingActionButton: FloatingActionButton.extended(
+                            heroTag: "goToCurrentLocationBtn",
                             onPressed: goToLocation, 
                             label: const Icon(Icons.location_pin),
                           ),

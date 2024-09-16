@@ -46,3 +46,4 @@ app.*.map.json
 ios/Runner/AppDelegate.swift
 android/app/src/main/AndroidManifest.xml
 secrets.dart
+macos/Runner/AppDelegate.swift

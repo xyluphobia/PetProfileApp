@@ -42,7 +42,7 @@ class _PetCardState extends State<PetCard> {
                   width: 200,
                   child: FittedBox(
                     fit: BoxFit.fill,
-                    child: pet.image == null ? Image.asset('assets/images/petImage.jpg') : Image.file(File(pet.image!)),
+                    child: pet.image == null ? Image.asset('assets/images/petimage.jpg') : Image.file(File(pet.image!)),
                   ),
                 ),
                 Expanded(

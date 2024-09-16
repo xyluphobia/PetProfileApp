@@ -25,6 +25,7 @@ class _AccountViewState extends State<AccountView> {
             style: TextStyle(fontSize: 40)),
           Text(account.name == null ? "ph" : account.name!),
           FloatingActionButton(
+            heroTag: "temp1",
             onPressed: () async {
               account.name = "trial";
 
@@ -32,6 +33,7 @@ class _AccountViewState extends State<AccountView> {
             }
           ),
           FloatingActionButton(
+            heroTag: "temp2",
             onPressed: () {
               context.read<FileController>().clearAccountDetailsJson();
             }

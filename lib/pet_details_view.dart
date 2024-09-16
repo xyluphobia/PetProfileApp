@@ -70,7 +70,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       assignPet = false;
     }
 
-    void sharePetInfo() async {
+    Future<String> sharePetInfo() async {
       var uuid = const Uuid();
       String filename = uuid.v4();
       filename = filename.replaceRange(6, filename.length, '');
@@ -82,15 +82,19 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       };
       var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
       request.body = json.encode(pet);
-      print(request.body);
+      
       request.headers.addAll(headers);
       http.StreamedResponse response = await request.send();
 
-      if (response.statusCode == 200)
+      if (response.statusCode == 201 || response.statusCode == 200)
       {
-        print(await response.stream.bytesToString());
+        //print(await response.stream.bytesToString());
+        return filename;
+      } 
+      else {
+        //print(response.reasonPhrase);
+        return "Error";
       }
-      else {print(response.reasonPhrase);}
     }
 
     return Scaffold(
@@ -104,11 +108,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: !newPet ? FloatingActionButton(
         heroTag: "sharePetInfoBtn",
-        onPressed: sharePetInfo,
-        child: const Icon(Icons.navigation),
-      ),
+        onPressed: () async {
+          String petCode = await sharePetInfo();
+          if (context.mounted) showPetCode(context, petCode);
+        },
+        child: const Icon(Icons.ios_share_rounded),
+      ) : null,
       body: Container(
         margin: const EdgeInsets.only(
           top: 16,
@@ -129,6 +136,36 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> showPetCode(BuildContext context, String petCode) {
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        titlePadding: const EdgeInsets.only(left: 24, top: 24, bottom: 12),
+        title: const Text("Pet Code", style: TextStyle(decoration: TextDecoration.underline),),
+        contentPadding: const EdgeInsets.all(20),
+        content: Text(
+          petCode,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 30,
+            letterSpacing: 12,
+          ),
+        ),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+        buttonPadding: const EdgeInsets.all(0),
+        actions: [
+          TextButton(
+            child: Text("CLOSE", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }

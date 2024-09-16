@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pet_profile_app/network_util.dart';
@@ -73,7 +74,9 @@ class NearbyVetsTile extends StatelessWidget {
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
               } else {
-                print("Cannot launch url: $url");
+                if (kDebugMode) {
+                  print("Cannot launch url: $url");
+                }
               }
             }, icon: const Icon(Icons.phone)),
 
@@ -91,7 +94,9 @@ class NearbyVetsTile extends StatelessWidget {
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
               } else {
-                print("Cannot launch url: $url");
+                if (kDebugMode) {
+                  print("Cannot launch url: $url");
+                }
               }
             }, icon: const Icon(Icons.directions)),
           ],

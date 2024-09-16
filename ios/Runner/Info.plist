@@ -36,6 +36,8 @@
 	<string>Uses location to find nearby veterinary clinics.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open to provide information about nearby open emergency vet clinics.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location in order to provide information about nearby open emergency vet clinics.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to capture audio for the image picker plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>

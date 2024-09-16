@@ -7,4 +7,4 @@
 **/xcuserdata/
 
 #custom
-AppDelegate.swift
+Runner/AppDelegate.swift

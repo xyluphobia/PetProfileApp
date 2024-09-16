@@ -19,11 +19,37 @@ class _AccountViewState extends State<AccountView> {
 
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            "Account", 
-            style: TextStyle(fontSize: 40)),
-          Text(account.name == null ? "ph" : account.name!),
+          SizedBox(
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: Colors.amber,
+                ),
+                Text(account.name != null ? account.name! : "First Last"),
+              ],
+            )
+          ),
+          const SizedBox(
+            child:Column(
+              children: [
+                Text("Contact"),
+                Text("919 648 95003"),
+                Text("mattscav@gmail.com"),
+              ],
+            ),
+          ),
+          const SizedBox(
+            child:Column(
+              children: [
+                Text("Locations"),
+                Text("406 Summerlin Dr Goldsboro NC 27530 United States"),
+                Text("812 Moonerjin St Silverboro SC 30527 Australia"),
+              ],
+            ),
+          ),
           FloatingActionButton(
             heroTag: "temp1",
             onPressed: () async {

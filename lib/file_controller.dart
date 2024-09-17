@@ -19,6 +19,12 @@ class FileController extends ChangeNotifier
     notifyListeners();
   }
   clearPetDetailsJson() async {
+    if (petDetails?.data != null && petDetails!.data.isNotEmpty){
+      for (int i = 0; i < petDetails!.data.length; i++) {
+        await FileManager().deleteFile(petDetails!.data[i].image);
+      }
+    }
+
     _petDetails = await FileManager().writeJsonFile(true, FileManager.baseJsonString);
     notifyListeners();
   }
@@ -36,6 +42,7 @@ class FileController extends ChangeNotifier
     notifyListeners();
   }
   clearAccountDetailsJson() async {
+    await FileManager().deleteFile(accountDetails?.image);
     _accountDetails = await FileManager().writeJsonFile(false, "{}");
     notifyListeners();
   }

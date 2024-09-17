@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/pet_details.dart';
@@ -53,5 +54,24 @@ class FileManager {
     final path = await _localPath;
     File imageSaved = await image.copy('$path/${DateTime.now()}');
     return imageSaved.path;
+  }
+
+  Future<int> deleteFile(String? path) async {
+    if (path == null) {
+      if (kDebugMode) print("Null path passed to delete.");
+      return 0;
+    }
+
+    try {
+      File file = File(path);
+      await file.delete();
+      return 1;
+    }
+    catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return 0;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +27,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   late int petIndex = widget.petIndex;
 
   Future selectImage(ImageSource imgSource) async {
-    final returnedImage = await ImagePicker().pickImage(source: imgSource);
+    final returnedImage = await ImagePicker().pickImage(source: imgSource, imageQuality: 70);
 
     if (returnedImage == null) return;
 
@@ -81,7 +82,17 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         'x-ms-blob-type': 'BlockBlob'
       };
       var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
-      request.body = json.encode(pet);
+      
+      if (pet.image != null) {
+        Pet tempPet = pet;
+        File _imageFile = File(tempPet.image!);
+        Uint8List _bytes = await _imageFile.readAsBytes();
+        tempPet.image = base64Encode(_bytes);
+
+        request.body = jsonEncode(tempPet);
+      } else {
+        request.body = json.encode(pet);
+      }
       
       request.headers.addAll(headers);
       http.StreamedResponse response = await request.send();

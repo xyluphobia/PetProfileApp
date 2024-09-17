@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:pet_profile_app/common/add_pet_card.dart';
@@ -35,10 +37,21 @@ class _PetsViewState extends State<PetsView> {
       String responseString = await response.stream.bytesToString();
       
       Pet pet = Pet.fromJson(jsonDecode(responseString));
+      if (pet.image != null) {
+        Uint8List _bytes = base64Decode(pet.image!);
+        String dir = (await getApplicationDocumentsDirectory()).path;
+        File file = File("$dir/${DateTime.now()}");
+
+        await file.writeAsBytes(_bytes);
+        pet.image = file.path;
+      }
+
       if (mounted) {
         PetDetails? petDetails = context.read<FileController>().petDetails;
         petDetails?.data.add(pet);
         await context.read<FileController>().writePetDetails(petDetails!);
+      } else {
+        if (kDebugMode) print("Error, data not saved.");
       }
     }
     else {

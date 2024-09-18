@@ -39,7 +39,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     return;
   }
 
-  void addOrEditPetData() async {
+  Future addOrEditPetData() async {
     PetDetails? petDetails = context.read<FileController>().petDetails;
     if (newPet) {
       petDetails?.data.add(pet);
@@ -53,6 +53,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
     unsavedChanges = false;
     await context.read<FileController>().writePetDetails(petDetails!);
+    return;
   }
 
   @override
@@ -74,7 +75,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       assignPet = false;
     }
 
-    Future<String> sharePetInfo() async {
+    Future<String> sharePetInfo(Pet? petToShare) async {
+      if (petToShare == null) return "Error";
+
       var uuid = const Uuid();
       String filename = uuid.v4();
       filename = filename.replaceRange(6, filename.length, '');
@@ -86,15 +89,15 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       };
       var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
       
-      if (pet.image != null) {
-        Pet tempPet = pet;
+      if (petToShare.image != null) {
+        Pet tempPet = petToShare;
         File _imageFile = File(tempPet.image!);
         Uint8List _bytes = await _imageFile.readAsBytes();
         tempPet.image = base64Encode(_bytes);
 
         request.body = jsonEncode(tempPet);
       } else {
-        request.body = json.encode(pet);
+        request.body = json.encode(petToShare);
       }
       
       request.headers.addAll(headers);
@@ -131,9 +134,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       floatingActionButton: !newPet ? FloatingActionButton(
         heroTag: "sharePetInfoBtn",
         onPressed: () async {
-          if (unsavedChanges) saveChangesQuestion(context);
+          if (unsavedChanges) await saveChangesQuestion(context);
 
-          String petCode = await sharePetInfo();
+          String petCode = await sharePetInfo(context.read<FileController>().petDetails?.data[petIndex]);
           if (context.mounted) showPetCode(context, petCode);
         },
         child: const Icon(Icons.ios_share_rounded),
@@ -181,9 +184,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           TextButton(
             style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
             child: Text("Save", style: TextStyle(color: Theme.of(context).colorScheme.surface),),
-            onPressed: () {
-              addOrEditPetData();
-              Navigator.of(context).pop();
+            onPressed: () async {
+              await addOrEditPetData();
+              if (context.mounted) Navigator.of(context).pop();
             },
           ),
           TextButton(

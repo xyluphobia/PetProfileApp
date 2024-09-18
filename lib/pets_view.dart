@@ -22,7 +22,7 @@ class _PetsViewState extends State<PetsView> {
   TextEditingController enterPetCodePopupInput = TextEditingController();
   bool addCardExists = false;
 
-  void getPetInfo(String friendCode) async {
+  Future<bool> getPetInfo(String friendCode) async {
     String filename = friendCode.toUpperCase();
     var headers = {
       'x-ms-blob-type': 'BlockBlob'
@@ -53,12 +53,14 @@ class _PetsViewState extends State<PetsView> {
       } else {
         if (kDebugMode) print("Error, data not saved.");
       }
+      return true;
     }
     else {
       // need error handling for invalid code
       if (kDebugMode) {
         print(response.reasonPhrase);
       }
+      return false;
     }
   }
 
@@ -88,46 +90,65 @@ class _PetsViewState extends State<PetsView> {
       return const AddPetCard();
     }
     else {
+      String? errorMessage;
       addCardExists = false;
       return ElevatedButton(
         onPressed: () {
           showDialog(
             context: context, 
-            builder: (context) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              title: const Text("Enter Pet Code"),
-              content: TextField(
-                autofocus: true,
-                autocorrect: false,
-                showCursor: false,
-                controller: enterPetCodePopupInput,
-                keyboardType: TextInputType.visiblePassword,
-                maxLines: 1,
-                maxLength: 6,
-                textCapitalization: TextCapitalization.characters,
-                decoration: InputDecoration(
-                  hintText: "A1B2C3",
-                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary,),
-                ),
-              ),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: [
-                IconButton(
-                  onPressed: () {Navigator.of(context).pop();}, 
-                  icon: const Icon(Icons.close_rounded),
-                ),
-                TextButton(
-                  child: Text("SUBMIT", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
-                  onPressed: () {
-                    if (enterPetCodePopupInput.text.length == 6)
-                    {
-                      getPetInfo(enterPetCodePopupInput.text);
-                      Navigator.of(context).pop();
-                    }
-                    // Show error that code is not valid
-                  },
-                ),
-              ],
+            builder: (context) => StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  title: const Text("Enter Pet Code"),
+                  content: TextField(
+                    autofocus: true,
+                    autocorrect: false,
+                    showCursor: false,
+                    controller: enterPetCodePopupInput,
+                    keyboardType: TextInputType.visiblePassword,
+                    maxLines: 1,
+                    maxLength: 6,
+                    textCapitalization: TextCapitalization.characters,
+                    onChanged: (text) {
+                      setState(() {
+                        errorMessage = null;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "A1B2C3",
+                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary,),
+                      errorText: errorMessage,
+                    ),
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actions: [
+                    IconButton(
+                      onPressed: () {Navigator.of(context).pop();}, 
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                    TextButton(
+                      child: Text("SUBMIT", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+                      onPressed: () async {
+                        if (enterPetCodePopupInput.text.length == 6)
+                        {
+                          if (await getPetInfo(enterPetCodePopupInput.text)) Navigator.of(context).pop();
+                          else {
+                            setState(() {
+                              errorMessage = "Code Expired or Invalid";
+                            });
+                          }
+                        } 
+                        else {
+                          setState(() {
+                            errorMessage = "Code must be 6 Characters";
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                );
+              }
             ),
           );
         }, 

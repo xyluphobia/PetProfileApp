@@ -23,6 +23,7 @@ class PetDetailsView extends StatefulWidget {
 class _PetDetailsViewState extends State<PetDetailsView> {
   bool newPet = false;
   bool assignPet = true;
+  bool unsavedChanges = false;
   late Pet pet;
   late int petIndex = widget.petIndex;
 
@@ -50,7 +51,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     else {
       petDetails?.data[petIndex] = pet;
     }
-
+    unsavedChanges = false;
     await context.read<FileController>().writePetDetails(petDetails!);
   }
 
@@ -65,6 +66,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   @override
   Widget build(BuildContext context) {
     if (assignPet) {
+      context.read<FileController>().readPetDetails();
+      
       pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
 
@@ -112,6 +115,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       appBar: AppBar(
         centerTitle: true,
         title: const Icon(Icons.pets_sharp),
+        leading: BackButton(
+          onPressed: () async {
+            if (unsavedChanges) await saveChangesQuestion(context);
+            if (context.mounted) Navigator.maybePop(context);
+          },
+        ),
         actions: [
           IconButton(
             onPressed: addOrEditPetData, 
@@ -122,6 +131,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       floatingActionButton: !newPet ? FloatingActionButton(
         heroTag: "sharePetInfoBtn",
         onPressed: () async {
+          if (unsavedChanges) saveChangesQuestion(context);
+
           String petCode = await sharePetInfo();
           if (context.mounted) showPetCode(context, petCode);
         },
@@ -147,6 +158,41 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future saveChangesQuestion(BuildContext context) {
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        titlePadding: const EdgeInsets.only(left: 24, top: 24, bottom: 12),
+        title: Text("Unsaved Changes", style: Theme.of(context).textTheme.headlineMedium),
+        contentPadding: const EdgeInsets.all(20),
+        content: Text(
+          "You have unsaved changes, would you like to save your changes?",
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+        buttonPadding: const EdgeInsets.all(0),
+        actions: [
+          TextButton(
+            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
+            child: Text("Save", style: TextStyle(color: Theme.of(context).colorScheme.surface),),
+            onPressed: () {
+              addOrEditPetData();
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text("No", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }
@@ -293,6 +339,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               maxLines: 1,
         
                               onChanged: (text) {
+                                unsavedChanges = true;
                                 pet.age = text;
                               },
                               decoration: InputDecoration(
@@ -325,6 +372,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                   lastDate: DateTime.now(),
                                 ).then((date) {
                                   if (date != null) {
+                                    unsavedChanges = true;
                                     setState(() {
                                       pet.birthday = DateFormat('dd/MM/yyyy').format(date);
                                     });
@@ -364,6 +412,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               maxLines: 1,
         
                               onChanged: (text) {
+                                unsavedChanges = true;
                                 pet.name = text;
                               },
                               decoration: InputDecoration(
@@ -388,6 +437,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               maxLines: 1,
         
                               onChanged: (text) {
+                                unsavedChanges = true;
                                 pet.owner = text;
                               },
                               decoration: InputDecoration(
@@ -417,6 +467,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               maxLines: 1,
         
                               onChanged: (text) {
+                                unsavedChanges = true;
                                 pet.gender = text;
                               },
                               decoration: InputDecoration(
@@ -443,6 +494,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                   maxLines: 1,
         
                                   onChanged: (text) {
+                                    unsavedChanges = true;
                                     pet.species = text;
                                   },
                                   decoration: InputDecoration(
@@ -464,6 +516,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                   maxLines: 1,
         
                                   onChanged: (text) {
+                                    unsavedChanges = true;
                                     pet.breed = text;
                                   },
                                   decoration: InputDecoration(

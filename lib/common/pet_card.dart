@@ -32,6 +32,7 @@ class _PetCardState extends State<PetCard> {
         },
         child: Card(
           clipBehavior: Clip.antiAlias,
+          color: pet.notOwnedByAccount ? Colors.red : Theme.of(context).colorScheme.primary,
           child: SizedBox(
             height: 184,
             child: Row(

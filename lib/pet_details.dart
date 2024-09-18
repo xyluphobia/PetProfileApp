@@ -28,6 +28,7 @@ class PetDetails {
 
 class Pet {
   Pet({
+    this.notOwnedByAccount = false,
     this.image,
     this.name,
     this.age,
@@ -38,6 +39,7 @@ class Pet {
     this.owner,
   });
 
+  bool notOwnedByAccount;
   String? image;
   String? name;
   String? age;
@@ -48,6 +50,7 @@ class Pet {
   String? owner;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
+    notOwnedByAccount: json["notOwnedByAccount"],
     image: json["image"],
     name: json["name"],
     age: json["age"],
@@ -59,6 +62,7 @@ class Pet {
   );
 
   Map<String, dynamic> toJson() => {
+    "notOwnedByAccount": notOwnedByAccount,
     "image": image,
     "name": name,
     "age" : age,

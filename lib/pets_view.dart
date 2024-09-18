@@ -132,7 +132,10 @@ class _PetsViewState extends State<PetsView> {
                       onPressed: () async {
                         if (enterPetCodePopupInput.text.length == 6)
                         {
-                          if (await getPetInfo(enterPetCodePopupInput.text)) Navigator.of(context).pop();
+                          if (await getPetInfo(enterPetCodePopupInput.text)) {
+                            enterPetCodePopupInput.clear();
+                            if (context.mounted) Navigator.of(context).pop();
+                          }
                           else {
                             setState(() {
                               errorMessage = "Code Expired or Invalid";

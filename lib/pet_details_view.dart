@@ -77,6 +77,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
     Future<String> sharePetInfo(Pet? petToShare) async {
       if (petToShare == null) return "Error";
+      petToShare.notOwnedByAccount = true;
 
       var uuid = const Uuid();
       String filename = uuid.v4();

@@ -32,7 +32,6 @@ class _PetCardState extends State<PetCard> {
         },
         child: Card(
           clipBehavior: Clip.antiAlias,
-          color: pet.notOwnedByAccount ? Colors.red : Theme.of(context).colorScheme.primary,
           child: SizedBox(
             height: 184,
             child: Row(
@@ -47,16 +46,33 @@ class _PetCardState extends State<PetCard> {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(pet.name ?? 'name', style: Theme.of(context).textTheme.headlineMedium,),
-                      const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                      Text(pet.owner ?? 'owner', style: Theme.of(context).textTheme.bodyLarge,),
-                      const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
-                      Text('${pet.gender ?? 'gender'} * ${pet.age ?? 'age'}', style: Theme.of(context).textTheme.bodyLarge,),
-                    ],
+                  child: Container(
+                    decoration: pet.notOwnedByAccount ? BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.secondary,
+                        width: 2,
+                      ), 
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12), 
+                        bottomRight: Radius.circular(12)
+                      ),
+                    ) : null,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(pet.name ?? 'name', style: Theme.of(context).textTheme.headlineMedium,),
+                        const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
+                        Text(
+                          pet.owner ?? 'owner', 
+                          style: pet.notOwnedByAccount ? 
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary) :
+                            Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        const Divider(thickness: 1, indent: 20, endIndent: 20, height: 10,),
+                        Text('${pet.gender ?? 'gender'} * ${pet.age ?? 'age'}', style: Theme.of(context).textTheme.bodyLarge,),
+                      ],
+                    ),
                   ),
                 ),
               ],

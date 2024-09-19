@@ -134,6 +134,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                             mapType: MapType.terrain,
                             initialCameraPosition: defaultCameraPosition,
                             zoomControlsEnabled: false,
+                            myLocationButtonEnabled: false,
                             markers: markers,
                             onMapCreated: (GoogleMapController controller) {
                               _mapController.complete(controller);

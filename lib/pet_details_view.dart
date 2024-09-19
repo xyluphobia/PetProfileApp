@@ -26,6 +26,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   bool unsavedChanges = false;
   late Pet pet;
   late int petIndex = widget.petIndex;
+  bool savedConfirmVisible = false;
 
   Future selectImage(ImageSource imgSource) async {
     final returnedImage = await ImagePicker().pickImage(source: imgSource, imageQuality: 70);
@@ -53,6 +54,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
     unsavedChanges = false;
     await context.read<FileController>().writePetDetails(petDetails!);
+    setState(() {
+      savedConfirmVisible = true;
+    });
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {
+        savedConfirmVisible = false;
+      });
+    });
     return;
   }
 
@@ -149,16 +158,40 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           left: 24,
           right: 24,
         ),
-        child: Column(
+        child: Stack(
           children: [
-            basicInfoCard(),
-
-            GestureDetector(
-              onTap: () {
-                context.read<FileController>().clearPetDetailsJson();
-                Navigator.pop(context);
-              },
-              child: const Text('CLEAR ALL SAVED PETS'),
+            Column(
+              children: [
+                basicInfoCard(),
+            
+                GestureDetector(
+                  onTap: () {
+                    context.read<FileController>().clearPetDetailsJson();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('CLEAR ALL SAVED PETS'),
+                ),
+              ],
+            ),
+            AnimatedOpacity(
+              opacity: savedConfirmVisible ? 1 : 0,
+              duration: savedConfirmVisible ? const Duration(milliseconds: 100) : const Duration(milliseconds: 1000),
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                alignment: Alignment.topCenter,
+                child: Card(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Container(
+                    width: 74,
+                    height: 30,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Saved!", 
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

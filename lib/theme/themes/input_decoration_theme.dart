@@ -7,7 +7,6 @@ class CInputDecorationTheme {
   static InputDecorationTheme lightInputDecorationTheme = InputDecorationTheme(
     hintStyle: TextStyle(
       color: CColorThemes.lightScheme.onPrimary, 
-      decoration: TextDecoration.underline,
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: CColorThemes.lightScheme.onSurface, width: 1.0),
@@ -17,7 +16,6 @@ class CInputDecorationTheme {
   static InputDecorationTheme darkInputDecorationTheme = InputDecorationTheme(
     hintStyle: TextStyle(
       color: CColorThemes.darkScheme.onPrimary,
-      decoration: TextDecoration.underline,
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: CColorThemes.darkScheme.onSurface, width: 1.0),

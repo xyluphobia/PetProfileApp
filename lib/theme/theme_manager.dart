@@ -3,6 +3,7 @@ import 'package:pet_profile_app/theme/themes/app_bar_theme.dart';
 import 'package:pet_profile_app/theme/themes/bottom_navigation_bar_theme.dart';
 import 'package:pet_profile_app/theme/themes/color_scheme_theme.dart';
 import 'package:pet_profile_app/theme/themes/input_decoration_theme.dart';
+import 'package:pet_profile_app/theme/themes/text_selection_theme.dart';
 import 'package:pet_profile_app/theme/themes/text_theme.dart';
 
 class ThemeManager
@@ -42,6 +43,7 @@ class ThemeManager
     fontFamily: 'Cabin',
     textTheme: CTextTheme.lightTextTheme,
     inputDecorationTheme: CInputDecorationTheme.lightInputDecorationTheme,
+    textSelectionTheme: CTextSelectionThemes.lightTextSelectionThemeData,
 
     colorScheme: CColorThemes.lightScheme,
     appBarTheme: lightAppBar,
@@ -57,6 +59,7 @@ class ThemeManager
     fontFamily: 'Cabin',
     textTheme: CTextTheme.darkTextTheme,
     inputDecorationTheme: CInputDecorationTheme.darkInputDecorationTheme,
+    textSelectionTheme: CTextSelectionThemes.darkTextSelectionThemeData,
 
     colorScheme: CColorThemes.darkScheme,
     appBarTheme: darkAppBar,

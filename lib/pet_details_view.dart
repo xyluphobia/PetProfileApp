@@ -374,6 +374,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               textAlign: TextAlign.start,
                               autocorrect: false,
                               maxLines: 1,
+                              enabled: false,
         
                               onChanged: (text) {
                                 unsavedChanges = true;
@@ -382,6 +383,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               decoration: InputDecoration(
                                 hintText: pet.age,
                                 isDense: true,
+                                disabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                ),
                               ),
                             ),
                           ),
@@ -412,6 +416,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                     unsavedChanges = true;
                                     setState(() {
                                       pet.birthday = DateFormat('dd/MM/yyyy').format(date);
+                                      pet.age = context.read<FileController>().checkAndUpdatePetBirthdays(birthday: date, updateAll: false);
                                     });
                                   }
                                 });

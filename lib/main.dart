@@ -22,9 +22,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   @override
-  void didChangeDependencies() {
-    context.read<FileController>().readPetDetails();
+  void didChangeDependencies() async {
     context.read<FileController>().readAccountDetails();
+    await context.read<FileController>().readPetDetails();
+    if (mounted) {
+      context.read<FileController>().checkAndUpdatePetBirthdays();
+    }
     super.didChangeDependencies();
   }
 

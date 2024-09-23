@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:pet_profile_app/network_util.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pet_profile_app/file_manager.dart';
@@ -144,10 +145,16 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       floatingActionButton: !newPet ? FloatingActionButton(
         heroTag: "sharePetInfoBtn",
         onPressed: () async {
-          if (unsavedChanges) await saveChangesQuestion(context);
+          if(NetworkUtil.acceptableRequestAmount())
+          {
+            if (unsavedChanges) await saveChangesQuestion(context);
 
-          String petCode = await sharePetInfo(context.read<FileController>().petDetails?.data[petIndex]);
-          if (context.mounted) showPetCode(context, petCode);
+            String petCode = await sharePetInfo(context.read<FileController>().petDetails?.data[petIndex]);
+            if (context.mounted) showPetCode(context, petCode);
+          }
+          else {
+            // Slow down! Too many requests too quickly, wait a minute and try again.
+          }
         },
         child: const Icon(Icons.ios_share_rounded),
       ) : null,

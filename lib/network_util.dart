@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +17,31 @@ class NetworkUtil {
       debugPrint(e.toString());
     }
     return null;
+  }
+
+  static int requestLimit = 10;
+  static int requestsMade = 0; 
+  static CancelableOperation? operation;
+  static bool acceptableRequestAmount() {
+    if (requestsMade >= requestLimit) return false;
+    requestsMade++;
+
+    // check if theres a timer running, if there is restart it else start one
+    if (operation != null) operation!.cancel();
+
+    operation = CancelableOperation<dynamic>.fromFuture(
+      Future.delayed(const Duration(minutes: 1)),
+      onCancel: () => {}
+    );
+
+    operation!.value.then((value) {
+      if(!operation!.isCanceled) {
+        requestsMade = 0;
+        operation = null;
+      }
+    },);
+
+    return true;
   }
   
   static Position? lastLocation; //find out how to do this within TOS

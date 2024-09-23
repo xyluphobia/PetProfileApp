@@ -153,7 +153,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             if (context.mounted) showPetCode(context, petCode);
           }
           else {
-            // Slow down! Too many requests too quickly, wait a minute and try again.
+            NetworkUtil.showTooManyRequests(context);
           }
         },
         child: const Icon(Icons.ios_share_rounded),

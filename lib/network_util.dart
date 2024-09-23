@@ -43,6 +43,33 @@ class NetworkUtil {
 
     return true;
   }
+
+  static Future<dynamic> showTooManyRequests(BuildContext context) {
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        titlePadding: const EdgeInsets.only(left: 24, top: 24, bottom: 12),
+        title: const Text("Rate limit reached", style: TextStyle(decoration: TextDecoration.underline),),
+        contentPadding: const EdgeInsets.all(20),
+        content: const Text(
+          "You are making more requests than we can handle, please wait a few moments before trying again.",
+          textAlign: TextAlign.center,
+        ),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+        buttonPadding: const EdgeInsets.all(0),
+        actions: [
+          TextButton(
+            child: Text("CLOSE", style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   
   static Position? lastLocation; //find out how to do this within TOS
 

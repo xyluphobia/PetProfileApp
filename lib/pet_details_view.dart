@@ -415,6 +415,17 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               onTap: () {
                                 showDatePicker(
                                   context: context,
+                                  builder: (context, child) {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                        colorScheme: ColorScheme.light(
+                                          surface: Theme.of(context).colorScheme.primary,
+                                          primary: Theme.of(context).colorScheme.onSurface
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  },
                                   initialDate: pet.birthday == null ? DateTime.now() : DateFormat('dd/MM/yyyy').tryParse(pet.birthday!),
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime.now(),
@@ -587,63 +598,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           ),
         ),
       ),
-    );
-  }
-
-
-  Widget developmentInputFields() {
-    return Column(
-      children: [
-        TextField(
-          onChanged: (text) {
-            pet.name = text;
-          },
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: newPet ? "Pet Name" : pet.name,
-          ),
-        ),
-
-        TextField(
-          onChanged: (text) {
-            pet.owner = text;
-          },
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: newPet ? "Owner Name" : pet.owner,
-          ),
-        ),
-
-        TextField(
-          onChanged: (text) {
-            pet.age = text;
-          },
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: newPet ? "Pet Age" : pet.age,
-          ),
-        ),
-
-        TextField(
-          onChanged: (text) {
-            pet.species = text;
-          },
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: newPet ? "Pet Species" : pet.species,
-          ),
-        ),
-
-        TextField(
-          onChanged: (text) {
-            pet.breed = text;
-          },
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: newPet ? "Pet Breed" : pet.breed,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -420,7 +421,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                       data: Theme.of(context).copyWith(
                                         colorScheme: ColorScheme.light(
                                           surface: Theme.of(context).colorScheme.primary,
-                                          primary: Theme.of(context).colorScheme.onSurface
+                                          primary: Theme.of(context).colorScheme.onSurface,
+                                          onSurface: Theme.of(context).colorScheme.onPrimary,
+                                          onPrimary: Theme.of(context).colorScheme.primary,
                                         ),
                                       ),
                                       child: child!,

@@ -171,6 +171,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             Column(
               children: [
                 basicInfoCard(),
+                foodInfoCard(),
             
                 GestureDetector(
                   onTap: () {
@@ -600,6 +601,76 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  bool visible = true;
+  Widget foodInfoCard() {
+    return Card(
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        iconColor: Theme.of(context).colorScheme.onSurface,
+        shape: const Border(),
+        title: Text("Food", 
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(decoration: TextDecoration.underline),
+        ),
+        trailing: Icon(visible ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+        onExpansionChanged: (bool expanded) {
+          setState(() {
+            visible = expanded;
+          });
+        },
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: SizedBox(
+              height: 270,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // What they eat
+                      // Notes/Routines
+                      LimitedBox(
+                        maxHeight: 90,
+                        maxWidth: 160,
+                        child: TextField(
+                          maxLines: null,
+                          minLines: 3,
+                          autocorrect: true,
+                          keyboardType: TextInputType.multiline,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                            filled: true,
+                            fillColor: const Color.fromARGB(14, 0, 0, 0),
+                            contentPadding: EdgeInsets.all(4),
+                            labelText: "Anything else?",
+                            alignLabelWithHint: true,
+                            labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Feeding times
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

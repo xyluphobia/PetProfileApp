@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/theme/theme_manager.dart';
 
 import 'package:pet_profile_app/account_view.dart';
@@ -26,7 +27,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Icon(Icons.pets_sharp),
+        title: ImageIcon(const Image(image: Svg('assets/petTetherIcon.svg')).image, size: 28,),
         surfaceTintColor: Colors.transparent,
         elevation: 1,
         leading: navIndex == 1 ? IconButton(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -129,7 +130,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Icon(Icons.pets_sharp),
+        title: ImageIcon(const Image(image: Svg('assets/petTetherIcon.svg')).image, size: 28,),
         leading: BackButton(
           onPressed: () async {
             if (unsavedChanges) await saveChangesQuestion(context);
@@ -607,6 +608,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   bool visible = true;
   Widget foodInfoCard() {
+    Widget getFoods(int index) {
+      return Placeholder();
+    }
+
     return Card(
       child: ExpansionTile(
         initiallyExpanded: true,
@@ -634,6 +639,16 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // What they eat
+                      ListView.builder(
+                        itemCount: context.select((FileController controller) => controller.petDetails != null ? controller.petDetails!.data.length + 1 : 1),
+                        /*padding: const EdgeInsets.only(
+                          top: 4,
+                          bottom: 8,
+                          right: 16,
+                          left: 16,
+                        ),*/
+                        itemBuilder: (context, index) => getFoods(index),
+                      ),
                       // Notes/Routines
                       LimitedBox(
                         maxHeight: 90,

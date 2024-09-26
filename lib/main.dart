@@ -39,6 +39,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, value, child) { 
         return MaterialApp(
           home: const HomeView(),
+          title: "Pet Tether",
           theme: value,
         );
       }

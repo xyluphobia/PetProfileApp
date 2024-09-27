@@ -37,7 +37,9 @@ class Pet {
     this.species,
     this.breed,
     this.owner,
-  });
+
+    List<String>? petFoods
+  }) : petFoods = petFoods ?? <String>[];
 
   bool notOwnedByAccount;
   String? image;
@@ -49,6 +51,8 @@ class Pet {
   String? breed;
   String? owner;
 
+  List<String> petFoods;
+
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
     image: json["image"],
@@ -59,17 +63,21 @@ class Pet {
     species: json["species"],
     breed: json["breed"],
     owner: json["owner"],
+
+    petFoods: List<String>.from(json["petFoods"]),
   );
 
   Map<String, dynamic> toJson() => {
     "notOwnedByAccount": notOwnedByAccount,
     "image": image,
     "name": name,
-    "age" : age,
-    "birthday" : birthday,
-    "gender" : gender,
-    "species" : species,
-    "breed" : breed,
-    "owner" : owner,
+    "age": age,
+    "birthday": birthday,
+    "gender": gender,
+    "species": species,
+    "breed": breed,
+    "owner": owner,
+
+    "petFoods": petFoods, 
   };
 }

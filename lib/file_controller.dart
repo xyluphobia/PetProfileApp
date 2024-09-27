@@ -17,8 +17,10 @@ class FileController extends ChangeNotifier
 
     if (updateAll) {
       for (int i = 0; i < petDetails!.data.length; i++) {
-        int expectedAge = DateTime.now().difference(DateFormat('dd/MM/yyyy').tryParse(petDetails!.data[i].birthday!)!).inDays ~/ 365;
-        petDetails!.data[i].age = expectedAge.toString();
+        if (petDetails!.data[i].birthday != null) {
+          int expectedAge = DateTime.now().difference(DateFormat('dd/MM/yyyy').tryParse(petDetails!.data[i].birthday!)!).inDays ~/ 365;
+          petDetails!.data[i].age = expectedAge.toString();
+        }
       }
     }
     else {

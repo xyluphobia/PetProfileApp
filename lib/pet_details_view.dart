@@ -607,9 +607,75 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   }
 
   bool visible = true;
+  TextEditingController foodListInput = TextEditingController();
   Widget foodInfoCard() {
     Widget getFoods(int index) {
-      return Placeholder();
+      if (pet.petFoods.isNotEmpty && index < pet.petFoods.length) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              pet.petFoods[index], 
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  pet.petFoods.removeAt(index);
+                  unsavedChanges = true;
+                });
+              }, 
+              child: Icon(
+                Icons.clear, 
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        );
+      }
+      else {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TextField(
+                onSubmitted: (value) {
+                  if (value.isEmpty) return;
+                  setState(() {
+                    unsavedChanges = true;
+                    pet.petFoods.add(value);
+                    foodListInput.clear();
+                  });
+                },
+                maxLines: 1,
+                controller: foodListInput,
+                decoration: InputDecoration(
+                  isCollapsed: true,
+                  hintText: "New food...",
+                  hintStyle: Theme.of(context).textTheme.bodySmall,
+                  border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (foodListInput.text.isEmpty) return;
+                setState(() {
+                  unsavedChanges = true;
+                  pet.petFoods.add(foodListInput.text);
+                  foodListInput.clear();
+                });
+              }, 
+              child: Icon(
+                Icons.check, 
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        );
+      }
     }
 
     return Card(
@@ -618,7 +684,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         iconColor: Theme.of(context).colorScheme.onSurface,
         shape: const Border(),
         title: Text("Food", 
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(decoration: TextDecoration.underline),
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
         trailing: Icon(visible ? Icons.visibility_rounded : Icons.visibility_off_rounded),
         onExpansionChanged: (bool expanded) {
@@ -628,9 +694,16 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         },
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SizedBox(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Container(
               height: 270,
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1
+                ),
+              )
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -639,15 +712,19 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // What they eat
-                      ListView.builder(
-                        itemCount: context.select((FileController controller) => controller.petDetails != null ? controller.petDetails!.data.length + 1 : 1),
-                        /*padding: const EdgeInsets.only(
-                          top: 4,
-                          bottom: 8,
-                          right: 16,
-                          left: 16,
-                        ),*/
-                        itemBuilder: (context, index) => getFoods(index),
+                      SizedBox(
+                        height: 90,
+                        width: 160,
+                        child: ListView.builder(
+                          itemCount: pet.petFoods.length + 1,
+                          /*padding: const EdgeInsets.only(
+                            top: 4,
+                            bottom: 8,
+                            right: 16,
+                            left: 16,
+                          ),*/
+                          itemBuilder: (context, index) => getFoods(index),
+                        ),
                       ),
                       // Notes/Routines
                       LimitedBox(

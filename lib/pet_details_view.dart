@@ -365,9 +365,21 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     onTap: () {
                       displayBottomSheet(context);
                     },
-                    child: CircleAvatar(
-                      radius: 80,
-                      backgroundImage: pet.image != null ? FileImage(File(pet.image!)) : const AssetImage('assets/images/petimage.jpg'),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 80,
+                          backgroundColor: Theme.of(context).colorScheme.onSurface,
+                          backgroundImage: pet.image != null ? 
+                          FileImage(File(pet.image!)) : null,
+                        ),
+                        Icon(
+                          Icons.pets,
+                          size: 80,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      ],
                     ),
                   ),
                   Column(
@@ -678,6 +690,75 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       }
     }
 
+    Widget getEatingTimes(int index) {
+      if (pet.petFoods.isNotEmpty && index < pet.petFoods.length) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              pet.petFoods[index], 
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  pet.petFoods.removeAt(index);
+                  unsavedChanges = true;
+                });
+              }, 
+              child: Icon(
+                Icons.clear, 
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        );
+      }
+      else {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TextField(
+                onSubmitted: (value) {
+                  if (value.isEmpty) return;
+                  setState(() {
+                    unsavedChanges = true;
+                    pet.petFoods.add(value);
+                    foodListInput.clear();
+                  });
+                },
+                maxLines: 1,
+                controller: foodListInput,
+                decoration: InputDecoration(
+                  isCollapsed: true,
+                  hintText: "New food...",
+                  hintStyle: Theme.of(context).textTheme.bodySmall,
+                  border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (foodListInput.text.isEmpty) return;
+                setState(() {
+                  unsavedChanges = true;
+                  pet.petFoods.add(foodListInput.text);
+                  foodListInput.clear();
+                });
+              }, 
+              child: Icon(
+                Icons.check, 
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        );
+      }
+    }
+
     return Card(
       child: ExpansionTile(
         initiallyExpanded: true,
@@ -694,9 +775,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         },
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Container(
-              height: 270,
+              height: 234,
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(
                   color: Theme.of(context).colorScheme.onSurface,
@@ -704,61 +785,97 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 ),
               )
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // What they eat
-                      SizedBox(
-                        height: 90,
-                        width: 160,
-                        child: ListView.builder(
-                          itemCount: pet.petFoods.length + 1,
-                          /*padding: const EdgeInsets.only(
-                            top: 4,
-                            bottom: 8,
-                            right: 16,
-                            left: 16,
-                          ),*/
-                          itemBuilder: (context, index) => getFoods(index),
-                        ),
-                      ),
-                      // Notes/Routines
-                      LimitedBox(
-                        maxHeight: 90,
-                        maxWidth: 160,
-                        child: TextField(
-                          maxLines: null,
-                          minLines: 3,
-                          autocorrect: true,
-                          keyboardType: TextInputType.multiline,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
-                            filled: true,
-                            fillColor: const Color.fromARGB(14, 0, 0, 0),
-                            contentPadding: EdgeInsets.all(4),
-                            labelText: "Anything else?",
-                            alignLabelWithHint: true,
-                            labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // What they eat
+                        SizedBox(
+                          height: 96,
+                          width: 160,
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                              filled: true,
+                              fillColor: const Color.fromARGB(8, 0, 0, 0),
+                              contentPadding: const EdgeInsets.all(4),
+                              labelText: "Pets Food",
+                              alignLabelWithHint: true,
+                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            ),
+                            child: ListView.builder(
+                              itemCount: pet.petFoods.length + 1,
+                              itemBuilder: (context, index) => getFoods(index),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Feeding times
-                    ],
-                  ),
-                ],
+                        // Notes/Routines
+                        LimitedBox(
+                          maxHeight: 110,
+                          maxWidth: 160,
+                          child: TextField(
+                            maxLines: null,
+                            minLines: 5,
+                            autocorrect: true,
+                            keyboardType: TextInputType.multiline,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                              filled: true,
+                              fillColor: const Color.fromARGB(8, 0, 0, 0),
+                              contentPadding: const EdgeInsets.all(4),
+                              labelText: "Notes",
+                              alignLabelWithHint: true,
+                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Pet food image
+                        Transform.rotate(
+                          angle: -0.2,
+                          child: Image.asset('assets/images/petFoodBowl.png', width: 120,),
+                        ),
+                        // Feeding times
+                        SizedBox(
+                          height: 96,
+                          width: 150,
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                              filled: true,
+                              fillColor: const Color.fromARGB(8, 0, 0, 0),
+                              contentPadding: const EdgeInsets.all(4),
+                              labelText: "Feeding Times",
+                              alignLabelWithHint: true,
+                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            ),
+                            child: ListView.builder(
+                              itemCount: pet.petFoods.length + 1,
+                              itemBuilder: (context, index) => getEatingTimes(index),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

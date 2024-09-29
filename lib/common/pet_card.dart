@@ -40,9 +40,14 @@ class _PetCardState extends State<PetCard> {
                 SizedBox(
                   height: 184,
                   width: 200,
-                  child: FittedBox(
+                  child: pet.image != null ? FittedBox(
                     fit: BoxFit.fill,
-                    child: pet.image == null ? Image.asset('assets/images/petimage.jpg') : Image.file(File(pet.image!)),
+                    //child: pet.image == null ? Image.asset('assets/images/petimage.jpg') : Image.file(File(pet.image!)),
+                    child:  Image.file(File(pet.image!))
+                  ) :
+                  const Icon(
+                    Icons.pets,
+                    size: 100,
                   ),
                 ),
                 Expanded(

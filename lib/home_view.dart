@@ -84,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
             showUnselectedLabels: false,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.account_box_rounded),
+                icon: Icon(Icons.settings),
                 label: "Account",
               ),
               BottomNavigationBarItem(
@@ -92,7 +92,7 @@ class _HomeViewState extends State<HomeView> {
                 label: "Pets",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.emergency),
+                icon: Icon(Icons.emergency_rounded),
                 label: "Emergency",
               ),
             ],

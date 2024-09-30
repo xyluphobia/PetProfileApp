@@ -84,6 +84,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
 
+      if (newPet && context.read<FileController>().accountDetails != null) {
+        if (context.read<FileController>().accountDetails!.name != null) pet.owner = context.read<FileController>().accountDetails!.name!;
+      }
+
       assignPet = false;
     }
 

@@ -667,7 +667,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 controller: foodListInput,
                 decoration: InputDecoration(
                   isCollapsed: true,
-                  hintText: "New food...",
+                  hintText: "Add Pet foods",
                   hintStyle: Theme.of(context).textTheme.bodySmall,
                   border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
                   enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
@@ -771,7 +771,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               child: GestureDetector(
                 onTap: timePicker,
                 child: Text(
-                  "Add Time",
+                  "Add Feeding Time",
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -830,7 +830,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         children: [
                           // What they eat
                           Expanded(
-                            child: InputDecorator(
+                            child: /*InputDecorator(
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
                                 enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
@@ -842,11 +842,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 alignLabelWithHint: true,
                                 labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                               ),
-                              child: ListView.builder(
+                              child: */ListView.builder(
                                 itemCount: pet.petFoods.length + 1,
+                                shrinkWrap: true,
                                 itemBuilder: (context, index) => getFoods(index),
                               ),
-                            ),
+                            //),
                           ),
                           const SizedBox(
                             height: 8,
@@ -904,7 +905,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           ),
                           // Feeding times
                           Expanded(
-                            child: InputDecorator(
+                            child: /*InputDecorator(
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
                                 enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
@@ -916,11 +917,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                 alignLabelWithHint: true,
                                 labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                               ),
-                              child: ListView.builder(
+                              child: */ListView.builder(
                                 itemCount: pet.feedingTimes.length + 1,
+                                shrinkWrap: true,
                                 itemBuilder: (context, index) => getEatingTimes(index),
                               ),
-                            ),
+                            //),
                           ),
                         ],
                       ),
@@ -978,9 +980,17 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           // Pet food image
                           Expanded(
                             child: Center(
-                              child: Transform.rotate(
-                                angle: -0.4,
-                                child: Image.asset('assets/images/petNeedle.png'),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Transform.rotate(
+                                    angle: -0.4,
+                                    child: Image.asset('assets/images/petNeedle.png'),
+                                  ),
+                                  const SizedBox(
+                                    width: 50,
+                                  )
+                                ],
                               ),
                             ),
                           ),

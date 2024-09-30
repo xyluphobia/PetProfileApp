@@ -80,7 +80,7 @@ class _AccountViewState extends State<AccountView> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
-                      account.vetAddress != null ? account.vetAddress! : "812 Moonerjin St Silverboro SC 30527 Australia",
+                      account.preferredVetAddress != null ? account.preferredVetAddress! : "812 Moonerjin St Silverboro SC 30527 Australia",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
@@ -110,7 +110,7 @@ class _AccountViewState extends State<AccountView> {
               onPressed: () async {
                 account.name = "trial";
                 account.homeAddress = "406 Summerlin Dr Goldsboro";
-                account.vetAddress = "812 Moonerjin St Silverboro";
+                account.preferredVetAddress = "812 Moonerjin St Silverboro";
 
                 await context.read<FileController>().writeAccountDetails(account);
               },

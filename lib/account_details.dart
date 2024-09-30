@@ -5,21 +5,25 @@ class Account {
     this.image,
     this.name,
     this.homeAddress,
-    this.vetAddress, 
+    this.preferredVetAddress, 
+    this.emergencyVetAddress, 
   });
 
   String? lastLatLng;
   String? image;
   String? name;
   String? homeAddress;
-  String? vetAddress;
+
+  String? preferredVetAddress;
+  String? emergencyVetAddress;
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
     lastLatLng: json["lastLatLng"],
     image: json["image"],
     name: json["name"],
     homeAddress: json["homeAddress"], 
-    vetAddress: json["vetAddress"], 
+    preferredVetAddress: json["preferredVetAddress"], 
+    emergencyVetAddress: json["emergencyVetAddress"], 
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +31,7 @@ class Account {
     "image": image,
     "name": name,
     "homeAddress": homeAddress,
-    "vetAddress": vetAddress,
+    "preferredVetAddress": preferredVetAddress,
+    "emergencyVetAddress": emergencyVetAddress,
   };
 }

@@ -620,7 +620,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   bool visible = true;
   TextEditingController foodListInput = TextEditingController();
+  TextEditingController foodNotesInput = TextEditingController();
   Widget foodInfoCard() {
+    foodNotesInput.text = pet.petFoodNotes == null ? "" : pet.petFoodNotes!;
     Widget getFoods(int index) {
       if (pet.petFoods.isNotEmpty && index < pet.petFoods.length) {
         return Row(
@@ -851,11 +853,18 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           maxHeight: 110,
                           maxWidth: 160,
                           child: TextField(
+                            controller: foodNotesInput,
                             maxLines: null,
                             minLines: 5,
                             autocorrect: true,
                             keyboardType: TextInputType.multiline,
                             style: Theme.of(context).textTheme.bodyMedium,
+                            onChanged: (value) {
+                              setState(() {
+                                unsavedChanges = true;
+                                pet.petFoodNotes = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),

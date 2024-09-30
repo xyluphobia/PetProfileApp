@@ -42,6 +42,7 @@ class Pet {
 
     List<String>? petFoods,
     List<TimeOfDay>? feedingTimes,
+    this.petFoodNotes,
   }) : 
     petFoods = petFoods ?? <String>[],
     feedingTimes = feedingTimes ?? <TimeOfDay>[];
@@ -58,6 +59,7 @@ class Pet {
 
   List<String> petFoods;
   List<TimeOfDay> feedingTimes;
+  String? petFoodNotes;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
@@ -76,6 +78,7 @@ class Pet {
           hour: item['hour'] as int, 
           minute: item['minute'] as int))
       .toList() ?? [],
+    petFoodNotes: json["petFoodNotes"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -96,5 +99,6 @@ class Pet {
           'minute': time.minute,
       })
       .toList(),
+    "petFoodNotes": petFoodNotes,
   };
 }

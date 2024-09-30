@@ -691,24 +691,68 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     }
 
     Widget getEatingTimes(int index) {
-      if (pet.petFoods.isNotEmpty && index < pet.petFoods.length) {
+      void timePicker() async {
+        final TimeOfDay? newTime = await showTimePicker(
+          context: context,
+          initialTime: const TimeOfDay(hour: 12, minute: 0),
+          initialEntryMode: TimePickerEntryMode.input,
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  surface: Theme.of(context).colorScheme.primary,
+                  primary: Theme.of(context).colorScheme.onSurface,
+                  onSurface: Theme.of(context).colorScheme.onPrimary,
+                  onPrimary: Theme.of(context).colorScheme.primary,
+                ),
+                timePickerTheme: TimePickerThemeData(
+                  dayPeriodColor: Theme.of(context).colorScheme.onSurface,
+                  dayPeriodTextColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Theme.of(context).colorScheme.surface;
+                    }
+                    return Theme.of(context).colorScheme.onPrimary;
+                  }),
+                )
+              ),
+              child: child!,
+            );
+          },
+        );
+        if (newTime != null) {
+          int compareTimeOfDay(TimeOfDay time1, TimeOfDay time2) {
+            var totalMinutes1 = time1.hour * 60 + time1.minute;
+            var totalMinutes2 = time2.hour * 60 + time2.minute;
+            return totalMinutes1.compareTo(totalMinutes2);
+          }
+          pet.feedingTimes.add(newTime);
+          pet.feedingTimes.sort(compareTimeOfDay);
+          setState(() {
+            unsavedChanges = true;
+            pet.feedingTimes;
+          });
+        }
+      }
+
+      if (pet.feedingTimes.isNotEmpty && index < pet.feedingTimes.length) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              pet.petFoods[index], 
+              pet.feedingTimes[index].format(context), 
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             GestureDetector(
               onTap: () {
                 setState(() {
-                  pet.petFoods.removeAt(index);
+                  pet.feedingTimes.removeAt(index);
                   unsavedChanges = true;
                 });
               }, 
               child: Icon(
                 Icons.clear, 
                 color: Theme.of(context).colorScheme.onSurface,
+                size: 20,
               ),
             ),
           ],
@@ -719,39 +763,20 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: TextField(
-                onSubmitted: (value) {
-                  if (value.isEmpty) return;
-                  setState(() {
-                    unsavedChanges = true;
-                    pet.petFoods.add(value);
-                    foodListInput.clear();
-                  });
-                },
-                maxLines: 1,
-                controller: foodListInput,
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  hintText: "New food...",
-                  hintStyle: Theme.of(context).textTheme.bodySmall,
-                  border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
-                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
-                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+              child: GestureDetector(
+                onTap: timePicker,
+                child: Text(
+                  "Add Time",
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
             ),
             GestureDetector(
-              onTap: () {
-                if (foodListInput.text.isEmpty) return;
-                setState(() {
-                  unsavedChanges = true;
-                  pet.petFoods.add(foodListInput.text);
-                  foodListInput.clear();
-                });
-              }, 
+              onTap: timePicker, 
               child: Icon(
-                Icons.check, 
+                Icons.add, 
                 color: Theme.of(context).colorScheme.onSurface,
+                size: 20,
               ),
             ),
           ],
@@ -767,7 +792,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         title: Text("Food", 
           style: Theme.of(context).textTheme.headlineSmall,
         ),
-        trailing: Icon(visible ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+        trailing: Icon(
+          visible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
+          color: Theme.of(context).colorScheme.onPrimary, 
+        ),
         onExpansionChanged: (bool expanded) {
           setState(() {
             visible = expanded;
@@ -805,7 +833,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
                               filled: true,
                               fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.all(4),
+                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 5),
                               labelText: "Pets Food",
                               alignLabelWithHint: true,
                               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
@@ -832,7 +860,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
                               filled: true,
                               fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.all(4),
+                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
                               labelText: "Notes",
                               alignLabelWithHint: true,
                               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
@@ -861,13 +889,13 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
                               filled: true,
                               fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.all(4),
+                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
                               labelText: "Feeding Times",
                               alignLabelWithHint: true,
                               labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                             ),
                             child: ListView.builder(
-                              itemCount: pet.petFoods.length + 1,
+                              itemCount: pet.feedingTimes.length + 1,
                               itemBuilder: (context, index) => getEatingTimes(index),
                             ),
                           ),

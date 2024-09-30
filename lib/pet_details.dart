@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 // ignore: constant_identifier_names, non_constant_identifier_names
 
 PetDetails petDetailsFromJson(String str) => PetDetails.fromJson(json.decode(str));
@@ -38,8 +40,11 @@ class Pet {
     this.breed,
     this.owner,
 
-    List<String>? petFoods
-  }) : petFoods = petFoods ?? <String>[];
+    List<String>? petFoods,
+    List<TimeOfDay>? feedingTimes,
+  }) : 
+    petFoods = petFoods ?? <String>[],
+    feedingTimes = feedingTimes ?? <TimeOfDay>[];
 
   bool notOwnedByAccount;
   String? image;
@@ -52,6 +57,7 @@ class Pet {
   String? owner;
 
   List<String> petFoods;
+  List<TimeOfDay> feedingTimes;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
@@ -65,6 +71,11 @@ class Pet {
     owner: json["owner"],
 
     petFoods: List<String>.from(json["petFoods"]),
+    feedingTimes: (json["feedingTimes"] as List<dynamic>?)
+      ?.map((item) => TimeOfDay(
+          hour: item['hour'] as int, 
+          minute: item['minute'] as int))
+      .toList() ?? [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -79,5 +90,11 @@ class Pet {
     "owner": owner,
 
     "petFoods": petFoods, 
+    "feedingTimes": feedingTimes
+      .map((time) => {
+          'hour': time.hour,
+          'minute': time.minute,
+      })
+      .toList(),
   };
 }

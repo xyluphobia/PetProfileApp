@@ -160,51 +160,52 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         },
         child: const Icon(Icons.ios_share_rounded),
       ) : null,
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 16,
-          bottom: 8,
-          left: 24,
-          right: 24,
-        ),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                basicInfoCard(),
-                foodInfoCard(),
-            
-                GestureDetector(
+      body: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.only(
+              top: 8,
+              bottom: 8,
+              left: 16,
+              right: 16,
+            ),
+            children: [
+              basicInfoCard(),
+              foodInfoCard(),
+              medicalInfoCard(),
+          
+              Center(
+                child: GestureDetector(
                   onTap: () {
                     context.read<FileController>().clearPetDetailsJson();
                     Navigator.pop(context);
                   },
                   child: const Text('CLEAR ALL SAVED PETS'),
                 ),
-              ],
-            ),
-            AnimatedOpacity(
-              opacity: savedConfirmVisible ? 1 : 0,
-              duration: savedConfirmVisible ? const Duration(milliseconds: 100) : const Duration(milliseconds: 1000),
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                alignment: Alignment.topCenter,
-                child: Card(
-                  color: Theme.of(context).colorScheme.surface,
-                  child: Container(
-                    width: 74,
-                    height: 30,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Saved!", 
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
-                    ),
+              ),
+            ],
+          ),
+          AnimatedOpacity(
+            opacity: savedConfirmVisible ? 1 : 0,
+            duration: savedConfirmVisible ? const Duration(milliseconds: 100) : const Duration(milliseconds: 1000),
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              alignment: Alignment.topCenter,
+              child: Card(
+                color: Theme.of(context).colorScheme.surface,
+                child: Container(
+                  width: 74,
+                  height: 30,
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Saved!", 
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -375,7 +376,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           FileImage(File(pet.image!)) : null,
                         ),
                         Icon(
-                          Icons.pets,
+                          pet.image != null ? null : Icons.pets,
                           size: 80,
                           color: Theme.of(context).colorScheme.primary,
                         )
@@ -822,96 +823,197 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // What they eat
-                        SizedBox(
-                          height: 96,
-                          width: 160,
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
-                              filled: true,
-                              fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 5),
-                              labelText: "Pets Food",
-                              alignLabelWithHint: true,
-                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                            ),
-                            child: ListView.builder(
-                              itemCount: pet.petFoods.length + 1,
-                              itemBuilder: (context, index) => getFoods(index),
-                            ),
-                          ),
-                        ),
-                        // Notes/Routines
-                        LimitedBox(
-                          maxHeight: 110,
-                          maxWidth: 160,
-                          child: TextField(
-                            controller: foodNotesInput,
-                            maxLines: null,
-                            minLines: 5,
-                            autocorrect: true,
-                            keyboardType: TextInputType.multiline,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onChanged: (value) {
-                              setState(() {
-                                unsavedChanges = true;
-                                pet.petFoodNotes = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
-                              filled: true,
-                              fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
-                              labelText: "Notes",
-                              alignLabelWithHint: true,
-                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // What they eat
+                          Expanded(
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                                filled: true,
+                                fillColor: const Color.fromARGB(8, 0, 0, 0),
+                                contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 5),
+                                labelText: "Pets Food",
+                                alignLabelWithHint: true,
+                                labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                              ),
+                              child: ListView.builder(
+                                itemCount: pet.petFoods.length + 1,
+                                itemBuilder: (context, index) => getFoods(index),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          // Notes/Routines
+                          Expanded(
+                            child: TextField(
+                              controller: foodNotesInput,
+                              maxLines: null,
+                              minLines: 5,
+                              autocorrect: true,
+                              keyboardType: TextInputType.multiline,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onChanged: (value) {
+                                setState(() {
+                                  unsavedChanges = true;
+                                  pet.petFoodNotes = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                                filled: true,
+                                fillColor: const Color.fromARGB(8, 0, 0, 0),
+                                contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
+                                labelText: "Notes",
+                                alignLabelWithHint: true,
+                                labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Pet food image
-                        Transform.rotate(
-                          angle: -0.2,
-                          child: Image.asset('assets/images/petFoodBowl.png', width: 120,),
-                        ),
-                        // Feeding times
-                        SizedBox(
-                          height: 96,
-                          width: 150,
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
-                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
-                              filled: true,
-                              fillColor: const Color.fromARGB(8, 0, 0, 0),
-                              contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
-                              labelText: "Feeding Times",
-                              alignLabelWithHint: true,
-                              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                            ),
-                            child: ListView.builder(
-                              itemCount: pet.feedingTimes.length + 1,
-                              itemBuilder: (context, index) => getEatingTimes(index),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Pet food image
+                          Expanded(
+                            child: Center(
+                              child: Transform.rotate(
+                                angle: -0.2,
+                                child: Image.asset('assets/images/petFoodBowl.png', width: 120,),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          // Feeding times
+                          Expanded(
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8))),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8)), ),
+                                filled: true,
+                                fillColor: const Color.fromARGB(8, 0, 0, 0),
+                                contentPadding: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 6),
+                                labelText: "Feeding Times",
+                                alignLabelWithHint: true,
+                                labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                              ),
+                              child: ListView.builder(
+                                itemCount: pet.feedingTimes.length + 1,
+                                itemBuilder: (context, index) => getEatingTimes(index),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget medicalInfoCard() {
+    return Card(
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        iconColor: Theme.of(context).colorScheme.onSurface,
+        shape: const Border(),
+        title: Text("Medical", 
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        trailing: Icon(
+          visible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
+          color: Theme.of(context).colorScheme.onPrimary, 
+        ),
+        onExpansionChanged: (bool expanded) {
+          setState(() {
+            visible = expanded;
+          });
+        },
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            child: Container(
+              height: 234,
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1
+                ),
+              )
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Pet food image
+                          Expanded(
+                            child: Center(
+                              child: Transform.rotate(
+                                angle: -0.4,
+                                child: Image.asset('assets/images/petNeedle.png'),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          // Notes/Routines
+                          const Expanded(
+                            child: Text("temp"),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Text("temp2"),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          // Feeding times
+                          Expanded(
+                            child: Text("temp3"),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

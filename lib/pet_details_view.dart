@@ -640,6 +640,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               child: Icon(
                 Icons.clear, 
                 color: Theme.of(context).colorScheme.onSurface,
+                size: 20,
               ),
             ),
           ],
@@ -683,6 +684,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               child: Icon(
                 Icons.check, 
                 color: Theme.of(context).colorScheme.onSurface,
+                size: 20,
               ),
             ),
           ],

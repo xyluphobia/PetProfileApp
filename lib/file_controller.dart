@@ -65,7 +65,6 @@ class FileController extends ChangeNotifier
     notifyListeners();
   }
   clearAccountDetailsJson() async {
-    await FileManager().deleteFile(accountDetails?.image);
     _accountDetails = await FileManager().writeJsonFile(false, "{}");
     notifyListeners();
   }

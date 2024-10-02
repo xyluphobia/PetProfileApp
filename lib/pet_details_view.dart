@@ -83,8 +83,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       
       pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
-
-      if (newPet && context.read<FileController>().accountDetails != null) {
+      
+      // Defaults pet's owner to the account name if one is set.
+      if (newPet && context.read<FileController>().accountDetails != null) { 
         if (context.read<FileController>().accountDetails!.name != null) pet.owner = context.read<FileController>().accountDetails!.name!;
       }
 
@@ -104,7 +105,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         'Content-Type': 'application/json',
         'x-ms-blob-type': 'BlockBlob'
       };
-      var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
+      var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyxTwnRGdxuQ9AC9XL2w%3D'));
       
       if (petToShare.image != null) {
         Pet tempPet = petToShare;
@@ -623,7 +624,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     );
   }
 
-  bool visible = true;
+  bool foodVisible = true;
   TextEditingController foodListInput = TextEditingController();
   TextEditingController foodNotesInput = TextEditingController();
   Widget foodInfoCard() {
@@ -703,7 +704,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       void timePicker() async {
         final TimeOfDay? newTime = await showTimePicker(
           context: context,
-          initialTime: const TimeOfDay(hour: 12, minute: 0),
+          initialTime: const TimeOfDay(hour: 0, minute: 0),
           initialEntryMode: TimePickerEntryMode.input,
           builder: (context, child) {
             return Theme(
@@ -802,12 +803,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         trailing: Icon(
-          visible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
+          foodVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
           color: Theme.of(context).colorScheme.onPrimary, 
         ),
         onExpansionChanged: (bool expanded) {
           setState(() {
-            visible = expanded;
+            foodVisible = expanded;
           });
         },
         children: [
@@ -941,7 +942,175 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     );
   }
 
+  bool timePicked = false;
+  MedicationEntry newEntry = MedicationEntry(name: "", time: const TimeOfDay(hour: 0, minute: 0), taken: false);
+  TextEditingController medicationsInput = TextEditingController();
+  bool medicalVisible = true;
   Widget medicalInfoCard() {
+    Widget getMedications(int index) {
+      Future<TimeOfDay> timePicker() async {
+        final TimeOfDay? newTime = await showTimePicker(
+          context: context,
+          initialTime: const TimeOfDay(hour: 0, minute: 0),
+          initialEntryMode: TimePickerEntryMode.input,
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  surface: Theme.of(context).colorScheme.primary,
+                  primary: Theme.of(context).colorScheme.onSurface,
+                  onSurface: Theme.of(context).colorScheme.onPrimary,
+                  onPrimary: Theme.of(context).colorScheme.primary,
+                ),
+                timePickerTheme: TimePickerThemeData(
+                  dayPeriodColor: Theme.of(context).colorScheme.onSurface,
+                  dayPeriodTextColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Theme.of(context).colorScheme.surface;
+                    }
+                    return Theme.of(context).colorScheme.onPrimary;
+                  }),
+                )
+              ),
+              child: child!,
+            );
+          },
+        );
+        return newTime ?? const TimeOfDay(hour: 0, minute: 0);
+      }
+      void sortByTime() {
+        pet.medications.sort((a, b) {
+          // Convert TimeOfDay to minutes since midnight for comparison
+          final aMinutes = a.time.hour * 60 + a.time.minute;
+          final bMinutes = b.time.hour * 60 + b.time.minute;
+          return aMinutes.compareTo(bMinutes);
+        });
+        setState(() {
+          unsavedChanges = true;
+          pet.medications;
+        });
+      }
+      void resetOnSubmit() {
+        timePicked = false;
+        newEntry = MedicationEntry(name: "", time: const TimeOfDay(hour: 0, minute: 0), taken: false);
+        medicationsInput.clear();
+      }
+
+      if (pet.medications.isNotEmpty && index < pet.medications.length) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Text(
+                pet.medications[index].name, 
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Text(
+              pet.medications[index].time.format(context), 
+              maxLines: 1,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.end,
+            ),
+            const SizedBox(width: 12),
+            SizedBox(
+              width: 20,
+              height: 24,
+              child: Transform.scale(
+                scale: 0.8,
+                child: Checkbox(
+                  visualDensity: VisualDensity.compact,
+                  value: pet.medications[index].taken, 
+                  onChanged: (value) {
+                    setState(() {
+                      pet.medications[index].taken = value ?? false;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+      else {
+        return Container(
+          decoration: pet.medications.isNotEmpty ? BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ) : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 4,
+                child: TextField(
+                  maxLines: 1,
+                  controller: medicationsInput,
+                  decoration: InputDecoration(
+                    isCollapsed: true,
+                    hintText: "Add Medication",
+                    hintStyle: Theme.of(context).textTheme.bodySmall,
+                    border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  newEntry.time = await timePicker();
+                  setState(() {
+                    newEntry.time;
+                    timePicked = true;
+                  });
+                },
+                child: timePicked
+                ? Text(
+                    newEntry.time.format(context),
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.end,
+                  )
+                : Text(
+                    "12:00 AM",
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.end,
+                  ),
+              ),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 20,
+                child: GestureDetector(
+                  onTap: () {
+                    // need to do checks to ensure each variable is filled
+                    if (medicationsInput.text.isEmpty || medicationsInput.text == "") return;
+
+                    newEntry.name = medicationsInput.text;
+                    setState(() {
+                      unsavedChanges = true;
+                      pet.medications.add(newEntry);
+                    });
+                    sortByTime();
+                    resetOnSubmit();
+                  }, 
+                  child: Icon(
+                    Icons.add, 
+                    color: Theme.of(context).colorScheme.onSurface,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
     return Card(
       child: ExpansionTile(
         initiallyExpanded: true,
@@ -951,12 +1120,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         trailing: Icon(
-          visible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
+          medicalVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, 
           color: Theme.of(context).colorScheme.onPrimary, 
         ),
         onExpansionChanged: (bool expanded) {
           setState(() {
-            visible = expanded;
+            medicalVisible = expanded;
           });
         },
         children: [
@@ -973,16 +1142,17 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               ),
               child: Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Column(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Pet food image
-                          Expanded(
+                          SizedBox(
+                            width: 90,
                             child: Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -991,19 +1161,20 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                                     angle: -0.4,
                                     child: Image.asset('assets/images/petNeedle.png'),
                                   ),
-                                  const SizedBox(
-                                    width: 50,
-                                  )
                                 ],
                               ),
                             ),
                           ),
                           const SizedBox(
-                            height: 8,
+                            width: 8,
                           ),
                           // Notes/Routines
-                          const Expanded(
-                            child: Text("temp"),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: 1 + pet.medications.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) => getMedications(index),
+                            ),
                           ),
                         ],
                       ),
@@ -1012,19 +1183,19 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       width: 8,
                     ),
                     const Expanded(
-                      child: Column(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
-                            child: Text("temp2"),
+                            child: Text("temp1"),
                           ),
                           const SizedBox(
-                            height: 8,
+                            width: 8,
                           ),
                           // Feeding times
-                          Expanded(
-                            child: Text("temp3"),
+                          const Expanded(
+                            child: Text("temp2"),
                           ),
                         ],
                       ),

@@ -43,9 +43,17 @@ class Pet {
     List<String>? petFoods,
     List<TimeOfDay>? feedingTimes,
     this.petFoodNotes,
+
+    List<MedicationEntry>? medications,
+    Map<String, bool>? vaccinations,
+    List<String>? procedures,
   }) : 
     petFoods = petFoods ?? <String>[],
-    feedingTimes = feedingTimes ?? <TimeOfDay>[];
+    feedingTimes = feedingTimes ?? <TimeOfDay>[],
+    
+    medications = medications ?? <MedicationEntry>[],
+    vaccinations = vaccinations ?? <String, bool>{},
+    procedures = procedures ?? <String>[];
 
   bool notOwnedByAccount;
   String? image;
@@ -61,6 +69,10 @@ class Pet {
   List<TimeOfDay> feedingTimes;
   String? petFoodNotes;
 
+  List<MedicationEntry> medications;
+  Map<String, bool> vaccinations;
+  List<String> procedures;
+
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
     image: json["image"],
@@ -72,13 +84,26 @@ class Pet {
     breed: json["breed"],
     owner: json["owner"],
 
-    petFoods: List<String>.from(json["petFoods"]),
+    petFoods: List<String>.from(json["petFoods"] ?? []),
     feedingTimes: (json["feedingTimes"] as List<dynamic>?)
       ?.map((item) => TimeOfDay(
           hour: item['hour'] as int, 
           minute: item['minute'] as int))
       .toList() ?? [],
     petFoodNotes: json["petFoodNotes"],
+
+    medications: (json["medications"] as List<dynamic>?)
+      ?.map((med) => MedicationEntry(
+        name: med['name'] as String,
+        time: TimeOfDay(
+          hour: med['time']['hour'] as int,
+          minute: med['time']['minute'] as int
+        ),
+        taken: med['taken'] as bool
+      ))
+      .toList() ?? [],
+    vaccinations: Map<String, bool>.from(json["vaccinations"] ?? {}),
+    procedures: List<String>.from(json["procedures"] ?? []),
   );
 
   Map<String, dynamic> toJson() => {
@@ -100,5 +125,28 @@ class Pet {
       })
       .toList(),
     "petFoodNotes": petFoodNotes,
+
+    "medications": medications.map((medEntry) => {
+      'name': medEntry.name,
+      'time': {
+        'hour': medEntry.time.hour,
+        'minute': medEntry.time.minute,
+      },
+      'taken': medEntry.taken,
+    }).toList(),
+    "vaccinations": vaccinations,
+    "procedures": procedures,
   };
+}
+
+class MedicationEntry {
+  String name;
+  TimeOfDay time;
+  bool taken;
+
+  MedicationEntry({
+    required this.name,
+    required this.time,
+    required this.taken,
+  });
 }

@@ -58,10 +58,6 @@ class _AccountViewState extends State<AccountView> {
                       "919 648 9503",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    Text(
-                      "mattscav@gmail.com",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
                   ],
                 ),
               ),
@@ -74,10 +70,6 @@ class _AccountViewState extends State<AccountView> {
                     Text(
                       "Locations",
                       style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    Text(
-                      account.homeAddress != null ? account.homeAddress! : "406 Summerlin Dr Goldsboro NC 27530 United States",
-                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       account.preferredVetAddress != null ? account.preferredVetAddress! : "812 Moonerjin St Silverboro SC 30527 Australia",
@@ -109,7 +101,6 @@ class _AccountViewState extends State<AccountView> {
               heroTag: "temp1",
               onPressed: () async {
                 account.name = "trial";
-                account.homeAddress = "406 Summerlin Dr Goldsboro";
                 account.preferredVetAddress = "812 Moonerjin St Silverboro";
 
                 await context.read<FileController>().writeAccountDetails(account);

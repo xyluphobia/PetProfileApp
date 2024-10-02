@@ -997,40 +997,49 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       }
 
       if (pet.medications.isNotEmpty && index < pet.medications.length) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              flex: 4,
-              child: Text(
-                pet.medications[index].name, 
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Text(
-              pet.medications[index].time.format(context), 
-              maxLines: 1,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.end,
-            ),
-            const SizedBox(width: 12),
-            SizedBox(
-              width: 20,
-              height: 24,
-              child: Transform.scale(
-                scale: 0.8,
-                child: Checkbox(
-                  visualDensity: VisualDensity.compact,
-                  value: pet.medications[index].taken, 
-                  onChanged: (value) {
-                    setState(() {
-                      pet.medications[index].taken = value ?? false;
-                    });
-                  },
+        return Dismissible(
+          key: Key(index.toString()),
+          background: Container(color: Colors.red),
+          onDismissed: (direction) {
+            setState(() {
+              pet.medications.removeAt(index);
+            });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  pet.medications[index].name, 
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
-            ),
-          ],
+              Text(
+                pet.medications[index].time.format(context), 
+                maxLines: 1,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.end,
+              ),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 20,
+                height: 24,
+                child: Transform.scale(
+                  scale: 0.8,
+                  child: Checkbox(
+                    visualDensity: VisualDensity.compact,
+                    value: pet.medications[index].taken, 
+                    onChanged: (value) {
+                      setState(() {
+                        pet.medications[index].taken = value ?? false;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       }
       else {
@@ -1170,10 +1179,13 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           ),
                           // Notes/Routines
                           Expanded(
-                            child: ListView.builder(
-                              itemCount: 1 + pet.medications.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) => getMedications(index),
+                            child: ClipRRect(
+                              clipBehavior: Clip.hardEdge,
+                              child: ListView.builder(
+                                itemCount: 1 + pet.medications.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) => getMedications(index),
+                              ),
                             ),
                           ),
                         ],

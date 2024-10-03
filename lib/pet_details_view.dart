@@ -945,7 +945,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   bool timePicked = false;
   MedicationEntry newEntry = MedicationEntry(name: "", time: const TimeOfDay(hour: 0, minute: 0), taken: false);
   TextEditingController medicationsInput = TextEditingController();
+  TextEditingController vaccinationsInput = TextEditingController();
   bool medicalVisible = true;
+  bool vaccinationsVisible = false;
+  bool proceduresVisible = false;
   Widget medicalInfoCard() {
     Widget getMedications(int index) {
       Future<TimeOfDay> timePicker() async {
@@ -998,7 +1001,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
       if (pet.medications.isNotEmpty && index < pet.medications.length) {
         return Dismissible(
-          key: Key(index.toString()),
+          key: UniqueKey(),
           background: Container(color: Colors.red),
           onDismissed: (direction) {
             setState(() {
@@ -1032,6 +1035,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     value: pet.medications[index].taken, 
                     onChanged: (value) {
                       setState(() {
+                        unsavedChanges = true;
                         pet.medications[index].taken = value ?? false;
                       });
                     },
@@ -1120,7 +1124,115 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       }
     }
 
+    Widget getVaccinations(int index) {
+      if (pet.vaccinations.isNotEmpty && index < pet.vaccinations.length) {
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(color: Colors.red),
+          onDismissed: (direction) {
+            setState(() {
+              pet.vaccinations.removeAt(index);
+            });
+          },
+          child: Container(
+            height: 30,
+            margin: const EdgeInsets.only(left: 8, right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    pet.vaccinations[index].name, 
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                const SizedBox(
+                  width: 52,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(
+                        Icons.upload_file,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.view_in_ar_rounded,
+                        size: 24,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      }
+      else {
+        return Container(
+          margin: const EdgeInsets.only(left: 8, right: 8),
+          decoration: pet.vaccinations.isNotEmpty ? BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ) : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextField(
+                  maxLines: 1,
+                  controller: vaccinationsInput,
+                  decoration: InputDecoration(
+                    isCollapsed: true,
+                    hintText: "Add Vaccine",
+                    hintStyle: Theme.of(context).textTheme.bodySmall,
+                    border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Icon(
+                      Icons.upload_file,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      child: const Icon(
+                        Icons.add,
+                        size: 24,
+                      ),
+                      onTap: () {
+                        if (vaccinationsInput.text.isEmpty || vaccinationsInput.text == "") return;
+                
+                        setState(() {
+                          pet.vaccinations.add(VaccinationEntry(
+                            name: vaccinationsInput.text, 
+                            base64: "fill in base64",
+                          ));
+                        });
+                        vaccinationsInput.clear();
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    } 
+
     return Card(
+      clipBehavior: Clip.hardEdge,
       child: ExpansionTile(
         initiallyExpanded: true,
         iconColor: Theme.of(context).colorScheme.onSurface,
@@ -1138,84 +1250,136 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           });
         },
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: Container(
-              height: 234,
-              decoration: BoxDecoration(
-                border: Border(top: BorderSide(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  width: 1
+          Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 16, right: 16),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 1,
+                      ),
+                    ),
+                  ),
                 ),
-              )
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Pet food image
-                          SizedBox(
-                            width: 90,
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Transform.rotate(
+              LimitedBox(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Column(
+                    children: [
+                      LimitedBox(
+                        maxHeight: 90,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Pet food image
+                              SizedBox(
+                                height: 90,
+                                width: 90,
+                                child: Center(
+                                  child: Transform.rotate(
                                     angle: -0.4,
                                     child: Image.asset('assets/images/petNeedle.png'),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          // Notes/Routines
-                          Expanded(
-                            child: ClipRRect(
-                              clipBehavior: Clip.hardEdge,
-                              child: ListView.builder(
-                                itemCount: 1 + pet.medications.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => getMedications(index),
+                              const SizedBox(
+                                width: 8,
                               ),
-                            ),
+                              // Notes/Routines
+                              Expanded(
+                                child: ClipRRect(
+                                  clipBehavior: Clip.hardEdge,
+                                  child: ListView.builder(
+                                    itemCount: 1 + pet.medications.length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) => getMedications(index),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    const Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      ExpansionTile(
+                        initiallyExpanded: false,
+                        iconColor: Theme.of(context).colorScheme.onSurface,
+                        shape: const Border(),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        title: Text("Vaccinations", 
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                        ),
+                        trailing: Icon(
+                          vaccinationsVisible ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_down_outlined, 
+                          color: Theme.of(context).colorScheme.onPrimary, 
+                        ),
+                        onExpansionChanged: (bool expanded) {
+                          setState(() {
+                            vaccinationsVisible = expanded;
+                          });
+                        },
                         children: [
-                          Expanded(
-                            child: Text("temp1"),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          // Feeding times
-                          const Expanded(
-                            child: Text("temp2"),
+                          ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            child: LimitedBox(
+                              maxHeight: 200,
+                              child: ListView.builder(
+                                itemCount: 1 + pet.vaccinations.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) => getVaccinations(index),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      ExpansionTile(
+                        initiallyExpanded: false,
+                        iconColor: Theme.of(context).colorScheme.onSurface,
+                        shape: const Border(),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        childrenPadding: const EdgeInsets.only(bottom: 4),
+                        title: Text("Procedures", 
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                        ),
+                        trailing: Icon(
+                          proceduresVisible ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_down_outlined, 
+                          color: Theme.of(context).colorScheme.onPrimary, 
+                        ),
+                        onExpansionChanged: (bool expanded) {
+                          setState(() {
+                            proceduresVisible = expanded;
+                          });
+                        },
+                        children: [
+                          ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            child: LimitedBox(
+                              maxHeight: 200,
+                              child: ListView.builder(
+                                itemCount: 1 + pet.vaccinations.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) => getVaccinations(index),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),

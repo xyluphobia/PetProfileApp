@@ -45,15 +45,15 @@ class Pet {
     this.petFoodNotes,
 
     List<MedicationEntry>? medications,
-    Map<String, bool>? vaccinations,
-    List<String>? procedures,
+    List<VaccinationEntry>? vaccinations,
+    List<ProcedureEntry>? procedures,
   }) : 
     petFoods = petFoods ?? <String>[],
     feedingTimes = feedingTimes ?? <TimeOfDay>[],
     
     medications = medications ?? <MedicationEntry>[],
-    vaccinations = vaccinations ?? <String, bool>{},
-    procedures = procedures ?? <String>[];
+    vaccinations = vaccinations ?? <VaccinationEntry>[],
+    procedures = procedures ?? <ProcedureEntry>[];
 
   bool notOwnedByAccount;
   String? image;
@@ -70,8 +70,8 @@ class Pet {
   String? petFoodNotes;
 
   List<MedicationEntry> medications;
-  Map<String, bool> vaccinations;
-  List<String> procedures;
+  List<VaccinationEntry> vaccinations;  // Name & base64 string of uploaded vaccination
+  List<ProcedureEntry> procedures;  // Name & base64 string of uploaded procedure
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
@@ -102,8 +102,18 @@ class Pet {
         taken: med['taken'] as bool
       ))
       .toList() ?? [],
-    vaccinations: Map<String, bool>.from(json["vaccinations"] ?? {}),
-    procedures: List<String>.from(json["procedures"] ?? []),
+    vaccinations: (json["vaccinations"] as List<dynamic>?)
+      ?.map((vac) => VaccinationEntry(
+            name: vac['name'] as String,
+            base64: vac['base64'] as String,
+          ))
+      .toList() ?? [],
+    procedures: (json["procedures"] as List<dynamic>?)
+      ?.map((proc) => ProcedureEntry(
+            name: proc['name'] as String,
+            base64: proc['base64'] as String,
+          ))
+      .toList() ?? [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -134,8 +144,14 @@ class Pet {
       },
       'taken': medEntry.taken,
     }).toList(),
-    "vaccinations": vaccinations,
-    "procedures": procedures,
+    "vaccinations": vaccinations.map((vacEntry) => {
+      'name': vacEntry.name,
+      'base64': vacEntry.base64,
+    }).toList(),
+    "procedures": procedures.map((procEntry) => {
+        'name': procEntry.name,
+        'base64': procEntry.base64,
+      }).toList(),
   };
 }
 
@@ -148,5 +164,23 @@ class MedicationEntry {
     required this.name,
     required this.time,
     required this.taken,
+  });
+}
+class VaccinationEntry {
+  String name;
+  String base64;
+
+  VaccinationEntry ({
+    required this.name,
+    required this.base64,
+  });
+}
+class ProcedureEntry {
+  String name;
+  String base64;
+
+  ProcedureEntry({
+    required this.name,
+    required this.base64,
   });
 }

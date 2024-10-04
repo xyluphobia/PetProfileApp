@@ -31,16 +31,20 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   late int petIndex = widget.petIndex;
   bool savedConfirmVisible = false;
 
-  Future selectImage(ImageSource imgSource) async {
+  Future<String?> selectImage(ImageSource imgSource, {bool petImage = true}) async {
     final returnedImage = await ImagePicker().pickImage(source: imgSource, imageQuality: 70);
 
-    if (returnedImage == null) return;
+    if (returnedImage == null) return null;
 
     String savedImagePath = await FileManager().saveImage(File(returnedImage.path));
-    setState(() {
-      pet.image = savedImagePath;
-    });
-    return;
+    if (petImage)
+    {
+      setState(() {
+        pet.image = savedImagePath;
+      });
+      return null;
+    }
+    return savedImagePath;
   }
 
   Future addOrEditPetData() async {
@@ -280,7 +284,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     );
   }
 
-  Future displayBottomSheet(BuildContext context) {
+  Future<String?> displayBottomSheet(BuildContext context, {bool petImage = true}) {
     return showModalBottomSheet(
       context: context, 
       builder: (context) => SizedBox(
@@ -292,9 +296,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
-                  selectImage(ImageSource.gallery).then((_) {
+                  selectImage(ImageSource.gallery, petImage: petImage).then((path) {
                     addOrEditPetData();
-                    if (context.mounted) Navigator.pop(context);
+                    if (path != null) {
+                      if (context.mounted) Navigator.pop(context, path);
+                    }
+                    else {
+                      if (context.mounted) Navigator.pop(context);
+                    }
                   });
                 }, 
                 style: ButtonStyle(
@@ -326,9 +335,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
-                  selectImage(ImageSource.camera).then((_) {
+                  selectImage(ImageSource.camera, petImage: petImage).then((path) {
                     addOrEditPetData();
-                    if (context.mounted) Navigator.pop(context);
+                    if (path != null) {
+                      if (context.mounted) Navigator.pop(context, path);
+                    }
+                    else {
+                      if (context.mounted) Navigator.pop(context);
+                    }
                   });
                 }, 
                 style: ButtonStyle(
@@ -944,6 +958,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   bool timePicked = false;
   MedicationEntry newEntry = MedicationEntry(name: "", time: const TimeOfDay(hour: 0, minute: 0), taken: false);
+  String newPath = "";
   TextEditingController medicationsInput = TextEditingController();
   TextEditingController vaccinationsInput = TextEditingController();
   bool medicalVisible = true;
@@ -1146,19 +1161,30 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: 52,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.upload_file,
-                        size: 22,
+                      GestureDetector(
+                        onTap: () async {
+                          String? path = await displayBottomSheet(context, petImage: false);
+                          if (path != null) pet.vaccinations[index].imagePath = path;
+                        },
+                        child: const Icon(
+                          Icons.upload_file,
+                          size: 22,
+                        ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(
-                        Icons.view_in_ar_rounded,
-                        size: 24,
+                      GestureDetector(
+                        onTap: () {
+                          // serve image
+                        },
+                        child: const Icon(
+                          Icons.view_in_ar_rounded,
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),
@@ -1200,9 +1226,15 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.upload_file,
-                      size: 22,
+                    GestureDetector(
+                      onTap: () async {
+                        String? path = await displayBottomSheet(context, petImage: false);
+                        if (path != null) newPath = path;
+                      },
+                      child: const Icon(
+                        Icons.upload_file,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
@@ -1216,10 +1248,11 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         setState(() {
                           pet.vaccinations.add(VaccinationEntry(
                             name: vaccinationsInput.text, 
-                            base64: "fill in base64",
+                            imagePath: newPath,
                           ));
                         });
                         vaccinationsInput.clear();
+                        newPath = "";
                       },
                     ),
                   ],

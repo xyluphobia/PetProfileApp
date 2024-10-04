@@ -70,8 +70,8 @@ class Pet {
   String? petFoodNotes;
 
   List<MedicationEntry> medications;
-  List<VaccinationEntry> vaccinations;  // Name & base64 string of uploaded vaccination
-  List<ProcedureEntry> procedures;  // Name & base64 string of uploaded procedure
+  List<VaccinationEntry> vaccinations;  // Name & imagePath string of uploaded vaccination
+  List<ProcedureEntry> procedures;  // Name & imagePath string of uploaded procedure
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
@@ -105,13 +105,13 @@ class Pet {
     vaccinations: (json["vaccinations"] as List<dynamic>?)
       ?.map((vac) => VaccinationEntry(
             name: vac['name'] as String,
-            base64: vac['base64'] as String,
+            imagePath: vac['imagePath'] as String,
           ))
       .toList() ?? [],
     procedures: (json["procedures"] as List<dynamic>?)
       ?.map((proc) => ProcedureEntry(
             name: proc['name'] as String,
-            base64: proc['base64'] as String,
+            imagePath: proc['imagePath'] as String,
           ))
       .toList() ?? [],
   );
@@ -146,11 +146,11 @@ class Pet {
     }).toList(),
     "vaccinations": vaccinations.map((vacEntry) => {
       'name': vacEntry.name,
-      'base64': vacEntry.base64,
+      'imagePath': vacEntry.imagePath,
     }).toList(),
     "procedures": procedures.map((procEntry) => {
         'name': procEntry.name,
-        'base64': procEntry.base64,
+        'imagePath': procEntry.imagePath,
       }).toList(),
   };
 }
@@ -168,19 +168,19 @@ class MedicationEntry {
 }
 class VaccinationEntry {
   String name;
-  String base64;
+  String imagePath;
 
   VaccinationEntry ({
     required this.name,
-    required this.base64,
+    required this.imagePath,
   });
 }
 class ProcedureEntry {
   String name;
-  String base64;
+  String imagePath;
 
   ProcedureEntry({
     required this.name,
-    required this.base64,
+    required this.imagePath,
   });
 }

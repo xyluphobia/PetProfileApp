@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -113,9 +112,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       
       if (petToShare.image != null) {
         Pet tempPet = petToShare;
-        File _imageFile = File(tempPet.image!);
-        Uint8List _bytes = await _imageFile.readAsBytes();
-        tempPet.image = base64Encode(_bytes);
+        File imageFile = File(tempPet.image!);
+        Uint8List bytes = await imageFile.readAsBytes();
+        tempPet.image = base64Encode(bytes);
 
         request.body = jsonEncode(tempPet);
       } else {
@@ -160,8 +159,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
           {
             if (unsavedChanges) await saveChangesQuestion(context);
 
-            String petCode = await sharePetInfo(context.read<FileController>().petDetails?.data[petIndex]);
-            if (context.mounted) showPetCode(context, petCode);
+            if (context.mounted) {
+              String petCode = await sharePetInfo(context.read<FileController>().petDetails?.data[petIndex]);
+              if (context.mounted) showPetCode(context, petCode);
+            }
           }
           else {
             NetworkUtil.showTooManyRequests(context);

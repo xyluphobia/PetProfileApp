@@ -33,7 +33,7 @@ class _AccountViewState extends State<AccountView> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 64,
                       backgroundColor: Colors.amber,
                     ),
@@ -72,7 +72,7 @@ class _AccountViewState extends State<AccountView> {
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     Text(
-                      account.preferredVetAddress != null ? account.preferredVetAddress! : "812 Moonerjin St Silverboro SC 30527 Australia",
+                      account.preferredVetAddress != null ? account.preferredVetAddress! : "812 Example St Example SC 30527 Australia",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
@@ -101,7 +101,7 @@ class _AccountViewState extends State<AccountView> {
               heroTag: "temp1",
               onPressed: () async {
                 account.name = "trial";
-                account.preferredVetAddress = "812 Moonerjin St Silverboro";
+                account.preferredVetAddress = "812 Example St Example";
 
                 await context.read<FileController>().writeAccountDetails(account);
               },

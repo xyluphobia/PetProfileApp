@@ -39,11 +39,11 @@ class _PetsViewState extends State<PetsView> {
       
       Pet pet = Pet.fromJson(jsonDecode(responseString));
       if (pet.image != null) {
-        Uint8List _bytes = base64Decode(pet.image!);
+        Uint8List bytes = base64Decode(pet.image!);
         String dir = (await getApplicationDocumentsDirectory()).path;
         File file = File("$dir/${DateTime.now()}");
 
-        await file.writeAsBytes(_bytes);
+        await file.writeAsBytes(bytes);
         pet.image = file.path;
       }
 

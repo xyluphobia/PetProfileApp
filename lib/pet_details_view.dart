@@ -1180,7 +1180,15 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       const SizedBox(width: 4),
                       GestureDetector(
                         onTap: () {
-                          // serve image
+                          showDialog(
+                            context: context, 
+                            builder: (_) => Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Image.file(File(pet.vaccinations[index].imagePath))
+                              )
+                            ),
+                          );
                         },
                         child: const Icon(
                           Icons.view_in_ar_rounded,
@@ -1232,9 +1240,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         String? path = await displayBottomSheet(context, petImage: false);
                         if (path != null) newPath = path;
                       },
-                      child: const Icon(
+                      child: Icon(
                         Icons.upload_file,
                         size: 22,
+                        color: newPath != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(width: 4),

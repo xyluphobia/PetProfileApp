@@ -97,6 +97,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
     Future<String> sharePetInfo(Pet? petToShare) async {
       if (petToShare == null) return "Error";
+      Pet tempPet = petToShare;
       petToShare.notOwnedByAccount = true;
 
       var uuid = const Uuid();
@@ -108,18 +109,28 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         'Content-Type': 'application/json',
         'x-ms-blob-type': 'BlockBlob'
       };
-      var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyxTwnRGdxuQ9AC9XL2w%3D'));
-      
-      if (petToShare.image != null) {
-        Pet tempPet = petToShare;
-        File imageFile = File(tempPet.image!);
-        Uint8List bytes = await imageFile.readAsBytes();
-        tempPet.image = base64Encode(bytes);
+      var request = http.Request('PUT', Uri.parse('https://shareblobsaccount.blob.core.windows.net/petsharecontainer/$filename.json?sv=2022-11-02&ss=bf&srt=o&sp=wactfx&se=2025-10-01T08:19:27Z&st=2024-09-13T00:19:27Z&spr=https&sig=sF2pNHIdjPHa17nStOyabcxYwxTwnRGdxuQ9AC9XL2w%3D'));
 
-        request.body = jsonEncode(tempPet);
-      } else {
-        request.body = json.encode(petToShare);
+      Future<String> base64FromImage(String imagePath) async {
+        File imageFile = File(imagePath);
+        Uint8List bytes = await imageFile.readAsBytes();
+        return base64Encode(bytes);
       }
+
+      if (petToShare.image != null) {
+        petToShare.image = await base64FromImage(petToShare.image!);
+      } 
+      if (petToShare.vaccinations.isNotEmpty) {
+        for (int i = 0; i < petToShare.vaccinations.length; i++) {
+          if (petToShare.vaccinations[i].imagePath != "") petToShare.vaccinations[i].imagePath = await base64FromImage(petToShare.vaccinations[i].imagePath);
+        }
+      }
+      if (petToShare.procedures.isNotEmpty) {
+        for (int i = 0; i < petToShare.procedures.length; i++) {
+          if (petToShare.procedures[i].imagePath != "") petToShare.procedures[i].imagePath = await base64FromImage(petToShare.procedures[i].imagePath);
+        }
+      }
+      request.body = json.encode(petToShare);
       
       request.headers.addAll(headers);
       http.StreamedResponse response = await request.send();

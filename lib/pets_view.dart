@@ -38,13 +38,28 @@ class _PetsViewState extends State<PetsView> {
       String responseString = await response.stream.bytesToString();
       
       Pet pet = Pet.fromJson(jsonDecode(responseString));
-      if (pet.image != null) {
-        Uint8List bytes = base64Decode(pet.image!);
+
+      Future<String> base64ToImage(String byteString) async {
+        Uint8List bytes = base64Decode(byteString);
         String dir = (await getApplicationDocumentsDirectory()).path;
         File file = File("$dir/${DateTime.now()}");
 
         await file.writeAsBytes(bytes);
-        pet.image = file.path;
+        return file.path;
+      }
+
+      if (pet.image != null) {
+        pet.image = await base64ToImage(pet.image!);
+      } 
+      if (pet.vaccinations.isNotEmpty) {
+        for (int i = 0; i < pet.vaccinations.length; i++) {
+          if (pet.vaccinations[i].imagePath != "") pet.vaccinations[i].imagePath = await base64ToImage(pet.vaccinations[i].imagePath);
+        }
+      }
+      if (pet.procedures.isNotEmpty) {
+        for (int i = 0; i < pet.procedures.length; i++) {
+          if (pet.procedures[i].imagePath != "") pet.procedures[i].imagePath = await base64ToImage(pet.procedures[i].imagePath);
+        }
       }
 
       if (mounted) {

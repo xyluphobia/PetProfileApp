@@ -97,7 +97,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
     Future<String> sharePetInfo(Pet? petToShare) async {
       if (petToShare == null) return "Error";
-      Pet tempPet = petToShare;
       petToShare.notOwnedByAccount = true;
 
       var uuid = const Uuid();
@@ -970,9 +969,11 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
   bool timePicked = false;
   MedicationEntry newEntry = MedicationEntry(name: "", time: const TimeOfDay(hour: 0, minute: 0), taken: false);
-  String newPath = "";
+  String newPathVac = "";
+  String newPathPro = "";
   TextEditingController medicationsInput = TextEditingController();
   TextEditingController vaccinationsInput = TextEditingController();
+  TextEditingController proceduresInput = TextEditingController();
   bool medicalVisible = true;
   bool vaccinationsVisible = false;
   bool proceduresVisible = false;
@@ -1191,6 +1192,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       const SizedBox(width: 4),
                       GestureDetector(
                         onTap: () {
+                          if (pet.vaccinations[index].imagePath == "") return;
+
                           showDialog(
                             context: context, 
                             builder: (_) => Center(
@@ -1201,9 +1204,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                             ),
                           );
                         },
-                        child: const Icon(
+                        child: Icon(
                           Icons.view_in_ar_rounded,
                           size: 24,
+                          color: pet.vaccinations[index].imagePath != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ],
@@ -1249,12 +1253,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     GestureDetector(
                       onTap: () async {
                         String? path = await displayBottomSheet(context, petImage: false);
-                        if (path != null) newPath = path;
+                        if (path != null) newPathVac = path;
                       },
                       child: Icon(
                         Icons.upload_file,
                         size: 22,
-                        color: newPath != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
+                        color: newPathVac != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -1269,11 +1273,11 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         setState(() {
                           pet.vaccinations.add(VaccinationEntry(
                             name: vaccinationsInput.text, 
-                            imagePath: newPath,
+                            imagePath: newPathVac,
                           ));
                         });
                         vaccinationsInput.clear();
-                        newPath = "";
+                        newPathVac = "";
                       },
                     ),
                   ],
@@ -1285,6 +1289,143 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       }
     } 
 
+    Widget getProcedures(int index) {
+      if (pet.procedures.isNotEmpty && index < pet.procedures.length) {
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(color: Colors.red),
+          onDismissed: (direction) {
+            setState(() {
+              pet.procedures.removeAt(index);
+            });
+          },
+          child: Container(
+            height: 30,
+            margin: const EdgeInsets.only(left: 8, right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    pet.procedures[index].name, 
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                SizedBox(
+                  width: 52,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          String? path = await displayBottomSheet(context, petImage: false);
+                          if (path != null) pet.procedures[index].imagePath = path;
+                        },
+                        child: const Icon(
+                          Icons.upload_file,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: () {
+                          if (pet.procedures[index].imagePath == "") return;
+
+                          showDialog(
+                            context: context, 
+                            builder: (_) => Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Image.file(File(pet.procedures[index].imagePath))
+                              )
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          Icons.view_in_ar_rounded,
+                          size: 24,
+                          color: pet.procedures[index].imagePath != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      }
+      else {
+        return Container(
+          margin: const EdgeInsets.only(left: 8, right: 8),
+          decoration: pet.procedures.isNotEmpty ? BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ) : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextField(
+                  maxLines: 1,
+                  controller: proceduresInput,
+                  decoration: InputDecoration(
+                    isCollapsed: true,
+                    hintText: "Add Procedure",
+                    hintStyle: Theme.of(context).textTheme.bodySmall,
+                    border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                    focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        String? path = await displayBottomSheet(context, petImage: false);
+                        if (path != null) newPathPro = path;
+                      },
+                      child: Icon(
+                        Icons.upload_file,
+                        size: 22,
+                        color: newPathPro != "" ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      child: const Icon(
+                        Icons.add,
+                        size: 24,
+                      ),
+                      onTap: () {
+                        if (proceduresInput.text.isEmpty || proceduresInput.text == "") return;
+                
+                        setState(() {
+                          pet.procedures.add(ProcedureEntry(
+                            name: proceduresInput.text, 
+                            imagePath: newPathPro,
+                          ));
+                        });
+                        proceduresInput.clear();
+                        newPathPro = "";
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    } 
+    
     return Card(
       clipBehavior: Clip.hardEdge,
       child: ExpansionTile(
@@ -1421,9 +1562,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                             child: LimitedBox(
                               maxHeight: 200,
                               child: ListView.builder(
-                                itemCount: 1 + pet.vaccinations.length,
+                                itemCount: 1 + pet.procedures.length,
                                 shrinkWrap: true,
-                                itemBuilder: (context, index) => getVaccinations(index),
+                                itemBuilder: (context, index) => getProcedures(index),
                               ),
                             ),
                           ),

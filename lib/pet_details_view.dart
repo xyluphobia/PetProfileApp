@@ -193,6 +193,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               basicInfoCard(),
               foodInfoCard(),
               medicalInfoCard(),
+              emergencyInfo(),
           
               Center(
                 child: GestureDetector(
@@ -1579,6 +1580,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         ],
       ),
     );
+  }
+
+  Widget emergencyInfo() {
+    return Card();
   }
 }
 

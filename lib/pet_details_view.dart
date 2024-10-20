@@ -6,6 +6,7 @@ import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/network_util.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   late Pet pet;
   late int petIndex = widget.petIndex;
   bool savedConfirmVisible = false;
+  late Account account;
 
   Future<String?> selectImage(ImageSource imgSource, {bool petImage = true}) async {
     final returnedImage = await ImagePicker().pickImage(source: imgSource, imageQuality: 70);
@@ -87,6 +89,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) || newPet ? 
       Pet() : context.select((FileController controller) => controller.petDetails!.data[petIndex]);
       
+      account = context.watch<FileController>().accountDetails != null ? context.watch<FileController>().accountDetails! : Account();
+    
       // Defaults pet's owner to the account name if one is set.
       if (newPet && context.read<FileController>().accountDetails != null) { 
         if (context.read<FileController>().accountDetails!.name != null) pet.owner = context.read<FileController>().accountDetails!.name!;
@@ -1585,6 +1589,12 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   Widget emergencyInfo() {
     return Card(
       clipBehavior: Clip.hardEdge,
+      child: Column (
+        children: [
+          Text(account.preferredVetAddress ?? "Please set your preferred vet."),
+          Text(account.emergencyVetAddress ?? "Please set your emergency vet."),
+        ],
+      ),
     );
   }
 }

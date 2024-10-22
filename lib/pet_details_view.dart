@@ -1589,11 +1589,14 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   Widget emergencyInfo() {
     return Card(
       clipBehavior: Clip.hardEdge,
-      child: Column (
-        children: [
-          Text(account.preferredVetAddress ?? "Please set your preferred vet."),
-          Text(account.emergencyVetAddress ?? "Please set your emergency vet."),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+        child: Column (
+          children: [
+            Text(account.preferredVetAddress ?? "Please set your preferred vet."),
+            Text(account.emergencyVetAddress ?? "Please set your emergency vet."),
+          ],
+        ),
       ),
     );
   }

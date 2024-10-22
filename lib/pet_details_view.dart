@@ -1590,11 +1590,56 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+        padding: const EdgeInsets.all(8.0),
         child: Column (
           children: [
-            Text(account.preferredVetAddress ?? "Please set your preferred vet."),
-            Text(account.emergencyVetAddress ?? "Please set your emergency vet."),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text( // Title
+                      "Preferred",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text( //Address
+                      // account.preferredVetAddress ?? "Please set your preferred vet.",
+                      "Street Num, Street\nTown, State, Zip\nCountry",
+                    ),
+                  ],
+                ),
+                Container(
+                  color: Colors.red,
+                  height: 80,
+                  width: 80,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0), // Row Spacer
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text( // Title
+                      "Emergency",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text( // Address
+                      //account.emergencyVetAddress ?? "Please set your emergency vet.",
+                      "Street Num, Street\nTown, State, Zip\nCountry",
+                    ),
+                  ],
+                ),
+                Container(
+                  color: Colors.red,
+                  height: 80,
+                  width: 80,
+                ),
+              ],
+            ),
           ],
         ),
       ),

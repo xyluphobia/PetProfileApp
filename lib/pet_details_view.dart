@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:pet_profile_app/file_manager.dart';
 import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/pet_details.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class PetDetailsView extends StatefulWidget {
@@ -1609,14 +1612,66 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                   ],
                 ),
-                Container(
-                  color: Colors.red,
-                  height: 80,
-                  width: 80,
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        GestureDetector(
+                          child: const Icon(
+                            Icons.directions
+                          ),
+                          onTap: () async { // Directions Button
+                            Position? currentLocation = NetworkUtil.lastLocation;
+                            currentLocation ??= await NetworkUtil.determinePosition();
+                            Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                              "api" : "1",
+                              "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                              "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                              "travelmode" : "driving",
+                            });
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              if (kDebugMode) {
+                                print("Cannot launch url: $url");
+                              }
+                            }
+                          }, 
+                        ),
+                        const SizedBox(height: 16.0),
+                        GestureDetector(
+                          child: const Icon(
+                            Icons.phone,
+                          ),
+                          onTap: () async { // Phone Call Button
+                            final Uri url = Uri(
+                              scheme: 'tel',
+                              path: "9196489503", // phone number string
+                            );
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              if (kDebugMode) {
+                                print("Cannot launch url: $url");
+                              }
+                            }
+                          }, 
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 8.0),
+                    Container(
+                      color: Colors.red,
+                      height: 80,
+                      width: 80,
+                    ),
+                  ],
                 ),
               ],
             ),
+            
             const SizedBox(height: 8.0), // Row Spacer
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1633,10 +1688,60 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                   ],
                 ),
-                Container(
-                  color: Colors.red,
-                  height: 80,
-                  width: 80,
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        GestureDetector(
+                          child: const Icon(
+                            Icons.directions
+                          ),
+                          onTap: () async { // Directions Button
+                            Position? currentLocation = NetworkUtil.lastLocation;
+                            currentLocation ??= await NetworkUtil.determinePosition();
+                            Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                              "api" : "1",
+                              "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                              "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                              "travelmode" : "driving",
+                            });
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              if (kDebugMode) {
+                                print("Cannot launch url: $url");
+                              }
+                            }
+                          }, 
+                        ),
+                        const SizedBox(height: 16.0),
+                        GestureDetector(
+                          child: const Icon(
+                            Icons.phone,
+                          ),
+                          onTap: () async { // Phone Call Button
+                            final Uri url = Uri(
+                              scheme: 'tel',
+                              path: "9196489503", // phone number string
+                            );
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              if (kDebugMode) {
+                                print("Cannot launch url: $url");
+                              }
+                            }
+                          }, 
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 8.0),
+                    Container(
+                      color: Colors.red,
+                      height: 80,
+                      width: 80,
+                    ),
+                  ],
                 ),
               ],
             ),

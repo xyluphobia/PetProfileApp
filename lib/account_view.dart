@@ -51,57 +51,35 @@ class _AccountViewState extends State<AccountView> {
                 child: Column(
                   children: [
                     Text(
-                      "Contact",
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    Text(
-                      "919 648 9503",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              child:Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
                       "Locations",
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     Text(
-                      account.preferredVetAddress != null ? account.preferredVetAddress! : "812 Example St Example SC 30527 Australia",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
                       "Preferred Vet",
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.red),
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
-                      "name, phone #, address",
+                      account.preferredVet.address != null ? account.preferredVet.address! : "812 Example St Example SC 30527 Australia",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      "Emergency Vet",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    Text(
+                      account.emergencyVet.address != null ? account.emergencyVet.address! : "812 Example St Example SC 30527 Australia",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
                 ),
               ),
             ),
-
+            
             FloatingActionButton(
               heroTag: "temp1",
               onPressed: () async {
-                account.name = "trial";
-                account.preferredVetAddress = "812 Example St Example";
+                account.name = "test name";
+                account.preferredVet.address = "812 Example St Example";
 
                 await context.read<FileController>().writeAccountDetails(account);
               },

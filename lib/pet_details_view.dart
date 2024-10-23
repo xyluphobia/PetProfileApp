@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
@@ -1603,7 +1602,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text( // Title
-                      "Preferred",
+                      "Preferred Vet",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( //Address
@@ -1679,7 +1678,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text( // Title
-                      "Emergency",
+                      "Emergency Vet",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Address

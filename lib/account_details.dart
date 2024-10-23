@@ -5,24 +5,29 @@ class Account {
     this.name,
     this.contactNumber,
 
-    this.preferredVetAddress, 
-    this.emergencyVetAddress, 
-  });
+    VetNumAndAddress? preferredVetAddress, 
+    VetNumAndAddress? emergencyVetAddress, 
+  }) : preferredVet = preferredVetAddress ?? VetNumAndAddress(),
+       emergencyVet = emergencyVetAddress ?? VetNumAndAddress();
 
   String? lastLatLng;
   String? name;
   String? contactNumber;
 
-  String? preferredVetAddress;
-  String? emergencyVetAddress;
+  VetNumAndAddress preferredVet;
+  VetNumAndAddress emergencyVet;
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
     lastLatLng: json["lastLatLng"],
     name: json["name"],
     contactNumber: json["contactNumber"],
 
-    preferredVetAddress: json["preferredVetAddress"], 
-    emergencyVetAddress: json["emergencyVetAddress"], 
+    preferredVetAddress: json["preferredVetAddress"] != null
+      ? VetNumAndAddress.fromJson(json["preferredVetAddress"])
+      : null,
+    emergencyVetAddress: json["emergencyVetAddress"] != null
+      ? VetNumAndAddress.fromJson(json["emergencyVetAddress"])
+      : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -30,7 +35,28 @@ class Account {
     "name": name,
     "contactNumber": contactNumber, 
     
-    "preferredVetAddress": preferredVetAddress,
-    "emergencyVetAddress": emergencyVetAddress,
+    "preferredVetAddress": preferredVet.toJson(),
+    "emergencyVetAddress": emergencyVet.toJson(),
+  };
+}
+
+class VetNumAndAddress {
+  String? phoneNumber;
+  String? address;
+
+  VetNumAndAddress({
+    this.phoneNumber,
+    this.address,
+  });
+
+  
+  factory VetNumAndAddress.fromJson(Map<String, dynamic> json) => VetNumAndAddress(
+    phoneNumber: json["phoneNumber"],
+    address: json["address"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "phoneNumber": phoneNumber,
+    "address": address,
   };
 }

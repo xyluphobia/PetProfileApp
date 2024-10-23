@@ -1,16 +1,3 @@
-# pet_profile_app
+# Pet Tether
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This application targets pet owners who want their pet sitters to quickly and easily get a comprehensive care profile for their animals. This allows owners to rest easy knowing that even in the worst case scenario were their pet ends up needing a vet, the sitter knows who to call and where to go at a moments notice.

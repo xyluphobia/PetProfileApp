@@ -49,6 +49,7 @@ dependencies:
   uuid: ^4.5.0
   async: ^2.11.0
   flutter_svg_provider: ^1.0.7
+  flutter_multi_formatter: ^2.13.0
 
 dev_dependencies:
   flutter_test:

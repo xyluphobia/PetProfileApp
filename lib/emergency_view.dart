@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:geocoding/geocoding.dart';
 import 'package:pet_profile_app/common/location_list_tile.dart';
 import 'package:pet_profile_app/common/nearby_vets_tile.dart';
+import 'package:pet_profile_app/maps_util.dart';
 import 'package:pet_profile_app/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
 
@@ -89,6 +90,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                         showCursor: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                           hintText: "Enter your location...",
                           hintStyle: TextStyle(
                             color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
@@ -97,8 +99,13 @@ class _EmergencyViewState extends State<EmergencyView> {
                         ),
                         controller: _mapSearchTextController,
                         textCapitalization: TextCapitalization.words,
-                        onChanged: (value) {
-                          mapPlaceAutoComplete(value);
+                        onChanged: (value) async {
+
+                          placePredictions = await mapPlaceAutoComplete(value);
+                          setState(() {
+                            placePredictions;
+                          });
+                          
                           if (value.isEmpty)
                           {
                             setState(() {
@@ -129,7 +136,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                 ),
               ),
             ),
-            const SizedBox(height: 8.0),
+            SizedBox(height: searchingForLocation ? 0.0 : 8.0),
             Expanded(
               child: Stack(
                 fit: StackFit.loose,
@@ -224,28 +231,6 @@ class _EmergencyViewState extends State<EmergencyView> {
         ),
       ),
     );
-  }
-
-
-  void mapPlaceAutoComplete(String query) async {
-    Uri uri = Uri.https(
-      "maps.googleapis.com", 
-      "/maps/api/place/autocomplete/json",
-      {
-        "input": query,
-        "key": mapsAPI,
-      }
-    );
-
-    String? response = await NetworkUtil.fetchUrl(uri);
-    if (response != null && response.isNotEmpty) {
-      PlaceAutocompleteResponse result = PlaceAutocompleteResponse.parseAutocompleteResult(response);
-      if(result.predictions != null) {
-        setState(() {
-          placePredictions = result.predictions!;
-        });
-      }
-    }
   }
 
   void mapPlaceNearbySearch() async {

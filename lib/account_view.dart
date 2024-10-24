@@ -16,6 +16,7 @@ class _AccountViewState extends State<AccountView> {
   late Account account;
   bool unsavedChanges = false;
   bool savedConfirmVisible = false;
+  bool deletedNotSave = false;
 
   final TextEditingController accNameController = TextEditingController();
   final TextEditingController accPrefVetAddress = TextEditingController();
@@ -26,6 +27,7 @@ class _AccountViewState extends State<AccountView> {
   Future<void> saveAccountData() async {
     await context.read<FileController>().writeAccountDetails(account);
     setState(() {
+      deletedNotSave = false;
       savedConfirmVisible = true;
     });
     Future.delayed(const Duration(milliseconds: 1000), () {
@@ -273,7 +275,7 @@ class _AccountViewState extends State<AccountView> {
                           flex: 1,
                           child: ElevatedButton(
                             onPressed: () {
-                              context.read<FileController>().clearAccountDetailsJson();
+                              confirmDelete(context, true);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -290,14 +292,14 @@ class _AccountViewState extends State<AccountView> {
                           flex: 1,
                           child: ElevatedButton(
                             onPressed: () {
-                              context.read<FileController>().clearPetDetailsJson();
+                              confirmDelete(context, false);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               elevation: 1,
                             ),
                             child: Text(
-                              "Reset Pets",
+                              "Delete Pets",
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
                             ),
                           ),
@@ -323,12 +325,71 @@ class _AccountViewState extends State<AccountView> {
                   height: 30,
                   alignment: Alignment.center,
                   child: Text(
-                    "Saved!", 
+                    deletedNotSave ? "Reset!" : "Saved!", 
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+          
+  Future<dynamic> confirmDelete(BuildContext context, bool resetAccount) {
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        titlePadding: const EdgeInsets.only(left: 24, top: 24),
+        title: Text(
+          "${resetAccount ? "Reset Account" : "Delete Pets"}?", 
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(decoration: TextDecoration.underline),
+        ),
+        contentPadding: const EdgeInsets.all(20),
+        content: Text(
+          "Are you sure you want to reset all ${resetAccount ? "account" : "pet data"} data? This action cannot be undone.",
+          textAlign: TextAlign.start,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+        buttonPadding: const EdgeInsets.all(0),
+        actions: [
+          TextButton(
+            child: Text(
+              "Cancel", 
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(width: 8.0),
+          TextButton(
+            style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
+            child: Text(
+              resetAccount ? "Reset" : "Delete", 
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+            ),
+            onPressed: () async {
+
+              resetAccount ? 
+              await context.read<FileController>().clearAccountDetailsJson() : 
+              await context.read<FileController>().clearPetDetailsJson();
+
+              if (context.mounted) Navigator.of(context).pop();
+
+              setState(() {
+                deletedNotSave = true;
+                savedConfirmVisible = true;
+              });
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                setState(() {
+                  savedConfirmVisible = false;
+                });
+              });
+            },
           ),
         ],
       ),

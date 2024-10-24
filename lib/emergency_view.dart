@@ -129,6 +129,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                 ),
               ),
             ),
+            const SizedBox(height: 8.0),
             Expanded(
               child: Stack(
                 fit: StackFit.loose,
@@ -136,51 +137,58 @@ class _EmergencyViewState extends State<EmergencyView> {
                   Column(
                     children: [
                       // Google Map Embed
-                      Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        height: 300,
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Scaffold(
-                          body: GoogleMap(
-                            mapType: MapType.terrain,
-                            initialCameraPosition: defaultCameraPosition,
-                            zoomControlsEnabled: false,
-                            myLocationButtonEnabled: false,
-                            markers: markers,
-                            onMapCreated: (GoogleMapController controller) {
-                              _mapController.complete(controller);
-                            },
-                          ),
-                          floatingActionButton: FloatingActionButton.extended(
-                            heroTag: "goToCurrentLocationBtn",
-                            onPressed: goToLocation, 
-                            label: const Icon(Icons.location_pin),
-                          ),
-                        ),
-                      ),
-                      // Nearby Emergency Vet Cards
-                      Expanded(
+                      Material(
+                        elevation: 1,
+                        borderRadius: BorderRadius.circular(12.0),
                         child: Container(
-                          margin: const EdgeInsets.only(top: 8),
+                          height: 300,
                           decoration: ShapeDecoration(
-                            color: Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                           ),
                           clipBehavior: Clip.antiAlias,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(left: 12.0),
-                            itemCount: nearbyVets.length,
-                            itemBuilder: (context, index) => NearbyVetsTile(
-                              businessName: nearbyVets[index].businessName,
-                              formattedAddress: nearbyVets[index].formattedAddress,
-                              phoneNumber: nearbyVets[index].phoneNumber,
-                              isOpen: nearbyVets[index].isOpen,
+                          child: Scaffold(
+                            body: GoogleMap(
+                              mapType: MapType.terrain,
+                              initialCameraPosition: defaultCameraPosition,
+                              zoomControlsEnabled: false,
+                              myLocationButtonEnabled: false,
+                              markers: markers,
+                              onMapCreated: (GoogleMapController controller) {
+                                _mapController.complete(controller);
+                              },
+                            ),
+                            floatingActionButton: FloatingActionButton.extended(
+                              heroTag: "goToCurrentLocationBtn",
+                              onPressed: goToLocation, 
+                              label: const Icon(Icons.location_pin),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      // Nearby Emergency Vet Cards
+                      Expanded(
+                        child: Material(
+                          elevation: 1,
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.only(left: 12.0),
+                              itemCount: nearbyVets.length,
+                              itemBuilder: (context, index) => NearbyVetsTile(
+                                businessName: nearbyVets[index].businessName,
+                                formattedAddress: nearbyVets[index].formattedAddress,
+                                phoneNumber: nearbyVets[index].phoneNumber,
+                                isOpen: nearbyVets[index].isOpen,
+                              )
                             )
-                          )
+                          ),
                         ),
                       ),
                     ],

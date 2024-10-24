@@ -200,16 +200,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               foodInfoCard(),
               medicalInfoCard(),
               emergencyInfo(),
-          
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    context.read<FileController>().clearPetDetailsJson();
-                    Navigator.pop(context);
-                  },
-                  child: const Text('CLEAR ALL SAVED PETS'),
-                ),
-              ),
             ],
           ),
           AnimatedOpacity(

@@ -25,11 +25,11 @@ class _AccountViewState extends State<AccountView> {
   Widget build(BuildContext context) {
     account = context.watch<FileController>().accountDetails != null ? context.watch<FileController>().accountDetails! : Account();
 
-    if (account.name != null) accNameController.text = account.name!;
-    if (account.preferredVet.address != null) accPrefVetAddress.text = account.preferredVet.address!;
-    if (account.preferredVet.phoneNumber != null) accPrefVetNum.text = account.preferredVet.phoneNumber!;
-    if (account.emergencyVet.address != null) accEmeVetAddress.text = account.emergencyVet.address!;
-    if (account.emergencyVet.phoneNumber != null) accEmeVetNum.text = account.emergencyVet.phoneNumber!;
+    account.name != null ? accNameController.text = account.name! : accNameController.text = "";
+    account.preferredVet.address != null ? accPrefVetAddress.text = account.preferredVet.address! : accPrefVetAddress.text = "";
+    account.preferredVet.phoneNumber != null ? accPrefVetNum.text = account.preferredVet.phoneNumber! : accPrefVetNum.text = "";
+    account.emergencyVet.address != null ? accEmeVetAddress.text = account.emergencyVet.address! : accEmeVetAddress.text = "";
+    account.emergencyVet.phoneNumber != null ? accEmeVetNum.text = account.emergencyVet.phoneNumber! : accEmeVetNum.text = "";
 
     return Center(
       child: Container(
@@ -38,7 +38,7 @@ class _AccountViewState extends State<AccountView> {
           bottom: 8,
           right: 16,
           left: 16,
-         ),
+          ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -52,7 +52,7 @@ class _AccountViewState extends State<AccountView> {
                       "Account Information",
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
-
+    
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
@@ -88,7 +88,7 @@ class _AccountViewState extends State<AccountView> {
                         ),
                       ),
                     ),
-
+    
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
@@ -235,26 +235,46 @@ class _AccountViewState extends State<AccountView> {
               ),
             ),
             
-            FloatingActionButton(
-              heroTag: "temp1",
-              onPressed: () async {
-                await context.read<FileController>().writeAccountDetails(account);
-              },
-              child: const Text("Save"),
-            ),
-            FloatingActionButton(
-              heroTag: "temp2",
-              onPressed: () async {
-                print(account.toJson());
-              },
-              child: const Text("Print Account"),
-            ),
-            FloatingActionButton(
-              heroTag: "temp3",
-              onPressed: () {
-                context.read<FileController>().clearAccountDetailsJson();
-              },
-              child: const Text("Reset"),
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  const SizedBox(width: 1.0),
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<FileController>().clearAccountDetailsJson();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        elevation: 1,
+                      ),
+                      child: Text(
+                        "Reset Account",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<FileController>().clearPetDetailsJson();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        elevation: 1,
+                      ),
+                      child: Text(
+                        "Reset Pets",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 1.0),
+                ],
+              ),
             ),
           ],
         ),

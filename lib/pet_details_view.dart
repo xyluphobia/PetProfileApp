@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:pet_profile_app/account_details.dart';
-import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/utils/common_util.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pet_profile_app/file_manager.dart';
@@ -1657,39 +1658,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   }
 
   Widget emergencyInfo() {
-    Future<void> pleaseSetX(BuildContext context, String thingToSet) {
-      return showDialog(
-        context: context, 
-        builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          titlePadding: const EdgeInsets.only(left: 24, top: 24),
-          title: Text(
-            "Error", 
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(decoration: TextDecoration.underline),
-          ),
-          contentPadding: const EdgeInsets.only(top: 20, bottom: 10, left: 20, right: 20),
-          content: Text(
-            "Please set you $thingToSet in account settings.",
-            textAlign: TextAlign.start,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
-          buttonPadding: const EdgeInsets.all(0),
-          actions: [
-            TextButton(
-              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
-              child: Text(
-                "Ok", 
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
-    }
+    
 
     return Card(
       clipBehavior: Clip.hardEdge,
@@ -1744,7 +1713,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              pleaseSetX(context, "Preferred Vet's Address");
+                              basicError(context, "Please set your preferred vet's address before navigating.");
                             }
                           }, 
                         ),
@@ -1772,7 +1741,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              pleaseSetX(context, "Preferred Vet's Phone Number");
+                              basicError(context, "Please set your preferred vet's phone number before calling.");
                             }
                           }, 
                         ),
@@ -1838,7 +1807,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              pleaseSetX(context, "Emergency Vet's Address");
+                              basicError(context, "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
                             }
                           }, 
                         ),
@@ -1866,7 +1835,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              pleaseSetX(context, "Emergency Vet's Phone Number");
+                              basicError(context, "Please set your emergency vet's phone number.\nIf this is an emergency see the emergency page for local vet clinics.");
                             }
                           }, 
                         ),

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:geocoding/geocoding.dart';
 import 'package:pet_profile_app/common/location_list_tile.dart';
 import 'package:pet_profile_app/common/nearby_vets_tile.dart';
-import 'package:pet_profile_app/maps_util.dart';
-import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/utils/maps_util.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
 
 import 'package:flutter/material.dart';

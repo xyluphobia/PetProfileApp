@@ -1,4 +1,4 @@
-import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
 
 Future<List<AutocompletePrediction>> mapPlaceAutoComplete(String query) async {

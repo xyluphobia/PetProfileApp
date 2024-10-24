@@ -5,8 +5,8 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/file_controller.dart';
-import 'package:pet_profile_app/maps_util.dart';
-import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/utils/maps_util.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:provider/provider.dart';
 
 import 'common/location_list_tile.dart';

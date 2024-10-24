@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pet_profile_app/network_util.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NearbyVetsTile extends StatelessWidget {

@@ -252,7 +252,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     );
   }
 
-  Future<dynamic> confirmDelete(BuildContext context) {
+  Future<void> confirmDelete(BuildContext context) {
     return showDialog(
       context: context, 
       builder: (context) => AlertDialog(
@@ -296,7 +296,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
 
               if (context.mounted) Navigator.of(context).pop();
               if (context.mounted) Navigator.of(context).pop();
-              
+
               await context.read<FileController>().writePetDetails(petDetails!);
             },
           ),
@@ -1657,6 +1657,40 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   }
 
   Widget emergencyInfo() {
+    Future<void> pleaseSetX(BuildContext context, String thingToSet) {
+      return showDialog(
+        context: context, 
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          titlePadding: const EdgeInsets.only(left: 24, top: 24),
+          title: Text(
+            "Error", 
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(decoration: TextDecoration.underline),
+          ),
+          contentPadding: const EdgeInsets.only(top: 20, bottom: 10, left: 20, right: 20),
+          content: Text(
+            "Please set you $thingToSet in account settings.",
+            textAlign: TextAlign.start,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+          buttonPadding: const EdgeInsets.all(0),
+          actions: [
+            TextButton(
+              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
+              child: Text(
+                "Ok", 
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return Card(
       clipBehavior: Clip.hardEdge,
       child: Padding(
@@ -1673,7 +1707,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       "Preferred Vet",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
-                    Text( //Address
+                    Text( // Preferred Vet Address
                       // account.preferredVetAddress ?? "Please set your preferred vet.",
                       "Street Num, Street\nTown, State, Zip\nCountry",
                     ),
@@ -1684,43 +1718,61 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     Column(
                       children: [
                         GestureDetector(
-                          child: const Icon(
-                            Icons.directions
+                          child: Icon(
+                            Icons.directions,
+                            color: account.preferredVet.address != null ?
+                              Theme.of(context).colorScheme.onPrimary :
+                              Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Directions Button
-                            Position? currentLocation = NetworkUtil.lastLocation;
-                            currentLocation ??= await NetworkUtil.determinePosition();
-                            Uri url = Uri.https("www.google.com", "/maps/dir/", {
-                              "api" : "1",
-                              "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                              "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
-                              "travelmode" : "driving",
-                            });
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
-                            } else {
-                              if (kDebugMode) {
-                                print("Cannot launch url: $url");
+                            if (account.preferredVet.address != null)
+                            {
+                              Position? currentLocation = NetworkUtil.lastLocation;
+                              currentLocation ??= await NetworkUtil.determinePosition();
+                              Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                                "api" : "1",
+                                "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                                "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                                "travelmode" : "driving",
+                              });
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                if (kDebugMode) {
+                                  print("Cannot launch url: $url");
+                                }
                               }
+                            }
+                            else {
+                              pleaseSetX(context, "Preferred Vet's Address");
                             }
                           }, 
                         ),
                         const SizedBox(height: 16.0),
                         GestureDetector(
-                          child: const Icon(
+                          child: Icon(
                             Icons.phone,
+                            color: account.preferredVet.phoneNumber != null ?
+                              Theme.of(context).colorScheme.onPrimary :
+                              Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Phone Call Button
-                            final Uri url = Uri(
-                              scheme: 'tel',
-                              path: "9196489503", // phone number string
-                            );
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
-                            } else {
-                              if (kDebugMode) {
-                                print("Cannot launch url: $url");
+                            if (account.preferredVet.phoneNumber != null)
+                            {
+                              final Uri url = Uri(
+                                scheme: 'tel',
+                                path: account.preferredVet.phoneNumber, // Preferred Vet phone number string
+                              );
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                if (kDebugMode) {
+                                  print("Cannot launch url: $url");
+                                }
                               }
+                            }
+                            else {
+                              pleaseSetX(context, "Preferred Vet's Phone Number");
                             }
                           }, 
                         ),
@@ -1728,7 +1780,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                     const SizedBox(width: 8.0),
                     Container(
-                      color: Colors.red,
+                      color: Colors.grey,
                       height: 80,
                       width: 80,
                     ),
@@ -1749,7 +1801,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       "Emergency Vet",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
-                    Text( // Address
+                    Text( // Emergency Vet Address
                       //account.emergencyVetAddress ?? "Please set your emergency vet.",
                       "Street Num, Street\nTown, State, Zip\nCountry",
                     ),
@@ -1760,43 +1812,61 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     Column(
                       children: [
                         GestureDetector(
-                          child: const Icon(
-                            Icons.directions
+                          child: Icon(
+                            Icons.directions,
+                            color: account.emergencyVet.address != null ?
+                              Theme.of(context).colorScheme.onPrimary :
+                              Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Directions Button
-                            Position? currentLocation = NetworkUtil.lastLocation;
-                            currentLocation ??= await NetworkUtil.determinePosition();
-                            Uri url = Uri.https("www.google.com", "/maps/dir/", {
-                              "api" : "1",
-                              "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                              "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
-                              "travelmode" : "driving",
-                            });
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
-                            } else {
-                              if (kDebugMode) {
-                                print("Cannot launch url: $url");
+                            if (account.emergencyVet.address != null)
+                            {
+                              Position? currentLocation = NetworkUtil.lastLocation;
+                              currentLocation ??= await NetworkUtil.determinePosition();
+                              Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                                "api" : "1",
+                                "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                                "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                                "travelmode" : "driving",
+                              });
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                if (kDebugMode) {
+                                  print("Cannot launch url: $url");
+                                }
                               }
+                            }
+                            else {
+                              pleaseSetX(context, "Emergency Vet's Address");
                             }
                           }, 
                         ),
                         const SizedBox(height: 16.0),
                         GestureDetector(
-                          child: const Icon(
+                          child: Icon(
                             Icons.phone,
+                            color: account.emergencyVet.phoneNumber != null ?
+                              Theme.of(context).colorScheme.onPrimary :
+                              Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Phone Call Button
-                            final Uri url = Uri(
-                              scheme: 'tel',
-                              path: "9196489503", // phone number string
-                            );
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
-                            } else {
-                              if (kDebugMode) {
-                                print("Cannot launch url: $url");
+                            if (account.emergencyVet.phoneNumber != null)
+                            {
+                              final Uri url = Uri(
+                                scheme: 'tel',
+                                path: account.emergencyVet.phoneNumber, // Emergency Vet phone number string
+                              );
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                if (kDebugMode) {
+                                  print("Cannot launch url: $url");
+                                }
                               }
+                            }
+                            else {
+                              pleaseSetX(context, "Emergency Vet's Phone Number");
                             }
                           }, 
                         ),
@@ -1804,7 +1874,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                     const SizedBox(width: 8.0),
                     Container(
-                      color: Colors.red,
+                      color: Colors.grey,
                       height: 80,
                       width: 80,
                     ),

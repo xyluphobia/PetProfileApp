@@ -61,58 +61,72 @@ class _EmergencyViewState extends State<EmergencyView> {
         child: Column(
           children: [
             // Search bar to enter location
-            Container(
-              decoration: ShapeDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                shape: searchingForLocation ? 
-                const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0))) : 
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              ),
-              padding: const EdgeInsets.only(left: 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      showCursor: false,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter your location...",
-                        hintStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                          fontSize: 14,
-                        ),
+            Material(
+              elevation: 1,
+              borderRadius: searchingForLocation ? 
+                const BorderRadius.only(
+                  topLeft: Radius.circular(12.0),
+                  topRight: Radius.circular(12.0),
+                ) : 
+                BorderRadius.circular(12.0),
+              child: Container(
+                decoration: ShapeDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: searchingForLocation ? 
+                    const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12.0), 
+                        topRight: Radius.circular(12.0),
                       ),
-                      controller: _mapSearchTextController,
-                      textCapitalization: TextCapitalization.words,
-                      onChanged: (value) {
-                        mapPlaceAutoComplete(value);
-                        if (value.isEmpty)
-                        {
+                    ) : 
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                ),
+                padding: const EdgeInsets.only(left: 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        showCursor: false,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter your location...",
+                          hintStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                            fontSize: 14,
+                          ),
+                        ),
+                        controller: _mapSearchTextController,
+                        textCapitalization: TextCapitalization.words,
+                        onChanged: (value) {
+                          mapPlaceAutoComplete(value);
+                          if (value.isEmpty)
+                          {
+                            setState(() {
+                              searchingForLocation = false;
+                            });
+                          }
+                          else
+                          {
+                            setState(() {
+                              searchingForLocation = true;
+                            });
+                          }
+                        },
+                        onSubmitted: (value) {
                           setState(() {
                             searchingForLocation = false;
                           });
-                        }
-                        else
-                        {
-                          setState(() {
-                            searchingForLocation = true;
-                          });
-                        }
-                      },
-                      onSubmitted: (value) {
-                        setState(() {
-                          searchingForLocation = false;
-                        });
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _mapSearchTextController.clear();
-                    }, 
-                    icon: const Icon(Icons.clear),
-                  ),
-                ],
+                    IconButton(
+                      onPressed: () {
+                        _mapSearchTextController.clear();
+                      }, 
+                      icon: const Icon(Icons.clear),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(

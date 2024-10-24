@@ -1658,8 +1658,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
   }
 
   Widget emergencyInfo() {
-    
-
     return Card(
       clipBehavior: Clip.hardEdge,
       child: Padding(

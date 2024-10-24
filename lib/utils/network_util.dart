@@ -19,7 +19,7 @@ class NetworkUtil {
     return null;
   }
 
-  static int requestLimit = 10;
+  static int requestLimit = 6;
   static int requestsMade = 0; 
   static CancelableOperation? operation;
   static bool acceptableRequestAmount() {

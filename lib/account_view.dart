@@ -222,6 +222,7 @@ class _AccountViewState extends State<AccountView> {
                             fit: StackFit.loose,
                             children: [
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),

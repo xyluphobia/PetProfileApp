@@ -33,3 +33,17 @@ Future<void> basicError(BuildContext context, String errorBody) {
     ),
   );
 }
+
+String? formatAddressToPostal(String? address) {
+  if (address == null) return null;
+  // Split the address by commas to break it into parts
+  List<String> parts = address.split(', ');
+
+  // Join the parts with newlines
+  if (parts.length > 3)
+  {
+    return '${parts[0]},\n${parts.sublist(1, parts.length - 1).join(", ")},\n${parts.last}';  
+  }
+
+  return parts.join(',\n');
+}

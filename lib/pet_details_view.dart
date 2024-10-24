@@ -1677,8 +1677,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Preferred Vet Address
-                      // account.preferredVetAddress ?? "Please set your preferred vet.",
-                      "Street Num, Street\nTown, State, Zip\nCountry",
+                      formatAddressToPostal(account.preferredVet.address) ?? "Please set preferred vet address.\n\n",
+                      softWrap: true,
+                      maxLines: 3,
                     ),
                   ],
                 ),
@@ -1701,7 +1702,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                                "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                                "destination" : account.preferredVet.address,
                                 "travelmode" : "driving",
                               });
                               if (await canLaunchUrl(url)) {
@@ -1771,8 +1772,9 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Emergency Vet Address
-                      //account.emergencyVetAddress ?? "Please set your emergency vet.",
-                      "Street Num, Street\nTown, State, Zip\nCountry",
+                      formatAddressToPostal(account.emergencyVet.address) ?? "Please set emergency vet address.\n\n",
+                      softWrap: true,
+                      maxLines: 3,
                     ),
                   ],
                 ),
@@ -1795,7 +1797,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                                "destination" : "934 Charter St, Redwood City, CA 94063, United States", // formatted address string
+                                "destination" : account.emergencyVet.address,
                                 "travelmode" : "driving",
                               });
                               if (await canLaunchUrl(url)) {

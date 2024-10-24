@@ -25,7 +25,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: navIndex != 0 ? AppBar(
         centerTitle: true,
         title: ImageIcon(const Image(image: Svg('assets/petTetherIcon.svg')).image, size: 28,),
         surfaceTintColor: Colors.transparent,
@@ -53,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
             }
           ),
         ],
-      ),
+      ) : null,
       bottomNavigationBar: Container(
         height: 100,
         decoration: BoxDecoration(

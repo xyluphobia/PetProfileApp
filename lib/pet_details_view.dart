@@ -155,6 +155,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       appBar: AppBar(
         centerTitle: true,
         title: ImageIcon(const Image(image: Svg('assets/petTetherIcon.svg')).image, size: 28,),
+        elevation: 1,
         leading: BackButton(
           onPressed: () async {
             if (unsavedChanges) await saveChangesQuestion(context);

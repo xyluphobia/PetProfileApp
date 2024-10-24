@@ -201,6 +201,30 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               foodInfoCard(),
               medicalInfoCard(),
               emergencyInfo(),
+
+              if (!newPet) IntrinsicHeight(
+                child: Row(
+                  children: [
+                    const SizedBox(width: 4.0),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          confirmDelete(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          elevation: 1,
+                        ),
+                        child: Text(
+                          "Delete Pet",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4.0),
+                  ],
+                ),
+              ),
             ],
           ),
           AnimatedOpacity(
@@ -222,6 +246,59 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> confirmDelete(BuildContext context) {
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        titlePadding: const EdgeInsets.only(left: 24, top: 24),
+        title: Text(
+          "Delete Pet?", 
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(decoration: TextDecoration.underline),
+        ),
+        contentPadding: const EdgeInsets.all(20),
+        content: Text(
+          "Are you sure you want to delete this pet profile? This action cannot be undone.",
+          textAlign: TextAlign.start,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+        buttonPadding: const EdgeInsets.all(0),
+        actions: [
+          TextButton(
+            child: Text(
+              "Cancel", 
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(width: 8.0),
+          TextButton(
+            style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
+            child: Text(
+              "Delete", 
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+            ),
+            onPressed: () async {
+              PetDetails? petDetails = context.read<FileController>().petDetails;
+
+              if (petDetails != null) petDetails.data.removeAt(petIndex);
+            
+              unsavedChanges = false;
+
+              if (context.mounted) Navigator.of(context).pop();
+              if (context.mounted) Navigator.of(context).pop();
+              
+              await context.read<FileController>().writePetDetails(petDetails!);
+            },
           ),
         ],
       ),

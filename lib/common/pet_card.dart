@@ -17,7 +17,17 @@ class PetCard extends StatefulWidget {
 class _PetCardState extends State<PetCard> {
   @override
   Widget build(BuildContext context) {
-    Pet pet = context.select((FileController controller) => controller.petDetails == null || controller.petDetails!.data.isEmpty) ? 
+    if (context.read<FileController>().petDetails != null)
+    {
+      if (widget.petIndex <= context.read<FileController>().petDetails!.data.length)
+      {
+        
+      }
+    }
+
+    Pet pet = context.select((FileController controller) => controller.petDetails == null || 
+    controller.petDetails!.data.isEmpty || 
+    widget.petIndex >= controller.petDetails!.data.length) ? 
     Pet() : context.select((FileController controller) => controller.petDetails!.data[widget.petIndex]);
 
     return Container(

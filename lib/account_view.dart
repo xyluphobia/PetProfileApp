@@ -270,7 +270,7 @@ class _AccountViewState extends State<AccountView> {
                   IntrinsicHeight(
                     child: Row(
                       children: [
-                        const SizedBox(width: 1.0),
+                        const SizedBox(width: 2.0),
                         Expanded(
                           flex: 1,
                           child: ElevatedButton(
@@ -304,7 +304,7 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 1.0),
+                        const SizedBox(width: 2.0),
                       ],
                     ),
                   ),
@@ -337,7 +337,7 @@ class _AccountViewState extends State<AccountView> {
     );
   }
           
-  Future<dynamic> confirmDelete(BuildContext context, bool resetAccount) {
+  Future<void> confirmDelete(BuildContext context, bool resetAccount) {
     return showDialog(
       context: context, 
       builder: (context) => AlertDialog(
@@ -359,7 +359,7 @@ class _AccountViewState extends State<AccountView> {
           TextButton(
             child: Text(
               "Cancel", 
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
             ),
             onPressed: () {
               Navigator.of(context).pop();

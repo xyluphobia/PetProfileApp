@@ -1,9 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/file_controller.dart';
+import 'package:pet_profile_app/maps_util.dart';
+import 'package:pet_profile_app/network_util.dart';
 import 'package:provider/provider.dart';
+
+import 'common/location_list_tile.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({super.key});
@@ -24,9 +30,15 @@ class _AccountViewState extends State<AccountView> {
   final TextEditingController accEmeVetAddress = TextEditingController();
   final TextEditingController accEmeVetNum = TextEditingController();
 
+  bool searchingForPreferredLocation = false;
+  bool searchingForEmergencyLocation = false;
+  List<AutocompletePrediction> preferredPlacePredictions = [];
+  List<AutocompletePrediction> emergencyPlacePredictions = [];
+
   Future<void> saveAccountData() async {
     await context.read<FileController>().writeAccountDetails(account);
     setState(() {
+      unsavedChanges = false;
       deletedNotSave = false;
       savedConfirmVisible = true;
     });
@@ -37,15 +49,18 @@ class _AccountViewState extends State<AccountView> {
     });
     return;
   }
+
   @override
   Widget build(BuildContext context) {
     account = context.watch<FileController>().accountDetails != null ? context.watch<FileController>().accountDetails! : Account();
 
-    account.name != null ? accNameController.text = account.name! : accNameController.text = "";
-    account.preferredVet.address != null ? accPrefVetAddress.text = account.preferredVet.address! : accPrefVetAddress.text = "";
-    account.preferredVet.phoneNumber != null ? accPrefVetNum.text = account.preferredVet.phoneNumber! : accPrefVetNum.text = "";
-    account.emergencyVet.address != null ? accEmeVetAddress.text = account.emergencyVet.address! : accEmeVetAddress.text = "";
-    account.emergencyVet.phoneNumber != null ? accEmeVetNum.text = account.emergencyVet.phoneNumber! : accEmeVetNum.text = "";
+    if (!unsavedChanges) {
+      accNameController.text = account.name ?? "";
+      accPrefVetAddress.text = account.preferredVet.address ?? "";
+      accPrefVetNum.text = account.preferredVet.phoneNumber ?? "";
+      accEmeVetAddress.text = account.emergencyVet.address ?? "";
+      accEmeVetNum.text = account.emergencyVet.phoneNumber ?? "";
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +76,8 @@ class _AccountViewState extends State<AccountView> {
       ),
       body: Stack(
         children: [
-          Center(
-            child: Container(
+          SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.only(
                 top: 4,
                 bottom: 8,
@@ -82,7 +97,7 @@ class _AccountViewState extends State<AccountView> {
                             "Account Information",
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
-          
+                      
                           Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: Text(
@@ -118,7 +133,7 @@ class _AccountViewState extends State<AccountView> {
                               ),
                             ),
                           ),
-          
+                      
                           Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: Text(
@@ -139,11 +154,31 @@ class _AccountViewState extends State<AccountView> {
                                 controller: accPrefVetAddress,
                                 enabled: true,
                                 
-                                onChanged: (text) {
-                                  // validate address then if it passes:
-                                  // format address
+                                onChanged: (text) async {
                                   unsavedChanges = true;
-                                  account.preferredVet.address = text;
+            
+                                  preferredPlacePredictions = await mapPlaceAutoComplete(text);
+                                  setState(() {
+                                    preferredPlacePredictions;
+                                  });
+                                  
+                                  if (text.isEmpty)
+                                  {
+                                    setState(() {
+                                      searchingForPreferredLocation = false;
+                                    });
+                                  }
+                                  else
+                                  {
+                                    setState(() {
+                                      searchingForPreferredLocation = true;
+                                    });
+                                  }
+                                },
+                                onSubmitted: (value) {
+                                  setState(() {
+                                    searchingForPreferredLocation = false;
+                                  });
                                 },
                                 decoration: InputDecoration(
                                   hintText: "Enter address...",
@@ -157,116 +192,201 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                           const SizedBox(height: 4.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: SizedBox( // Preferred vet phone number
-                              height: 24,
-                              child: TextField(
-                                keyboardType: TextInputType.phone,
-                                textAlign: TextAlign.start,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                autocorrect: false,
-                                maxLines: 1,
-                                controller: accPrefVetNum,
-                                enabled: true,
-                                inputFormatters: [
-                                  MaskedInputFormatter('(###) ###-####')
+                          Stack(
+                            fit: StackFit.loose,
+                            children: [
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: SizedBox( // Preferred vet phone number
+                                      height: 24,
+                                      child: TextField(
+                                        keyboardType: TextInputType.phone,
+                                        textAlign: TextAlign.start,
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                        autocorrect: false,
+                                        maxLines: 1,
+                                        controller: accPrefVetNum,
+                                        enabled: true,
+                                        inputFormatters: [
+                                          MaskedInputFormatter('(###) ###-####')
+                                        ],
+                                        
+                                        onChanged: (text) {
+                                          // validate phone number then if it passes:
+                                    
+                                          unsavedChanges = true;
+                                          account.preferredVet.phoneNumber = text;
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: "Enter phone number...",
+                                          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                                          isDense: true,
+                                          disabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      "Emergency Vet",
+                                      style: Theme.of(context).textTheme.headlineSmall,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: SizedBox( // Emergency vet address
+                                      height: 24,
+                                      child: TextField(
+                                        keyboardType: TextInputType.streetAddress,
+                                        textAlign: TextAlign.start,
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                        autocorrect: false,
+                                        maxLines: 1,
+                                        controller: accEmeVetAddress,
+                                        enabled: true,
+                                        
+                                        onChanged: (text) async {
+                                          unsavedChanges = true;
+            
+                                          emergencyPlacePredictions = await mapPlaceAutoComplete(text);
+                                          setState(() {
+                                            emergencyPlacePredictions;
+                                          });
+                                          
+                                          if (text.isEmpty)
+                                          {
+                                            setState(() {
+                                              searchingForEmergencyLocation = false;
+                                            });
+                                          }
+                                          else
+                                          {
+                                            setState(() {
+                                              searchingForEmergencyLocation = true;
+                                            });
+                                          }
+                                        },
+                                        onSubmitted: (value) {
+                                          setState(() {
+                                            searchingForEmergencyLocation = false;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: "Enter address...",
+                                          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                                          isDense: true,
+                                          disabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Stack(
+                                    fit: StackFit.loose,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          const SizedBox(height: 4.0),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 2.0),
+                                            child: SizedBox( // Emergency vet phone number
+                                              height: 24,
+                                              child: TextField(
+                                                keyboardType: TextInputType.phone,
+                                                textAlign: TextAlign.start,
+                                                style: Theme.of(context).textTheme.bodyLarge,
+                                                autocorrect: false,
+                                                maxLines: 1,
+                                                controller: accEmeVetNum,
+                                                enabled: true,
+                                                inputFormatters: [
+                                                  MaskedInputFormatter('(###) ###-####')
+                                                ],
+                                                
+                                                onChanged: (text) {
+                                                  // validate phone number then if it passes:
+                                            
+                                                  unsavedChanges = true;
+                                                  account.emergencyVet.phoneNumber = text;
+                                                },
+                                                decoration: InputDecoration(
+                                                  hintText: "Enter phone number...",
+                                                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                                                  isDense: true,
+                                                  disabledBorder: UnderlineInputBorder(
+                                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      if (searchingForEmergencyLocation) Container(
+                                        decoration: ShapeDecoration( 
+                                          color: Theme.of(context).colorScheme.primary,
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12.0), bottomRight: Radius.circular(12.0)))
+                                        ),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: emergencyPlacePredictions.isNotEmpty ? max(emergencyPlacePredictions.length - 1, 1) : 0,
+                                          itemBuilder: (context, index) => LocationListTile(
+                                            indexPassed: index,
+                                            listLength: emergencyPlacePredictions.length,
+                                            location: emergencyPlacePredictions[index].description!,
+                                            noDivider: true,
+                                            press: () {
+                                              setState(() {
+                                                searchingForEmergencyLocation = false;
+                                                account.emergencyVet.address = emergencyPlacePredictions[index].description!;
+                                                accEmeVetAddress.text = account.emergencyVet.address!;
+                                              });
+                                              FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
-                                
-                                onChanged: (text) {
-                                  // validate phone number then if it passes:
-                            
-                                  unsavedChanges = true;
-                                  account.preferredVet.phoneNumber = text;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Enter phone number...",
-                                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                                  isDense: true,
-                                  disabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                              ),
+                              if (searchingForPreferredLocation) Container(
+                                decoration: ShapeDecoration( 
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12.0), bottomRight: Radius.circular(12.0)))
+                                ),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: preferredPlacePredictions.isNotEmpty ? max(preferredPlacePredictions.length - 1, 1) : 0,
+                                  itemBuilder: (context, index) => LocationListTile(
+                                    indexPassed: index,
+                                    listLength: preferredPlacePredictions.length,
+                                    location: preferredPlacePredictions[index].description!,
+                                    noDivider: true,
+                                    press: () {
+                                      setState(() {
+                                        searchingForPreferredLocation = false;
+                                        account.preferredVet.address = preferredPlacePredictions[index].description!;
+                                        accPrefVetAddress.text = account.preferredVet.address!;
+                                      });
+                                      FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
+                                    },
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Text(
-                              "Emergency Vet",
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: SizedBox( // Emergency vet address
-                              height: 24,
-                              child: TextField(
-                                keyboardType: TextInputType.streetAddress,
-                                textAlign: TextAlign.start,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                autocorrect: false,
-                                maxLines: 1,
-                                controller: accEmeVetAddress,
-                                enabled: true,
-                                
-                                onChanged: (text) {
-                                  // validate address then if it passes:
-                                  // format address
-                                  unsavedChanges = true;
-                                  account.emergencyVet.address = text;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Enter address...",
-                                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                                  isDense: true,
-                                  disabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 2.0),
-                            child: SizedBox( // Emergency vet phone number
-                              height: 24,
-                              child: TextField(
-                                keyboardType: TextInputType.phone,
-                                textAlign: TextAlign.start,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                autocorrect: false,
-                                maxLines: 1,
-                                controller: accEmeVetNum,
-                                enabled: true,
-                                inputFormatters: [
-                                  MaskedInputFormatter('(###) ###-####')
-                                ],
-                                
-                                onChanged: (text) {
-                                  // validate phone number then if it passes:
-                            
-                                  unsavedChanges = true;
-                                  account.emergencyVet.phoneNumber = text;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Enter phone number...",
-                                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                                  isDense: true,
-                                  disabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  
                   IntrinsicHeight(
                     child: Row(
                       children: [

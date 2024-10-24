@@ -2,18 +2,19 @@
 import 'package:flutter/material.dart';
 
 class LocationListTile extends StatelessWidget {
-  const LocationListTile({super.key, required this.location, required this.press, required this.indexPassed, required this.listLength});
+  const LocationListTile({super.key, required this.location, required this.press, required this.indexPassed, required this.listLength, this.noDivider = false});
 
   final String location;
   final VoidCallback press;
   final int indexPassed;
   final int listLength;
+  final bool noDivider;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (indexPassed == 0) Divider(
+        if (indexPassed == 0 && !noDivider) Divider(
           height: 2,
           thickness: 1,
           indent: 20,

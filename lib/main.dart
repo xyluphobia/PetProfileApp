@@ -23,11 +23,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void didChangeDependencies() async {
-    context.read<FileController>().readAccountDetails();
-    await context.read<FileController>().readPetDetails();
-    if (mounted) {
-      context.read<FileController>().checkAndUpdatePetBirthdays();
-    }
+    await context.read<FileController>().readAccountDetails();
+    if (mounted) await context.read<FileController>().readPetDetails();
+    if (mounted) context.read<FileController>().checkAndUpdatePetBirthdays();
+    
     super.didChangeDependencies();
   }
 

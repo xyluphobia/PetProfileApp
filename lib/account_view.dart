@@ -119,15 +119,29 @@ class _AccountViewState extends State<AccountView> {
                                 enabled: true,
                                 
                                 onChanged: (text) {
-                                  unsavedChanges = true;
-                                  account.name = text;
+                                  setState(() {
+                                    unsavedChanges = true;
+                                    account.name = text;
+                                  });
                                 },
                                 decoration: InputDecoration(
                                   hintText: "Enter your name...",
                                   hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
                                   isDense: true,
-                                  disabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        accNameController.clear();
+                                      });
+                                    },
+                                    visualDensity: VisualDensity.compact,
+                                    iconSize: 18,
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: accNameController.text.isNotEmpty ? 
+                                        Theme.of(context).colorScheme.onSurface :
+                                        Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -184,8 +198,20 @@ class _AccountViewState extends State<AccountView> {
                                   hintText: "Enter address...",
                                   hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
                                   isDense: true,
-                                  disabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        accPrefVetAddress.clear();
+                                      });
+                                    },
+                                    visualDensity: VisualDensity.compact,
+                                    iconSize: 18,
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: accPrefVetAddress.text.isNotEmpty ? 
+                                        Theme.of(context).colorScheme.onSurface :
+                                        Colors.transparent,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -215,16 +241,29 @@ class _AccountViewState extends State<AccountView> {
                                         
                                         onChanged: (text) {
                                           // validate phone number then if it passes:
-                                    
-                                          unsavedChanges = true;
-                                          account.preferredVet.phoneNumber = text;
+                                          setState(() {
+                                            unsavedChanges = true;
+                                            account.preferredVet.phoneNumber = text;  
+                                          });
                                         },
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number...",
                                           hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
                                           isDense: true,
-                                          disabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                accPrefVetNum.clear();
+                                              });
+                                            },
+                                            visualDensity: VisualDensity.compact,
+                                            iconSize: 18,
+                                            icon: Icon(
+                                              Icons.clear,
+                                              color: accPrefVetNum.text.isNotEmpty ? 
+                                                Theme.of(context).colorScheme.onSurface :
+                                                Colors.transparent,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -281,8 +320,20 @@ class _AccountViewState extends State<AccountView> {
                                           hintText: "Enter address...",
                                           hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
                                           isDense: true,
-                                          disabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                accEmeVetAddress.clear();
+                                              });
+                                            },
+                                            visualDensity: VisualDensity.compact,
+                                            iconSize: 18,
+                                            icon: Icon(
+                                              Icons.clear,
+                                              color: accEmeVetAddress.text.isNotEmpty ? 
+                                                Theme.of(context).colorScheme.onSurface :
+                                                Colors.transparent,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -312,16 +363,29 @@ class _AccountViewState extends State<AccountView> {
                                                 
                                                 onChanged: (text) {
                                                   // validate phone number then if it passes:
-                                            
-                                                  unsavedChanges = true;
-                                                  account.emergencyVet.phoneNumber = text;
+                                                  setState(() {
+                                                    unsavedChanges = true;
+                                                    account.emergencyVet.phoneNumber = text;
+                                                  });
                                                 },
                                                 decoration: InputDecoration(
                                                   hintText: "Enter phone number...",
                                                   hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
                                                   isDense: true,
-                                                  disabledBorder: UnderlineInputBorder(
-                                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                                                  suffixIcon: IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        accEmeVetNum.clear();
+                                                      });
+                                                    },
+                                                    visualDensity: VisualDensity.compact,
+                                                    iconSize: 18,
+                                                    icon: Icon(
+                                                      Icons.clear,
+                                                      color: accEmeVetNum.text.isNotEmpty ? 
+                                                        Theme.of(context).colorScheme.onSurface :
+                                                        Colors.transparent,
+                                                    ),
                                                   ),
                                                 ),
                                               ),

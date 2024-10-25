@@ -43,6 +43,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     String savedImagePath = await FileManager().saveImage(File(returnedImage.path));
     if (petImage)
     {
+      if (pet.image != null) await FileManager().deleteFile(pet.image);
       setState(() {
         pet.image = savedImagePath;
       });

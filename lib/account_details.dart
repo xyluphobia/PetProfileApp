@@ -43,20 +43,24 @@ class Account {
 class VetNumAndAddress {
   String? phoneNumber;
   String? address;
+  String? locationImagePath;
 
   VetNumAndAddress({
     this.phoneNumber,
     this.address,
+    this.locationImagePath,
   });
 
   
   factory VetNumAndAddress.fromJson(Map<String, dynamic> json) => VetNumAndAddress(
     phoneNumber: json["phoneNumber"],
     address: json["address"],
+    locationImagePath: json["locationImagePath"],
   );
 
   Map<String, dynamic> toJson() => {
     "phoneNumber": phoneNumber,
     "address": address,
+    "locationImagePath": locationImagePath,
   };
 }

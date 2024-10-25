@@ -1764,10 +1764,40 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       ],
                     ),
                     const SizedBox(width: 8.0),
-                    Container(
-                      color: Colors.grey,
-                      height: 80,
-                      width: 80,
+                    GestureDetector(
+                      child: Container(
+                        color: const Color.fromARGB(10, 0, 0, 0),
+                        height: 80,
+                        width: 80,
+                        child: pet.notOwnedByAccount
+                                ? pet.sharedPrefVet.locationImagePath != null ? Image.file(File(pet.sharedPrefVet.locationImagePath!)) : null
+                                : account.preferredVet.locationImagePath != null ? Image.file(File(account.preferredVet.locationImagePath!)) : null
+                      ),
+                      onTap: () async { // Directions Button
+                        if ((pet.notOwnedByAccount ? pet.sharedPrefVet.address : account.preferredVet.address) != null)
+                        {
+                          Position? currentLocation = NetworkUtil.lastLocation;
+                          currentLocation ??= await NetworkUtil.determinePosition();
+                          Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                            "api" : "1",
+                            "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                            "destination" : pet.notOwnedByAccount 
+                                            ? pet.sharedPrefVet.address
+                                            : account.preferredVet.address,
+                            "travelmode" : "driving",
+                          });
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url);
+                          } else {
+                            if (kDebugMode) {
+                              print("Cannot launch url: $url");
+                            }
+                          }
+                        }
+                        else {
+                          basicError(context, "Please set your preferred vet's address before navigating.");
+                        }
+                      }, 
                     ),
                   ],
                 ),
@@ -1877,10 +1907,40 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       ],
                     ),
                     const SizedBox(width: 8.0),
-                    Container(
-                      color: Colors.grey,
-                      height: 80,
-                      width: 80,
+                    GestureDetector(
+                      child: Container(
+                        color: const Color.fromARGB(10, 0, 0, 0),
+                        height: 80,
+                        width: 80,
+                        child: pet.notOwnedByAccount
+                                ? pet.sharedEmeVet.locationImagePath != null ? Image.file(File(pet.sharedEmeVet.locationImagePath!)) : null
+                                : account.emergencyVet.locationImagePath != null ? Image.file(File(account.emergencyVet.locationImagePath!)) : null
+                      ),
+                      onTap: () async { // Directions Button
+                        if ((pet.notOwnedByAccount ? pet.sharedEmeVet.address : account.emergencyVet.address) != null)
+                        {
+                          Position? currentLocation = NetworkUtil.lastLocation;
+                          currentLocation ??= await NetworkUtil.determinePosition();
+                          Uri url = Uri.https("www.google.com", "/maps/dir/", {
+                            "api" : "1",
+                            "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
+                            "destination" : pet.notOwnedByAccount
+                                              ? pet.sharedEmeVet.address
+                                              : account.emergencyVet.address,
+                            "travelmode" : "driving",
+                          });
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url);
+                          } else {
+                            if (kDebugMode) {
+                              print("Cannot launch url: $url");
+                            }
+                          }
+                        }
+                        else {
+                          basicError(context, "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
+                        }
+                      }
                     ),
                   ],
                 ),

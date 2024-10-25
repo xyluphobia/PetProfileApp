@@ -30,12 +30,33 @@ class _AccountViewState extends State<AccountView> {
   final TextEditingController accEmeVetAddress = TextEditingController();
   final TextEditingController accEmeVetNum = TextEditingController();
 
+  bool needNewPrefVetImage = false;
+  bool needNewEmeVetImage = false;
+
   bool searchingForPreferredLocation = false;
   bool searchingForEmergencyLocation = false;
   List<AutocompletePrediction> preferredPlacePredictions = [];
   List<AutocompletePrediction> emergencyPlacePredictions = [];
 
   Future<void> saveAccountData() async {
+    if (account.preferredVet.address?.isEmpty ?? true) account.preferredVet.address = null;
+    if (account.preferredVet.phoneNumber?.isEmpty ?? true) account.preferredVet.phoneNumber = null;
+    if (account.emergencyVet.address?.isEmpty ?? true) account.emergencyVet.address = null;
+    if (account.emergencyVet.phoneNumber?.isEmpty ?? true) account.emergencyVet.phoneNumber = null;
+
+    if (needNewPrefVetImage) {
+      // set preferred vet image
+      account.preferredVet.locationImagePath = await mapStaticImageGetter(account.preferredVet.address); 
+      needNewPrefVetImage = false;
+    }
+    if (!mounted) return;
+    if (needNewEmeVetImage) {
+      // set emergency vet image
+      account.emergencyVet.locationImagePath = await mapStaticImageGetter(account.emergencyVet.address);
+      needNewEmeVetImage = false;
+    }
+
+    if (!mounted) return;
     await context.read<FileController>().writeAccountDetails(account);
     setState(() {
       unsavedChanges = false;
@@ -172,6 +193,7 @@ class _AccountViewState extends State<AccountView> {
                                 
                                 onChanged: (text) async {
                                   unsavedChanges = true;
+                                  needNewPrefVetImage = true;
             
                                   preferredPlacePredictions = await mapPlaceAutoComplete(text);
                                   setState(() {
@@ -204,6 +226,7 @@ class _AccountViewState extends State<AccountView> {
                                     onPressed: () {
                                       setState(() {
                                         unsavedChanges = true;
+                                        needNewPrefVetImage = true;
                                         account.preferredVet.address = "";
                                         accPrefVetAddress.clear();
                                       });
@@ -296,6 +319,7 @@ class _AccountViewState extends State<AccountView> {
                                         
                                         onChanged: (text) async {
                                           unsavedChanges = true;
+                                          needNewEmeVetImage = true;
             
                                           emergencyPlacePredictions = await mapPlaceAutoComplete(text);
                                           setState(() {
@@ -328,6 +352,7 @@ class _AccountViewState extends State<AccountView> {
                                             onPressed: () {
                                               setState(() {
                                                 unsavedChanges = true;
+                                                needNewEmeVetImage = true;
                                                 account.emergencyVet.address = "";
                                                 accEmeVetAddress.clear();
                                               });

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pet_profile_app/utils/maps_util.dart';
 import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -61,6 +62,9 @@ class _PetsViewState extends State<PetsView> {
           if (pet.procedures[i].imagePath != "") pet.procedures[i].imagePath = await base64ToImage(pet.procedures[i].imagePath);
         }
       }
+      
+      pet.sharedPrefVet.locationImagePath = await mapStaticImageGetter(pet.sharedPrefVet.address);
+      pet.sharedEmeVet.locationImagePath = await mapStaticImageGetter(pet.sharedEmeVet.address);
 
       if (mounted) {
         PetDetails? petDetails = context.read<FileController>().petDetails;

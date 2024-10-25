@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:pet_profile_app/account_details.dart';
 
 // ignore: constant_identifier_names, non_constant_identifier_names
 
@@ -47,13 +48,19 @@ class Pet {
     List<MedicationEntry>? medications,
     List<VaccinationEntry>? vaccinations,
     List<ProcedureEntry>? procedures,
+
+    VetNumAndAddress? sharedPrefVet,
+    VetNumAndAddress? sharedEmeVet,
   }) : 
     petFoods = petFoods ?? <String>[],
     feedingTimes = feedingTimes ?? <TimeOfDay>[],
     
     medications = medications ?? <MedicationEntry>[],
     vaccinations = vaccinations ?? <VaccinationEntry>[],
-    procedures = procedures ?? <ProcedureEntry>[];
+    procedures = procedures ?? <ProcedureEntry>[],
+
+    sharedPrefVet = sharedPrefVet ?? VetNumAndAddress(),
+    sharedEmeVet = sharedEmeVet ?? VetNumAndAddress();
 
   bool notOwnedByAccount;
   String? image;
@@ -72,6 +79,9 @@ class Pet {
   List<MedicationEntry> medications;
   List<VaccinationEntry> vaccinations;  // Name & imagePath string of uploaded vaccination
   List<ProcedureEntry> procedures;  // Name & imagePath string of uploaded procedure
+  
+  VetNumAndAddress sharedPrefVet;
+  VetNumAndAddress sharedEmeVet;
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
     notOwnedByAccount: json["notOwnedByAccount"],
@@ -114,6 +124,13 @@ class Pet {
             imagePath: proc['imagePath'] as String,
           ))
       .toList() ?? [],
+
+    sharedPrefVet: json["sharedPrefVet"] != null
+      ? VetNumAndAddress.fromJson(json["sharedPrefVet"])
+      : null,
+    sharedEmeVet: json["sharedEmeVet"] != null
+      ? VetNumAndAddress.fromJson(json["sharedEmeVet"])
+      : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -152,6 +169,9 @@ class Pet {
         'name': procEntry.name,
         'imagePath': procEntry.imagePath,
       }).toList(),
+
+    "sharedPrefVet": sharedPrefVet.toJson(),
+    "sharedEmeVet": sharedEmeVet.toJson(),
   };
 }
 

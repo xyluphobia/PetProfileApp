@@ -106,6 +106,8 @@ class _PetDetailsViewState extends State<PetDetailsView> {
     Future<String> sharePetInfo(Pet? petToShare) async {
       if (petToShare == null) return "Error";
       petToShare.notOwnedByAccount = true;
+      petToShare.sharedPrefVet = account.preferredVet;
+      petToShare.sharedEmeVet = account.emergencyVet;
 
       var uuid = const Uuid();
       String filename = uuid.v4();
@@ -1677,7 +1679,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Preferred Vet Address
-                      formatAddressToPostal(account.preferredVet.address) ?? "Please set preferred vet address\nfound in account settings.\n",
+                      (pet.notOwnedByAccount 
+                        ? formatAddressToPostal(pet.sharedPrefVet.address) 
+                        : formatAddressToPostal(account.preferredVet.address) 
+                      ) ?? "Please set preferred vet address\nfound in account settings.\n",
                       softWrap: true,
                       maxLines: 3,
                     ),
@@ -1690,19 +1695,24 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         GestureDetector(
                           child: Icon(
                             Icons.directions,
-                            color: account.preferredVet.address != null ?
+                            color: (pet.notOwnedByAccount 
+                                      ? pet.sharedPrefVet.address
+                                      : account.preferredVet.address
+                                    ) != null ?
                               Theme.of(context).colorScheme.onPrimary :
                               Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Directions Button
-                            if (account.preferredVet.address != null)
+                            if ((pet.notOwnedByAccount ? pet.sharedPrefVet.address : account.preferredVet.address) != null)
                             {
                               Position? currentLocation = NetworkUtil.lastLocation;
                               currentLocation ??= await NetworkUtil.determinePosition();
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                                "destination" : account.preferredVet.address,
+                                "destination" : pet.notOwnedByAccount 
+                                                ? pet.sharedPrefVet.address
+                                                : account.preferredVet.address,
                                 "travelmode" : "driving",
                               });
                               if (await canLaunchUrl(url)) {
@@ -1722,16 +1732,21 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         GestureDetector(
                           child: Icon(
                             Icons.phone,
-                            color: account.preferredVet.phoneNumber != null ?
+                            color: (pet.notOwnedByAccount
+                                    ? pet.sharedPrefVet.phoneNumber
+                                    : account.preferredVet.phoneNumber
+                                  ) != null ?
                               Theme.of(context).colorScheme.onPrimary :
                               Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Phone Call Button
-                            if (account.preferredVet.phoneNumber != null)
+                            if ((pet.notOwnedByAccount ? pet.sharedPrefVet.phoneNumber : account.preferredVet.phoneNumber) != null)
                             {
                               final Uri url = Uri(
                                 scheme: 'tel',
-                                path: account.preferredVet.phoneNumber, // Preferred Vet phone number string
+                                path: pet.notOwnedByAccount
+                                        ? pet.sharedPrefVet.phoneNumber
+                                        : account.preferredVet.phoneNumber, // Preferred Vet phone number string
                               );
                               if (await canLaunchUrl(url)) {
                                 await launchUrl(url);
@@ -1777,7 +1792,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Emergency Vet Address
-                      formatAddressToPostal(account.emergencyVet.address) ?? "Please set emergency vet address\nfound in account settings.\n",
+                      (pet.notOwnedByAccount
+                        ? formatAddressToPostal(pet.sharedEmeVet.address)
+                        : formatAddressToPostal(account.emergencyVet.address)
+                      ) ?? "Please set emergency vet address\nfound in account settings.\n",
                       softWrap: true,
                       maxLines: 3,
                     ),
@@ -1790,19 +1808,24 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         GestureDetector(
                           child: Icon(
                             Icons.directions,
-                            color: account.emergencyVet.address != null ?
+                            color: (pet.notOwnedByAccount
+                                    ? pet.sharedEmeVet.address
+                                    : account.emergencyVet.address 
+                                  ) != null ?
                               Theme.of(context).colorScheme.onPrimary :
                               Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Directions Button
-                            if (account.emergencyVet.address != null)
+                            if ((pet.notOwnedByAccount ? pet.sharedEmeVet.address : account.emergencyVet.address) != null)
                             {
                               Position? currentLocation = NetworkUtil.lastLocation;
                               currentLocation ??= await NetworkUtil.determinePosition();
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
-                                "destination" : account.emergencyVet.address,
+                                "destination" : pet.notOwnedByAccount
+                                                  ? pet.sharedEmeVet.address
+                                                  : account.emergencyVet.address,
                                 "travelmode" : "driving",
                               });
                               if (await canLaunchUrl(url)) {
@@ -1822,16 +1845,21 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                         GestureDetector(
                           child: Icon(
                             Icons.phone,
-                            color: account.emergencyVet.phoneNumber != null ?
+                            color: (pet.notOwnedByAccount
+                                    ? pet.sharedEmeVet.phoneNumber
+                                    : account.emergencyVet.phoneNumber
+                                   ) != null ?
                               Theme.of(context).colorScheme.onPrimary :
                               Theme.of(context).colorScheme.secondary,
                           ),
                           onTap: () async { // Phone Call Button
-                            if (account.emergencyVet.phoneNumber != null)
+                            if ((pet.notOwnedByAccount ? pet.sharedEmeVet.phoneNumber : account.emergencyVet.phoneNumber) != null)
                             {
                               final Uri url = Uri(
                                 scheme: 'tel',
-                                path: account.emergencyVet.phoneNumber, // Emergency Vet phone number string
+                                path: pet.notOwnedByAccount
+                                        ? pet.sharedEmeVet.phoneNumber
+                                        : account.emergencyVet.phoneNumber, // Emergency Vet phone number string
                               );
                               if (await canLaunchUrl(url)) {
                                 await launchUrl(url);

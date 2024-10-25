@@ -1724,7 +1724,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              basicError(context, "Please set your preferred vet's address before navigating.");
+                              notification(context, "Error", "Please set your preferred vet's address before navigating.");
                             }
                           }, 
                         ),
@@ -1757,7 +1757,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              basicError(context, "Please set your preferred vet's phone number before calling.");
+                              notification(context, "Error", "Please set your preferred vet's phone number before calling.");
                             }
                           }, 
                         ),
@@ -1795,7 +1795,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           }
                         }
                         else {
-                          basicError(context, "Please set your preferred vet's address before navigating.");
+                          notification(context, "Error", "Please set your preferred vet's address before navigating.");
                         }
                       }, 
                     ),
@@ -1867,7 +1867,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              basicError(context, "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
+                              notification(context, "Error", "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
                             }
                           }, 
                         ),
@@ -1900,7 +1900,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                               }
                             }
                             else {
-                              basicError(context, "Please set your emergency vet's phone number.\nIf this is an emergency see the emergency page for local vet clinics.");
+                              notification(context, "Error", "Please set your emergency vet's phone number.\nIf this is an emergency see the emergency page for local vet clinics.");
                             }
                           }, 
                         ),
@@ -1938,7 +1938,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           }
                         }
                         else {
-                          basicError(context, "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
+                          notification(context, "Error", "Please set your emergency vet's address.\nIf this is an emergency see the emergency page for local vet clinics.");
                         }
                       }
                     ),

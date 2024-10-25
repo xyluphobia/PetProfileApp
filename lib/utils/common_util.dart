@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-Future<void> basicError(BuildContext context, String errorBody) {
+Future<void> notification(BuildContext context, String header, String body) {
   return showDialog(
     context: context, 
     builder: (context) => AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.primary,
       titlePadding: const EdgeInsets.only(left: 24, top: 24),
       title: Text(
-        "Error", 
+        header, 
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(decoration: TextDecoration.underline),
       ),
       contentPadding: const EdgeInsets.only(top: 20, bottom: 10, left: 20, right: 20),
       content: Text(
-        errorBody,
+        body,
         textAlign: TextAlign.start,
         style: Theme.of(context).textTheme.bodyLarge,
       ),

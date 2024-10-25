@@ -4,6 +4,7 @@ import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/file_manager.dart';
+import 'package:pet_profile_app/utils/common_util.dart';
 import 'package:pet_profile_app/utils/maps_util.dart';
 import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:provider/provider.dart';
@@ -443,6 +444,10 @@ class _AccountViewState extends State<AccountView> {
                                                 accEmeVetAddress.text = account.emergencyVet.address!;
                                               });
                                               FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
+                                              notification(context, 
+                                                "Reminder",
+                                                "Please ensure that your chosen emergency vet operates 24/7 and can provide care for your pet's species.", 
+                                              );
                                             },
                                           ),
                                         ),

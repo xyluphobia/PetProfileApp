@@ -40,10 +40,15 @@ String? formatAddressToPostal(String? address) {
   List<String> parts = address.split(', ');
 
   // Join the parts with newlines
-  if (parts.length > 3)
+  if (parts.length >= 3)
   {
     return '${parts[0]},\n${parts.sublist(1, parts.length - 1).join(", ")},\n${parts.last}';  
   }
-
-  return parts.join(',\n');
+  else {
+    if (parts.length == 2) {
+      return '${parts[0]},\n${parts[1]}\n';
+    } else {
+      return "$address\n\n";
+    }
+  }
 }

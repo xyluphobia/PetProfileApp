@@ -131,6 +131,8 @@ class _AccountViewState extends State<AccountView> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
+                                        unsavedChanges = true;
+                                        account.name = "";
                                         accNameController.clear();
                                       });
                                     },
@@ -201,6 +203,8 @@ class _AccountViewState extends State<AccountView> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
+                                        unsavedChanges = true;
+                                        account.preferredVet.address = "";
                                         accPrefVetAddress.clear();
                                       });
                                     },
@@ -251,6 +255,8 @@ class _AccountViewState extends State<AccountView> {
                                           suffixIcon: IconButton(
                                             onPressed: () {
                                               setState(() {
+                                                unsavedChanges = true;
+                                                account.preferredVet.phoneNumber = "";
                                                 accPrefVetNum.clear();
                                               });
                                             },
@@ -321,6 +327,8 @@ class _AccountViewState extends State<AccountView> {
                                           suffixIcon: IconButton(
                                             onPressed: () {
                                               setState(() {
+                                                unsavedChanges = true;
+                                                account.emergencyVet.address = "";
                                                 accEmeVetAddress.clear();
                                               });
                                             },
@@ -370,6 +378,8 @@ class _AccountViewState extends State<AccountView> {
                                                   suffixIcon: IconButton(
                                                     onPressed: () {
                                                       setState(() {
+                                                        unsavedChanges = true;
+                                                        account.emergencyVet.phoneNumber = "";
                                                         accEmeVetNum.clear();
                                                       });
                                                     },

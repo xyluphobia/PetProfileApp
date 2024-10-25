@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/file_controller.dart';
@@ -236,9 +234,6 @@ class _AccountViewState extends State<AccountView> {
                                         maxLines: 1,
                                         controller: accPrefVetNum,
                                         enabled: true,
-                                        inputFormatters: [
-                                          MaskedInputFormatter('(###) ###-####')
-                                        ],
                                         
                                         onChanged: (text) {
                                           // validate phone number then if it passes:
@@ -358,9 +353,6 @@ class _AccountViewState extends State<AccountView> {
                                                 maxLines: 1,
                                                 controller: accEmeVetNum,
                                                 enabled: true,
-                                                inputFormatters: [
-                                                  MaskedInputFormatter('(###) ###-####')
-                                                ],
                                                 
                                                 onChanged: (text) {
                                                   // validate phone number then if it passes:

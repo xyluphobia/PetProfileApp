@@ -1675,7 +1675,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Preferred Vet Address
-                      formatAddressToPostal(account.preferredVet.address) ?? "Please set preferred vet address.\n\n",
+                      formatAddressToPostal(account.preferredVet.address) ?? "Please set preferred vet address\nfound in account settings.\n",
                       softWrap: true,
                       maxLines: 3,
                     ),
@@ -1770,7 +1770,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text( // Emergency Vet Address
-                      formatAddressToPostal(account.emergencyVet.address) ?? "Please set emergency vet address.\n\n",
+                      formatAddressToPostal(account.emergencyVet.address) ?? "Please set emergency vet address\nfound in account settings.\n",
                       softWrap: true,
                       maxLines: 3,
                     ),

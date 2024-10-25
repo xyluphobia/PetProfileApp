@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
+import 'package:pet_profile_app/contact_us_view.dart';
 import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/file_manager.dart';
 import 'package:pet_profile_app/utils/common_util.dart';
@@ -109,7 +110,7 @@ class _AccountViewState extends State<AccountView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Card(
+                  Card( // Account Information
                     child:Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 4.0),
                       child: Column(
@@ -486,7 +487,28 @@ class _AccountViewState extends State<AccountView> {
                       ),
                     ),
                   ),
-                  IntrinsicHeight(
+                  Container( // Contact Me Button
+                    margin: const EdgeInsets.only(left: 2.0, right: 2.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => const ContactUsView(),
+                          )
+                        );
+                      }, 
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        elevation: 1, 
+                      ),
+                      child: Text(
+                        "Contact Me",
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  IntrinsicHeight( // Reset & Delete Buttons
                     child: Row(
                       children: [
                         const SizedBox(width: 2.0),

@@ -292,6 +292,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
             onPressed: () async {
               PetDetails? petDetails = context.read<FileController>().petDetails;
 
+              if (pet.image != null) FileManager().deleteFile(pet.image);
               if (petDetails != null) petDetails.data.removeAt(petIndex);
             
               unsavedChanges = false;

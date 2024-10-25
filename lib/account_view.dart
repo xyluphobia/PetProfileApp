@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/file_controller.dart';
+import 'package:pet_profile_app/file_manager.dart';
 import 'package:pet_profile_app/utils/maps_util.dart';
 import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:provider/provider.dart';
 
 import 'common/location_list_tile.dart';
+import 'pet_details.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({super.key});
@@ -551,9 +553,21 @@ class _AccountViewState extends State<AccountView> {
             ),
             onPressed: () async {
 
-              resetAccount ? 
-              await context.read<FileController>().clearAccountDetailsJson() : 
-              await context.read<FileController>().clearPetDetailsJson();
+              if (resetAccount) 
+              {
+                await context.read<FileController>().clearAccountDetailsJson();
+              }
+              else {
+                PetDetails? petDetails = context.read<FileController>().petDetails;
+                if (petDetails != null)
+                {
+                  for (Pet pet in petDetails.data) {
+                    if (pet.image != null) FileManager().deleteFile(pet.image);
+                  }
+                }
+
+                await context.read<FileController>().clearPetDetailsJson();
+              }
 
               if (context.mounted) Navigator.of(context).pop();
 

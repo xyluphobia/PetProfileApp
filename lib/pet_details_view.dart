@@ -1756,8 +1756,13 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                 ),
               ],
             ),
-            
-            const SizedBox(height: 8.0), // Row Spacer
+          
+            Divider(
+              height: 8.0, 
+              thickness: 0.6,
+              endIndent: 88.0, // Should be equal to the size of the container holding the map image + the padding of the card
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

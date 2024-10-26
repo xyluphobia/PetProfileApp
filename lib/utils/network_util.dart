@@ -3,6 +3,8 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:pet_profile_app/file_controller.dart';
+import 'package:provider/provider.dart';
 
 class NetworkUtil {
   static Future<String?> fetchUrl(Uri uri, {Map<String, String>? headers, String? jsonRequestBody}) async {
@@ -77,7 +79,7 @@ class NetworkUtil {
   ///
   /// When the location services are not enabled or permissions
   /// are denied the `Future` will return an error.
-  static Future<Position> determinePosition() async {
+  static Future<Position> determinePosition(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -111,8 +113,12 @@ class NetworkUtil {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    //lastLocation = await Geolocator.getCurrentPosition();
-    return await Geolocator.getCurrentPosition();
+    lastLocation = await Geolocator.getCurrentPosition();
+    if (context.mounted && context.read<FileController>().accountDetails != null) {
+      context.read<FileController>().accountDetails!.lastPosition = lastLocation;
+      context.read<FileController>().writeAccountDetails(context.read<FileController>().accountDetails!);
+    }
+    return lastLocation!;
   }
 }
 
@@ -140,7 +146,7 @@ class PlaceAutocompleteResponse {
 class AutocompletePrediction {
   // human-readable name for returned result, i.e. business name
   final String? description;
-  // pre-formated text
+  // pre-formatted text
   final StructuredFormatting? structuredFormatting;
   // unique identifier for a place
   final String? placeId;
@@ -215,7 +221,7 @@ class NearbyVets {
       businessName: json['displayName']['text'] as String?,
       formattedAddress: json['formattedAddress'] as String?,
       phoneNumber: json['nationalPhoneNumber'] as String?,
-      isOpen: json['regularOpeningHours']['openNow'] as bool?,
+      isOpen: json['regularOpeningHours']?['openNow'] as bool?,
     );
   }
 }

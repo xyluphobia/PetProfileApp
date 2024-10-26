@@ -1705,8 +1705,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           onTap: () async { // Directions Button
                             if ((pet.notOwnedByAccount ? pet.sharedPrefVet.address : account.preferredVet.address) != null)
                             {
-                              Position? currentLocation = NetworkUtil.lastLocation;
-                              currentLocation ??= await NetworkUtil.determinePosition();
+                              Position? currentLocation = await NetworkUtil.determinePosition(context);
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
@@ -1776,8 +1775,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       onTap: () async { // Directions Button
                         if ((pet.notOwnedByAccount ? pet.sharedPrefVet.address : account.preferredVet.address) != null)
                         {
-                          Position? currentLocation = NetworkUtil.lastLocation;
-                          currentLocation ??= await NetworkUtil.determinePosition();
+                          Position? currentLocation = await NetworkUtil.determinePosition(context);
                           Uri url = Uri.https("www.google.com", "/maps/dir/", {
                             "api" : "1",
                             "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
@@ -1848,8 +1846,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                           onTap: () async { // Directions Button
                             if ((pet.notOwnedByAccount ? pet.sharedEmeVet.address : account.emergencyVet.address) != null)
                             {
-                              Position? currentLocation = NetworkUtil.lastLocation;
-                              currentLocation ??= await NetworkUtil.determinePosition();
+                              Position? currentLocation = await NetworkUtil.determinePosition(context);
                               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                                 "api" : "1",
                                 "origin" : "${currentLocation.latitude},${currentLocation.longitude}",
@@ -1919,8 +1916,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       onTap: () async { // Directions Button
                         if ((pet.notOwnedByAccount ? pet.sharedEmeVet.address : account.emergencyVet.address) != null)
                         {
-                          Position? currentLocation = NetworkUtil.lastLocation;
-                          currentLocation ??= await NetworkUtil.determinePosition();
+                          Position? currentLocation = await NetworkUtil.determinePosition(context);
                           Uri url = Uri.https("www.google.com", "/maps/dir/", {
                             "api" : "1",
                             "origin" : "${currentLocation.latitude},${currentLocation.longitude}",

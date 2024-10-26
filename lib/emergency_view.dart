@@ -15,39 +15,20 @@ class EmergencyView extends StatefulWidget {
   const EmergencyView({super.key});
 
   @override
-  State<EmergencyView> createState() => _EmergencyViewState();
+  State<EmergencyView> createState() => EmergencyViewState();
 }
 
-class _EmergencyViewState extends State<EmergencyView> {
-  
+class EmergencyViewState extends State<EmergencyView> {
   final Completer<GoogleMapController> _mapController = Completer<GoogleMapController>();
 
-
-
-  static CameraPosition defaultCameraPosition = NetworkUtil.lastLocation == null ? 
-  const CameraPosition(
-    target: LatLng(-33.8688, 151.2093),
-    zoom: 10,
-  ) : 
-  CameraPosition(
-    target: LatLng(NetworkUtil.lastLocation!.latitude, NetworkUtil.lastLocation!.longitude),
-    zoom: 10,
-  );
+  static CameraPosition defaultCameraPosition = const CameraPosition(target: LatLng(0, 0));
   LatLng lastLatLng = const LatLng(0, 0);
-
   Set<Marker> markers = {};
   List<AutocompletePrediction> placePredictions = [];
   List<NearbyVets> nearbyVets = [];
 
   bool searchingForLocation = false;
   final TextEditingController _mapSearchTextController = TextEditingController();
-
-  @override
-  void initState() {
-    goToLocation();
-    mapPlaceNearbySearch();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,8 +141,20 @@ class _EmergencyViewState extends State<EmergencyView> {
                               zoomControlsEnabled: false,
                               myLocationButtonEnabled: false,
                               markers: markers,
-                              onMapCreated: (GoogleMapController controller) {
+                              onMapCreated: (GoogleMapController controller) async {
                                 _mapController.complete(controller);
+
+                                Position? lastKnownPos = await Geolocator.getLastKnownPosition();
+                                if (lastKnownPos == null) return;
+                                controller.animateCamera(CameraUpdate.newCameraPosition(
+                                  CameraPosition(
+                                    target: LatLng(lastKnownPos.latitude, lastKnownPos.longitude),
+                                    zoom: 10,
+                                  ))
+                                ); 
+                                lastLatLng = LatLng(lastKnownPos.latitude, lastKnownPos.longitude);
+                                NetworkUtil.lastLocation = lastKnownPos;
+                                mapPlaceNearbySearch(); // Should be optimizable by saving previous list and only calling this if said list is blank.
                               },
                             ),
                             floatingActionButton: FloatingActionButton.extended(
@@ -239,14 +232,14 @@ class _EmergencyViewState extends State<EmergencyView> {
       "includedTypes": [
         "veterinary_care"
       ],
-      "maxResultCount": 10,
+      "maxResultCount": 8,
       "locationRestriction": {
         "circle": {
           "center": {
-            "latitude": lastLatLng.latitude,
-            "longitude": lastLatLng.longitude
+            "latitude": NetworkUtil.lastLocation!.latitude,
+            "longitude": NetworkUtil.lastLocation!.longitude
           },
-          "radius": 50000
+          "radius": 7500
         }
       }
     };
@@ -277,8 +270,13 @@ class _EmergencyViewState extends State<EmergencyView> {
         setState(() {
           nearbyVets = result.places!;
         });
+        return;
       }
     }
+
+    setState(() {
+      nearbyVets = [];
+    });
   }
 
 
@@ -292,7 +290,8 @@ class _EmergencyViewState extends State<EmergencyView> {
       goTo = LatLng(locationList[0].latitude, locationList[0].longitude);
     }
     else {
-      Position position = await NetworkUtil.determinePosition();
+      // ignore: use_build_context_synchronously
+      Position position = await NetworkUtil.determinePosition(context);
       goTo = LatLng(position.latitude, position.longitude);
     }
 
@@ -306,10 +305,21 @@ class _EmergencyViewState extends State<EmergencyView> {
         markerId: const MarkerId("CurrentLocation"),
         position: goTo,
       ));
-    
+
+    // if savedlocation is far enough away from current location
+    double distanceBetweenSavedAndCurrentPos = Geolocator.distanceBetween(
+      lastLatLng.latitude, 
+      lastLatLng.longitude, 
+      
+      goTo.latitude,
+      goTo.longitude
+    );
+    if (distanceBetweenSavedAndCurrentPos > 1000) {  // If new location is more than 1000 meters from old location.
+      mapPlaceNearbySearch();
+    }
+
     setState(() {
       lastLatLng = goTo;
     });
-    mapPlaceNearbySearch();
   }
 }

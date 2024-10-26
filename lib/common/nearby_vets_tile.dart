@@ -82,7 +82,7 @@ class NearbyVetsTile extends StatelessWidget {
 
             IconButton(onPressed: () async {
               Position? currentLocation = NetworkUtil.lastLocation;
-              currentLocation ??= await NetworkUtil.determinePosition();
+              currentLocation ??= await NetworkUtil.determinePosition(context);
               
               Uri url = Uri.https("www.google.com", "/maps/dir/", {
                 "api" : "1",

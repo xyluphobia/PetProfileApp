@@ -14,12 +14,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final GlobalKey<EmergencyViewState> emergencyKey = GlobalKey<EmergencyViewState>();
   int navIndex = 1;
-  List<Widget> widgetList = const [
-    AccountView(),
-    PetsView(),
-    EmergencyView(),
-  ];
+  bool firstLocation = true;
 
   ThemeManager appValueNotifier = ThemeManager.instance;
   @override
@@ -76,6 +73,10 @@ class _HomeViewState extends State<HomeView> {
           ),
           child: BottomNavigationBar(
             onTap: (index) {
+              if (index == 2 && firstLocation) {
+                emergencyKey.currentState?.goToLocation();
+                firstLocation = false;
+              }
               setState(() {
                 navIndex = index;
               });
@@ -101,7 +102,11 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: IndexedStack(
         index: navIndex,
-        children: widgetList,
+        children: [
+          const AccountView(),
+          const PetsView(),
+          EmergencyView(key: emergencyKey),
+        ],
       ),
     );
   }

@@ -1,7 +1,8 @@
+import 'package:geolocator/geolocator.dart';
 
 class Account {
   Account({
-    this.lastLatLng,
+    this.lastPosition,
     this.name,
     this.contactNumber,
 
@@ -10,7 +11,7 @@ class Account {
   }) : preferredVet = preferredVetAddress ?? VetNumAndAddress(),
        emergencyVet = emergencyVetAddress ?? VetNumAndAddress();
 
-  String? lastLatLng;
+  Position? lastPosition;
   String? name;
   String? contactNumber;
 
@@ -18,7 +19,22 @@ class Account {
   VetNumAndAddress emergencyVet;
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
-    lastLatLng: json["lastLatLng"],
+    lastPosition: json["lastPosition"] != null
+      ? Position(
+          latitude: json["lastPosition"]["latitude"],
+          longitude: json["lastPosition"]["longitude"],
+          timestamp: json["lastPosition"]["timestamp"] != null
+              ? DateTime.parse(json["lastPosition"]["timestamp"])
+              : DateTime.now(),
+          accuracy: json["lastPosition"]["accuracy"] ?? 0.0,
+          altitude: json["lastPosition"]["altitude"] ?? 0.0,
+          heading: json["lastPosition"]["heading"] ?? 0.0,
+          speed: json["lastPosition"]["speed"] ?? 0.0,
+          speedAccuracy: json["lastPosition"]["speedAccuracy"] ?? 0.0,
+          altitudeAccuracy: json["lastPosition"]["altitudeAccuracy"] ?? 0.0,
+          headingAccuracy: json["lastPosition"]["headingAccuracy"] ?? 0.0,
+        )
+      : null,
     name: json["name"],
     contactNumber: json["contactNumber"],
 
@@ -31,7 +47,20 @@ class Account {
   );
 
   Map<String, dynamic> toJson() => {
-    "lastLatLng": lastLatLng,
+    "lastPosition": lastPosition != null
+      ? {
+          "latitude": lastPosition!.latitude,
+          "longitude": lastPosition!.longitude,
+          "timestamp": lastPosition!.timestamp.toIso8601String(),
+          "accuracy": lastPosition!.accuracy,
+          "altitude": lastPosition!.altitude,
+          "heading": lastPosition!.heading,
+          "speed": lastPosition!.speed,
+          "speedAccuracy": lastPosition!.speedAccuracy,
+          "altitudeAccuracy": lastPosition!.altitudeAccuracy,
+          "headingAccuracy": lastPosition!.headingAccuracy,
+        }
+      : null,
     "name": name,
     "contactNumber": contactNumber, 
     

@@ -499,7 +499,7 @@ class _AccountViewState extends State<AccountView> {
                         );
                       }, 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.blue[300],
                         elevation: 1, 
                       ),
                       child: Text(

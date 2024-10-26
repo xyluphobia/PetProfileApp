@@ -288,6 +288,20 @@ class EmergencyViewState extends State<EmergencyView> {
     if (address != null) {
       List<Location> locationList = await locationFromAddress(address);
       goTo = LatLng(locationList[0].latitude, locationList[0].longitude);
+
+
+      NetworkUtil.lastLocation = Position(
+        latitude: locationList.first.latitude,
+        longitude: locationList.first.longitude,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 1.0, 
+        altitudeAccuracy: 0.0, 
+        headingAccuracy: 0.0,
+      );
     }
     else {
       // ignore: use_build_context_synchronously

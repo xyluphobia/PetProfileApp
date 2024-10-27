@@ -67,14 +67,15 @@ class _ContactUsViewState extends State<ContactUsView> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 16,
-          bottom: 8,
+          top: 12,
+          bottom: 12,
           right: 16,
           left: 16,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
+            Container( // Image / Dono / No-Ads
               margin: const EdgeInsets.only(left: 4.0, right: 4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,8 +125,31 @@ class _ContactUsViewState extends State<ContactUsView> {
                 ],
               ),
             ),
-            const SizedBox(height: 8.0),
-            Card(
+            //const SizedBox(height: 8.0),
+            Card( // About me
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 10.0),
+                child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start, 
+                  children: [
+                    Text(
+                      "About Me",
+                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(decoration: TextDecoration.underline),
+                    ),
+                    const SizedBox(height: 6.0),
+                    Text(
+                      "Hi, I'm Matthew! I'm the sole developer of Pet Tether.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Text(
+                      "I built Pet Tether to make sharing all the essential information someone may need about your pet quick and easy.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Card( // Contact form
               child: Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 8.0),
                 child: Form(
@@ -269,7 +293,6 @@ class _ContactUsViewState extends State<ContactUsView> {
                 ),
               ),
             ),
-            const Card(),
           ],
         ),
       ),

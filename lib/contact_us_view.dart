@@ -47,7 +47,7 @@ class _ContactUsViewState extends State<ContactUsView> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
 
-    return value!.isNotEmpty && !regex.hasMatch(value)
+    return value != null && value.isNotEmpty && !regex.hasMatch(value)
         ? 'Please enter a valid email address.'
         : null;
   }
@@ -65,235 +65,236 @@ class _ContactUsViewState extends State<ContactUsView> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 12,
-          bottom: 12,
-          right: 16,
-          left: 16,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container( // Image / Dono / No-Ads
-              margin: const EdgeInsets.only(left: 4.0, right: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  PhysicalModel(
-                    color: Colors.transparent,
-                    elevation: 1,
-                    shape: BoxShape.circle,
-                    child: CircleAvatar(
-                      radius: 87,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: CircleAvatar(
-                        radius: 80,
-                        backgroundColor: Theme.of(context).colorScheme.onSurface,
-                        backgroundImage: const Image(image: AssetImage('assets/images/matthewAboutPicture.jpg')).image,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                      
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                        ),
-                        child: Text(
-                          "Buy NO Ads",
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                      
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                        ),
-                        child: Text(
-                          "Dono Placeholder",
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            //const SizedBox(height: 8.0),
-            Card( // About me
-              child: Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 10.0),
-                child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start, 
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 8,
+            bottom: 12,
+            right: 16,
+            left: 16,
+          ),
+          child: Column(
+            children: [
+              Container( // Image / Dono / No-Ads
+                margin: const EdgeInsets.only(left: 4.0, right: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "About Me",
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(decoration: TextDecoration.underline),
+                    PhysicalModel(
+                      color: Colors.transparent,
+                      elevation: 1,
+                      shape: BoxShape.circle,
+                      child: CircleAvatar(
+                        radius: 87,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: CircleAvatar(
+                          radius: 80,
+                          backgroundColor: Theme.of(context).colorScheme.onSurface,
+                          backgroundImage: const Image(image: AssetImage('assets/images/matthewAboutPicture.jpg')).image,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 6.0),
-                    Text(
-                      "Hi, I'm Matthew! I'm the sole developer of Pet Tether.",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    Text(
-                      "I built Pet Tether to make sharing all the essential information someone may need about your pet quick and easy.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                        
+                          }, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: Text(
+                            "Buy NO Ads",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                        
+                          }, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: Text(
+                            "Dono Placeholder",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
-            Card( // Contact form
-              child: Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 8.0),
-                child: Form(
-                  key: contactFormKey,
+              const SizedBox(height: 4.0),
+              Card( // About me
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 10.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                   crossAxisAlignment: CrossAxisAlignment.start, 
                     children: [
                       Text(
-                        "Get in Touch",
+                        "About Me",
                         style: Theme.of(context).textTheme.headlineMedium!.copyWith(decoration: TextDecoration.underline),
                       ),
                       const SizedBox(height: 6.0),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Have a question, suggestion or just want to talk about your experience with Pet Tether? Send me an email at ",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            TextSpan(
-                              text: "Contact@PetTether.com",
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface),
-                              recognizer: TapGestureRecognizer()..onTap = () {
-                                final Uri emailLaunchUri = Uri(
-                                  scheme: 'mailto',
-                                  path: 'contact@pettether.com',
-                                  query: encodeQueryParameters(<String, String>{
-                                    'subject': 'Pet Tether Contact',
-                                  })
-                                );
-                                launchUrl(emailLaunchUri);
-                              },
-                            ),
-                            TextSpan(
-                              text: " or by filling out the form below.",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ]
-                        ),
+                      Text(
+                        "Hi, I'm Matthew! I'm the sole developer of Pet Tether.",
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      const SizedBox(height: 16.0),
-                      TextFormField(
-                        controller: nameField,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Name",
-                          labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                          errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
-                          filled: true,
-                          fillColor: const Color.fromARGB(8, 0, 0, 0),
-                          border: inputBorder,
-                          focusedBorder: inputBorder,
-                          errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
-                          enabledBorder: inputBorder,
-                          disabledBorder: inputBorder,
-                          focusedErrorBorder: inputBorder,
-                        ),
-                        validator: (text) {
-                          if (text == null || text.isEmpty) {
-                            return "Please enter your name.";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 8.0), // Space between form elements
-                      TextFormField(
-                        controller: emailField,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: "E-mail",
-                          labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                          errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
-                          filled: true,
-                          fillColor: const Color.fromARGB(8, 0, 0, 0),
-                          border: inputBorder,
-                          focusedBorder: inputBorder,
-                          errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
-                          enabledBorder: inputBorder,
-                          disabledBorder: inputBorder,
-                          focusedErrorBorder: inputBorder, 
-                        ),
-                        validator: validateEmail
-                      ),
-                      const SizedBox(height: 8.0), // Space between form elements
-                      TextFormField(
-                        controller: messageField,
-                        minLines: 4,
-                        maxLines: 4,
-                        keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(
-                          labelText: "Message",
-                          alignLabelWithHint: true,
-                          labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-                          errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
-                          filled: true,
-                          fillColor: const Color.fromARGB(8, 0, 0, 0),
-                          border: inputBorder,
-                          focusedBorder: inputBorder,
-                          errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
-                          enabledBorder: inputBorder,
-                          disabledBorder: inputBorder,
-                          focusedErrorBorder: inputBorder,
-                        ),
-                        validator: (text) {
-                          if (text == null || text.isEmpty) {
-                            return "Please enter your question or suggestion!";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 8.0), // Space between form elements
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (contactFormKey.currentState!.validate()) {
-                              // send email.
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    "Sent!"
-                                  ),
-                                ),
-                              );
-                            }
-                          }, 
-                          style: ElevatedButton.styleFrom(
-                            elevation: 1,
-                            backgroundColor: Theme.of(context).colorScheme.onSurface,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                          ),
-                          child: Text(
-                            "Submit",
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
-                          ),
-                        ),
+                      Text(
+                        "I built Pet Tether to make sharing all the essential information someone may need about your pet quick and easy.",
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+              Card( // Contact form
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0, bottom: 8.0),
+                  child: Form(
+                    key: contactFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Get in Touch",
+                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(decoration: TextDecoration.underline),
+                        ),
+                        const SizedBox(height: 6.0),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Have a question, suggestion or just want to talk about your experience with Pet Tether? Send me an email at ",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              TextSpan(
+                                text: "Contact@PetTether.com",
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                                recognizer: TapGestureRecognizer()..onTap = () {
+                                  final Uri emailLaunchUri = Uri(
+                                    scheme: 'mailto',
+                                    path: 'contact@pettether.com',
+                                    query: encodeQueryParameters(<String, String>{
+                                      'subject': 'Pet Tether Contact',
+                                    })
+                                  );
+                                  launchUrl(emailLaunchUri);
+                                },
+                              ),
+                              TextSpan(
+                                text: " or by filling out the form below.",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ]
+                          ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        TextFormField(
+                          controller: nameField,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            labelText: "Name",
+                            labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
+                            filled: true,
+                            fillColor: const Color.fromARGB(8, 0, 0, 0),
+                            border: inputBorder,
+                            focusedBorder: inputBorder,
+                            errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
+                            enabledBorder: inputBorder,
+                            disabledBorder: inputBorder,
+                            focusedErrorBorder: inputBorder,
+                          ),
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return "Please enter your name.";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8.0), // Space between form elements
+                        TextFormField(
+                          controller: emailField,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: "E-mail",
+                            labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
+                            filled: true,
+                            fillColor: const Color.fromARGB(8, 0, 0, 0),
+                            border: inputBorder,
+                            focusedBorder: inputBorder,
+                            errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
+                            enabledBorder: inputBorder,
+                            disabledBorder: inputBorder,
+                            focusedErrorBorder: inputBorder, 
+                          ),
+                          validator: validateEmail
+                        ),
+                        const SizedBox(height: 8.0), // Space between form elements
+                        TextFormField(
+                          controller: messageField,
+                          minLines: 4,
+                          maxLines: 4,
+                          keyboardType: TextInputType.multiline,
+                          decoration: InputDecoration(
+                            labelText: "Message",
+                            alignLabelWithHint: true,
+                            labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
+                            filled: true,
+                            fillColor: const Color.fromARGB(8, 0, 0, 0),
+                            border: inputBorder,
+                            focusedBorder: inputBorder,
+                            errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: Colors.red[900] as Color)),
+                            enabledBorder: inputBorder,
+                            disabledBorder: inputBorder,
+                            focusedErrorBorder: inputBorder,
+                          ),
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return "Please enter your question or suggestion!";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8.0), // Space between form elements
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (contactFormKey.currentState!.validate()) {
+                                // send email.
+        
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Sent!"
+                                    ),
+                                  ),
+                                );
+                              }
+                            }, 
+                            style: ElevatedButton.styleFrom(
+                              elevation: 1,
+                              backgroundColor: Theme.of(context).colorScheme.onSurface,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                            ),
+                            child: Text(
+                              "Submit",
+                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

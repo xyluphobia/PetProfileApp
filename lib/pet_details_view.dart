@@ -175,6 +175,7 @@ class _PetDetailsViewState extends State<PetDetailsView> {
       ),
       floatingActionButton: !newPet ? FloatingActionButton(
         heroTag: "sharePetInfoBtn",
+        shape: const CircleBorder(),
         onPressed: () async {
           if(NetworkUtil.acceptableRequestAmount())
           {

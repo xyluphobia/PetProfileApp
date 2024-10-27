@@ -8,7 +8,13 @@ class ContactUsView extends StatefulWidget {
   State<ContactUsView> createState() => _ContactUsViewState();
 }
 
+final contactFormKey = GlobalKey<FormState>();
+
 class _ContactUsViewState extends State<ContactUsView> {
+  TextEditingController nameField = TextEditingController();
+  TextEditingController emailField = TextEditingController();
+  TextEditingController messageField = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,25 +37,118 @@ class _ContactUsViewState extends State<ContactUsView> {
         ),
         child: Column(
           children: [
-            SizedBox(
+            Container(
+              margin: const EdgeInsets.only(left: 4.0, right: 4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Theme.of(context).colorScheme.onSurface,
-                    backgroundImage: const Image(image: AssetImage('assets/images/matthewAboutPicture.jpg')).image,
+                  PhysicalModel(
+                    color: Colors.transparent,
+                    elevation: 1,
+                    shape: BoxShape.circle,
+                    child: CircleAvatar(
+                      radius: 87,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: CircleAvatar(
+                        radius: 80,
+                        backgroundColor: Theme.of(context).colorScheme.onSurface,
+                        backgroundImage: const Image(image: AssetImage('assets/images/matthewAboutPicture.jpg')).image,
+                      ),
+                    ),
                   ),
-                  Container(
-                    height: 50,
-                    width: 140,
-                    color: Colors.grey,
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                      
+                        }, 
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Text(
+                          "Buy NO Ads",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                      
+                        }, 
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Text(
+                          "Dono Placeholder",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const Card(),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                  key: contactFormKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: nameField,
+                        validator: (text) {
+                          if (text == null || text.isEmpty) {
+                            return "Please enter your name.";
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: emailField,
+                        validator: (text) {
+                          if (text == null || text.isEmpty) {
+                            return "Please enter a valid email.";
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: messageField,
+                        validator: (text) {
+                          if (text == null || text.isEmpty) {
+                            return "Please enter your question or suggestion!";
+                          }
+                          return null;
+                        },
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (contactFormKey.currentState!.validate()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Sent!"
+                                ),
+                              ),
+                            );
+                          }
+                        }, 
+                        style: ElevatedButton.styleFrom(
+                          elevation: 1,
+                          backgroundColor: Theme.of(context).colorScheme.onSurface,
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0))
+                        ),
+                        child: Text(
+                          "Send",
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             const Card(),
           ],
         ),

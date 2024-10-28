@@ -14,7 +14,7 @@ final contactFormKey = GlobalKey<FormState>();
 
 class _ContactUsViewState extends State<ContactUsView> {
   TextEditingController nameField = TextEditingController();
-  TextEditingController emailField = TextEditingController();
+  TextEditingController subjectField = TextEditingController();
   TextEditingController messageField = TextEditingController();
 
   OutlineInputBorder inputBorder = const OutlineInputBorder();
@@ -35,21 +35,6 @@ class _ContactUsViewState extends State<ContactUsView> {
       .map((MapEntry<String, String> e) =>
           '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
       .join('&');
-  }
-
-  String? validateEmail(String? value) {
-    const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-        r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
-        r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
-        r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
-        r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
-        r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
-        r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
-    final regex = RegExp(pattern);
-
-    return value != null && value.isNotEmpty && !regex.hasMatch(value)
-        ? 'Please enter a valid email address.'
-        : null;
   }
 
   @override
@@ -195,7 +180,7 @@ class _ContactUsViewState extends State<ContactUsView> {
                           controller: nameField,
                           keyboardType: TextInputType.name,
                           decoration: InputDecoration(
-                            labelText: "Name",
+                            labelText: "Name*",
                             labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                             errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
                             filled: true,
@@ -216,10 +201,10 @@ class _ContactUsViewState extends State<ContactUsView> {
                         ),
                         const SizedBox(height: 8.0), // Space between form elements
                         TextFormField(
-                          controller: emailField,
-                          keyboardType: TextInputType.emailAddress,
+                          controller: subjectField,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            labelText: "E-mail",
+                            labelText: "Subject",
                             labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                             errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
                             filled: true,
@@ -231,16 +216,15 @@ class _ContactUsViewState extends State<ContactUsView> {
                             disabledBorder: inputBorder,
                             focusedErrorBorder: inputBorder, 
                           ),
-                          validator: validateEmail
                         ),
                         const SizedBox(height: 8.0), // Space between form elements
                         TextFormField(
                           controller: messageField,
                           minLines: 4,
                           maxLines: 4,
-                          keyboardType: TextInputType.multiline,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            labelText: "Message",
+                            labelText: "Message*",
                             alignLabelWithHint: true,
                             labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
                             errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red[900] as Color),
@@ -264,14 +248,28 @@ class _ContactUsViewState extends State<ContactUsView> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (contactFormKey.currentState!.validate()) {
                                 // send email.
-        
+                                final Uri emailLaunchUri = Uri(
+                                  scheme: 'mailto',
+                                  path: 'contact@pettether.com',
+                                  query: encodeQueryParameters(<String, String>{
+                                    'subject': '${subjectField.text} ~ ${nameField.text}',
+                                    'body': messageField.text,
+                                  })
+                                );
+
+                                String snackBarText = "Failed to launch E-mail.";
+                                if (await canLaunchUrl(emailLaunchUri)) {
+                                  launchUrl(emailLaunchUri);
+                                  snackBarText = "Sent!";
+                                }
+                                  
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                      "Sent!"
+                                      snackBarText,
                                     ),
                                   ),
                                 );

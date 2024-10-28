@@ -263,7 +263,7 @@ class _ContactUsViewState extends State<ContactUsView> {
                                 String snackBarText = "Failed to launch E-mail.";
                                 if (await canLaunchUrl(emailLaunchUri)) {
                                   launchUrl(emailLaunchUri);
-                                  snackBarText = "Sent!";
+                                  snackBarText = "Launching!";
                                 }
                                   
                                 ScaffoldMessenger.of(context).showSnackBar(

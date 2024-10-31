@@ -266,6 +266,7 @@ class _ContactUsViewState extends State<ContactUsView> {
                                   snackBarText = "Launching!";
                                 }
                                   
+                                if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(

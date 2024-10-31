@@ -1,17 +1,23 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:pet_profile_app/utils/network_util.dart';
 
 class Account {
   Account({
     this.lastPosition,
+    List<NearbyVets>? nearbyVetsSaved,
+
     this.name,
     this.contactNumber,
 
     VetNumAndAddress? preferredVetAddress, 
     VetNumAndAddress? emergencyVetAddress, 
-  }) : preferredVet = preferredVetAddress ?? VetNumAndAddress(),
+  }) : nearbyVetsSaved = nearbyVetsSaved ?? <NearbyVets>[],
+       preferredVet = preferredVetAddress ?? VetNumAndAddress(),
        emergencyVet = emergencyVetAddress ?? VetNumAndAddress();
 
   Position? lastPosition;
+  List<NearbyVets> nearbyVetsSaved;
+
   String? name;
   String? contactNumber;
 
@@ -35,6 +41,12 @@ class Account {
           headingAccuracy: json["lastPosition"]["headingAccuracy"] ?? 0.0,
         )
       : null,
+    nearbyVetsSaved: json["nearbyVetsSaved"] != null
+      ? (json["nearbyVetsSaved"] as List)
+          .map((item) => NearbyVets.fromJson(item))
+          .toList()
+      : [],
+
     name: json["name"],
     contactNumber: json["contactNumber"],
 
@@ -61,6 +73,8 @@ class Account {
           "headingAccuracy": lastPosition!.headingAccuracy,
         }
       : null,
+    "nearbyVetsSaved": nearbyVetsSaved.map((vet) => vet.toJson()).toList(),
+
     "name": name,
     "contactNumber": contactNumber, 
     

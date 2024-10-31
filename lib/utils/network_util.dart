@@ -224,4 +224,13 @@ class NearbyVets {
       isOpen: json['regularOpeningHours']?['openNow'] as bool?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'displayName': {'text': businessName},
+      'formattedAddress': formattedAddress,
+      'nationalPhoneNumber': phoneNumber,
+      'regularOpeningHours': {'openNow': isOpen},
+    };
+  }
 }

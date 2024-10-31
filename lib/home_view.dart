@@ -73,9 +73,12 @@ class _HomeViewState extends State<HomeView> {
           ),
           child: BottomNavigationBar(
             onTap: (index) {
-              if (index == 2 && firstLocation) {
-                emergencyKey.currentState?.goToLocation();
-                firstLocation = false;
+              if (index == 2) {
+                if (firstLocation) {
+                  emergencyKey.currentState?.goToLocation();
+                  firstLocation = false;
+                }
+                emergencyKey.currentState?.determineIfSearchingAndSearch();
               }
               setState(() {
                 navIndex = index;

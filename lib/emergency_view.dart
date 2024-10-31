@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:pet_profile_app/account_details.dart';
 import 'package:pet_profile_app/common/location_list_tile.dart';
 import 'package:pet_profile_app/common/nearby_vets_tile.dart';
+import 'package:pet_profile_app/file_controller.dart';
 import 'package:pet_profile_app/utils/maps_util.dart';
 import 'package:pet_profile_app/utils/network_util.dart';
 import 'package:pet_profile_app/secrets.dart';
@@ -10,6 +13,7 @@ import 'package:pet_profile_app/secrets.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 class EmergencyView extends StatefulWidget {
   const EmergencyView({super.key});
@@ -32,6 +36,8 @@ class EmergencyViewState extends State<EmergencyView> {
 
   @override
   Widget build(BuildContext context) {
+    nearbyVets = context.watch<FileController>().accountDetails != null ? context.watch<FileController>().accountDetails!.nearbyVetsSaved : [];
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(
@@ -144,17 +150,23 @@ class EmergencyViewState extends State<EmergencyView> {
                               onMapCreated: (GoogleMapController controller) async {
                                 _mapController.complete(controller);
 
-                                Position? lastKnownPos = await Geolocator.getLastKnownPosition();
-                                if (lastKnownPos == null) return;
-                                controller.animateCamera(CameraUpdate.newCameraPosition(
-                                  CameraPosition(
-                                    target: LatLng(lastKnownPos.latitude, lastKnownPos.longitude),
-                                    zoom: 10,
-                                  ))
-                                ); 
-                                lastLatLng = LatLng(lastKnownPos.latitude, lastKnownPos.longitude);
-                                NetworkUtil.lastLocation = lastKnownPos;
-                                mapPlaceNearbySearch(); // Should be optimizable by saving previous list and only calling this if said list is blank.
+                                try {
+                                  Position? lastKnownPos = await Geolocator.getLastKnownPosition();
+                                  if (lastKnownPos != null) {
+                                    controller.animateCamera(CameraUpdate.newCameraPosition(
+                                      CameraPosition(
+                                        target: LatLng(lastKnownPos.latitude, lastKnownPos.longitude),
+                                        zoom: 10,
+                                      ))
+                                    ); 
+                                    lastLatLng = LatLng(lastKnownPos.latitude, lastKnownPos.longitude);
+                                    NetworkUtil.lastLocation = lastKnownPos;
+                                  }
+                                } catch (e) {
+                                  if (kDebugMode) {
+                                    print(e);
+                                  }
+                                }
                               },
                             ),
                             floatingActionButton: FloatingActionButton.extended(
@@ -226,6 +238,38 @@ class EmergencyViewState extends State<EmergencyView> {
     );
   }
 
+  void determineIfSearchingAndSearch() async {
+    Position? currentPos = await NetworkUtil.determinePosition(context);
+    double distanceBetweenSavedAndCurrentPos = Geolocator.distanceBetween(
+      lastLatLng.latitude, 
+      lastLatLng.longitude, 
+      
+      currentPos.latitude,
+      currentPos.longitude
+    );
+    if (distanceBetweenSavedAndCurrentPos > 2000) {
+      mapPlaceNearbySearch();
+    } else {
+      if (nearbyVets.isNotEmpty && nearbyVets[0].formattedAddress != null) {
+        NearbyVets location = nearbyVets[0];
+        List<Location> locationList = await locationFromAddress(location.formattedAddress!); 
+        LatLng nearbySavedVet = LatLng(locationList[0].latitude, locationList[0].longitude);
+
+        double distanceBetweenNearbyVetAndCurrentPos = Geolocator.distanceBetween(
+          nearbySavedVet.latitude, 
+          nearbySavedVet.longitude, 
+          
+          currentPos.latitude,
+          currentPos.longitude
+        );
+
+        if (distanceBetweenNearbyVetAndCurrentPos > 5000) {
+          mapPlaceNearbySearch();
+        }
+      }
+    }
+  }
+
   void mapPlaceNearbySearch() async {
     Uri uri = Uri.https("places.googleapis.com", "/v1/places:searchNearby");
     Map<String, dynamic> jsonRequest = {
@@ -267,16 +311,16 @@ class EmergencyViewState extends State<EmergencyView> {
           if (!a.isOpen! && b.isOpen!) return 1;
           return 0;
         });
-        setState(() {
-          nearbyVets = result.places!;
-        });
+
+        nearbyVets = result.places!;
+        if (!mounted) return;
+        Account account = context.read<FileController>().accountDetails!;
+        account.nearbyVetsSaved = nearbyVets;
+        context.read<FileController>().writeAccountDetails(account);
+
         return;
       }
     }
-
-    setState(() {
-      nearbyVets = [];
-    });
   }
 
 
@@ -328,7 +372,7 @@ class EmergencyViewState extends State<EmergencyView> {
       goTo.latitude,
       goTo.longitude
     );
-    if (distanceBetweenSavedAndCurrentPos > 1000) {  // If new location is more than 1000 meters from old location.
+    if (distanceBetweenSavedAndCurrentPos > 2000) {  // If new location is more than 1000 meters from old location.
       mapPlaceNearbySearch();
     }
 

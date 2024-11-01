@@ -60,7 +60,7 @@ class _ContactUsViewState extends State<ContactUsView> {
           ),
           child: Column(
             children: [
-              Container( // Image / Dono / No-Ads
+              Container( // Image / Donations / Remove Ads
                 margin: const EdgeInsets.only(left: 4.0, right: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -183,13 +183,13 @@ class _AccountViewState extends State<AccountView> {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: SizedBox( // preferred vet address
-                              height: 24,
+                              height: account.preferredVet.address != null && account.preferredVet.address!.isNotEmpty ? 72 : 24,
                               child: TextField(
                                 keyboardType: TextInputType.streetAddress,
                                 textAlign: TextAlign.start,
                                 style: Theme.of(context).textTheme.bodyLarge,
                                 autocorrect: false,
-                                maxLines: 1,
+                                maxLines: 3,
                                 controller: accPrefVetAddress,
                                 enabled: true,
                                 
@@ -216,6 +216,7 @@ class _AccountViewState extends State<AccountView> {
                                   }
                                 },
                                 onSubmitted: (value) {
+                                  accPrefVetAddress.text = formatAddressToPostal(value)!;
                                   setState(() {
                                     searchingForPreferredLocation = false;
                                   });
@@ -309,13 +310,13 @@ class _AccountViewState extends State<AccountView> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                                     child: SizedBox( // Emergency vet address
-                                      height: 24,
+                                      height: account.emergencyVet.address != null && account.emergencyVet.address!.isNotEmpty ? 72 : 24,
                                       child: TextField(
                                         keyboardType: TextInputType.streetAddress,
                                         textAlign: TextAlign.start,
                                         style: Theme.of(context).textTheme.bodyLarge,
                                         autocorrect: false,
-                                        maxLines: 1,
+                                        maxLines: 3,
                                         controller: accEmeVetAddress,
                                         enabled: true,
                                         
@@ -342,6 +343,7 @@ class _AccountViewState extends State<AccountView> {
                                           }
                                         },
                                         onSubmitted: (value) {
+                                          accEmeVetAddress.text = formatAddressToPostal(value)!;
                                           setState(() {
                                             searchingForEmergencyLocation = false;
                                           });
@@ -442,7 +444,7 @@ class _AccountViewState extends State<AccountView> {
                                               setState(() {
                                                 searchingForEmergencyLocation = false;
                                                 account.emergencyVet.address = emergencyPlacePredictions[index].description!;
-                                                accEmeVetAddress.text = account.emergencyVet.address!;
+                                                accEmeVetAddress.text = formatAddressToPostal(account.emergencyVet.address)!;
                                               });
                                               FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
                                               notification(context, 
@@ -474,7 +476,7 @@ class _AccountViewState extends State<AccountView> {
                                       setState(() {
                                         searchingForPreferredLocation = false;
                                         account.preferredVet.address = preferredPlacePredictions[index].description!;
-                                        accPrefVetAddress.text = account.preferredVet.address!;
+                                        accPrefVetAddress.text = formatAddressToPostal(account.preferredVet.address)!;
                                       });
                                       FocusManager.instance.primaryFocus?.unfocus(); // Dismisses keyboard when a tile is clicked.
                                     },

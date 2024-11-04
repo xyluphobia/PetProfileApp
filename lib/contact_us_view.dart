@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:pet_profile_app/utils/common_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsView extends StatefulWidget {
@@ -83,25 +84,66 @@ class _ContactUsViewState extends State<ContactUsView> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                        
+                            confirmProceedNotification(
+                              context, 
+                              "Remove Ads", 
+                              "body", 
+                              () {
+                                print("went ahead");
+                              }, 
+                              () {
+                                print("cancelled");
+                              }
+                            );
                           }, 
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.primary,
+                            ),
+                            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                              (states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return Colors.black.withOpacity(0.1); // Dark splash effect
+                                }
+                                return null; // Default overlay color
+                              },
+                            ),
                           ),
                           child: Text(
-                            "Buy NO Ads",
+                            "Remove Ads",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () {
-                        
+                            confirmProceedNotification(
+                              context, 
+                              "Support Pet Tether", 
+                              "Love Pet Tether? Support its development and earn a supporter badge! Donations aren't expected but are always appreciated—every bit helps keep us growing!", 
+                              () {
+                                print("confirmed");
+                              }, 
+                              () {
+                                print("cancelled");
+                                Navigator.of(context).pop();
+                              }
+                            );
                           }, 
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.primary,
+                            ),
+                            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                              (states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return Colors.black.withOpacity(0.1); // Dark splash effect
+                                }
+                                return null; // Default overlay color
+                              },
+                            ),
                           ),
                           child: Text(
-                            "Dono Placeholder",
+                            "Support Pet Tether",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),

@@ -34,6 +34,50 @@ Future<void> notification(BuildContext context, String header, String body) {
   );
 }
 
+Future<void> confirmProceedNotification(BuildContext context, String header, String body, Function onProceed, Function onCancel) {
+  return showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      titlePadding: const EdgeInsets.only(left: 24, top: 24),
+      title: Text(
+        header, 
+        style: Theme.of(context).textTheme.headlineMedium,
+      ),
+      contentPadding: const EdgeInsets.only(top: 20, bottom: 10, left: 20, right: 20),
+      content: Text(
+        body,
+        textAlign: TextAlign.start,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      actionsPadding: const EdgeInsets.only(right: 12, bottom: 12),
+      buttonPadding: const EdgeInsets.all(0),
+      actions: [
+        TextButton(
+          child: Text(
+            "Cancel", 
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          onPressed: ()  {
+            onCancel();
+          },
+        ),
+        const SizedBox(width: 8.0),
+        TextButton(
+          style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
+          child: Text(
+            "Confirm", 
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+          ),
+          onPressed: () {
+            onProceed();
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 String? formatAddressToPostal(String? address) {
   if (address == null) return null;
   // Split the address by commas to break it into parts

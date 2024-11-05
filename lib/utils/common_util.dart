@@ -34,7 +34,7 @@ Future<void> notification(BuildContext context, String header, String body) {
   );
 }
 
-Future<void> confirmProceedNotification(BuildContext context, String header, String body, Function onProceed, Function onCancel) {
+Future<void> confirmProceedNotification(BuildContext context, String header, String body, Function onProceed, Function onCancel, {String proceedButtonText = "Confirm", String cancelButtonText = "Cancel"}) {
   return showDialog(
     context: context, 
     builder: (context) => AlertDialog(
@@ -55,7 +55,7 @@ Future<void> confirmProceedNotification(BuildContext context, String header, Str
       actions: [
         TextButton(
           child: Text(
-            "Cancel", 
+            cancelButtonText, 
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           onPressed: ()  {
@@ -66,7 +66,7 @@ Future<void> confirmProceedNotification(BuildContext context, String header, Str
         TextButton(
           style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface)),
           child: Text(
-            "Confirm", 
+            proceedButtonText, 
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
           ),
           onPressed: () {

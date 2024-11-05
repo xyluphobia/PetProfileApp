@@ -92,8 +92,9 @@ class _ContactUsViewState extends State<ContactUsView> {
                                 print("went ahead");
                               }, 
                               () {
-                                print("cancelled");
-                              }
+                                Navigator.of(context).pop();
+                              },
+                              proceedButtonText: "Remove Ads"
                             );
                           }, 
                           style: ButtonStyle(
@@ -124,9 +125,9 @@ class _ContactUsViewState extends State<ContactUsView> {
                                 print("confirmed");
                               }, 
                               () {
-                                print("cancelled");
                                 Navigator.of(context).pop();
-                              }
+                              },
+                              proceedButtonText: "Support",
                             );
                           }, 
                           style: ButtonStyle(

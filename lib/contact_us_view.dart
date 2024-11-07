@@ -87,7 +87,7 @@ class _ContactUsViewState extends State<ContactUsView> {
                             confirmProceedNotification(
                               context, 
                               "Remove Ads", 
-                              "body", 
+                              "Support Pet Tether and enjoy an ad-free experience!", 
                               () {
                                 print("went ahead");
                               }, 
